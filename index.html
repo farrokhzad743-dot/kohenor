@@ -1,0 +1,27 @@
+<!doctype html><html lang="fa" dir="rtl"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="شرکت تعاونی عشایری کوه نور کهگیلویه - اخبار، رویدادها، اسناد و معرفی تعاونی">
+<title>شرکت تعاونی عشایری کوه نور کهگیلویه</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
+</head><body>
+<header class="site-header"><div class="brand-row container"><div class="brand-side"><img src="https://s6.uupload.ir/files/picsart_26-08-12_20-56-50-770_ahhz.png" alt="لوگوی سازمان امور عشایر ایران"></div><div class="brand-title"><div class="persian-title">شرکت تعاونی عشایری کوه نور کهگیلویه</div><div class="title-line"></div></div><div class="brand-side"><img src="https://s6.uupload.ir/files/1786554350546_9ait.png" alt="لوگوی شرکت تعاونی عشایری کوه نور"></div></div></header>
+<main>
+<section class="news-section container" aria-label="آخرین اخبار"><div class="section-top"><div><h1>آخرین اخبار</h1></div><button class="icon-news" id="openNews" aria-label="نمایش همه اخبار" title="همه اخبار"><span class="news-icon-lines"><i></i><i></i><i></i></span></button></div>
+<div class="news-carousel-wrap"><button class="carousel-arrow next" id="nextNews" aria-label="خبر بعدی">‹</button><div class="news-track" id="newsTrack"></div><button class="carousel-arrow prev" id="prevNews" aria-label="خبر قبلی">›</button></div><div class="dots" id="newsDots"></div></section>
+<section class="quick-menu container" aria-label="دسترسی سریع">
+<button class="menu-card" data-target="ashayer"><span>عشایر؛ سرمایه ملّی</span><b>←</b></button>
+<button class="menu-card" data-target="cooperative"><span>چگونگی تعاونی</span><b>←</b></button>
+<button class="menu-card" data-target="documents"><span>اسناد و مدارک</span><b>←</b></button>
+<button class="menu-card" data-target="about"><span>درباره ما</span><b>←</b></button>
+</section>
+<section class="content-section container" id="ashayer"><div class="section-heading"><h2>عشایر؛ سرمایه ملّی</h2></div><div class="info-card"><div class="info-accent"></div><p id="ashayerExcerpt">جامعه عشایری ایران یکی از ارزشمندترین بخش‌های اجتماعی، فرهنگی و اقتصادی کشور است؛ جامعه‌ای که در تولید، حفظ میراث فرهنگی و ارتباط پایدار با سرزمین نقش مهمی دارد.</p><button class="read-more" data-content="ashayer">ادامه متن...</button></div></section>
+<section class="content-section container" id="cooperative"><div class="section-heading"><h2>چگونگی تعاونی</h2></div><div class="info-card"><div class="info-accent"></div><p id="cooperativeExcerpt">تعاونی، سازوکاری برای مشارکت افراد دارای نیازها و اهداف مشترک است؛ تعاونی عشایری نیز با سازمان‌دهی ظرفیت اعضا، تأمین نیازها، ارائه خدمات و تقویت تولید و بازار به جامعه عشایری کمک می‌کند.</p><button class="read-more" data-content="cooperative">ادامه متن...</button></div></section>
+<section class="content-section container" id="documents"><div class="section-heading"><h2>اسناد و مدارک</h2></div><div class="document-buttons"><button class="document-tab active" data-doc="0">استعلام شناسه ملی</button><button class="document-tab" data-doc="1">ثبت شرکت در دهدشت</button><button class="document-tab" data-doc="2">آگهی تأسیس</button></div><div class="document-viewer" id="documentViewer"></div></section>
+<section class="content-section container" id="about"><div class="section-heading"><h2>درباره ما</h2></div><div class="about-card"><h3>شرکت تعاونی عشایری کوه نور کهگیلویه</h3><p>این وب‌سایت با هدف اطلاع‌رسانی، انتشار اخبار و رویدادها، معرفی فعالیت‌های شرکت و دسترسی آسان به اسناد و اطلاعات عمومی راه‌اندازی شده است.</p><div class="supervision"><span>تحت نظارت</span><b>سازمان امور عشایر ایران</b></div></div></section>
+</main><footer class="footer"><div class="container footer-inner"><div><strong>شرکت تعاونی عشایری کوه نور کهگیلویه</strong><span>پایگاه اطلاع‌رسانی و معرفی شرکت</span></div><div class="footer-note">© تمامی حقوق این وب‌سایت محفوظ است.</div></div></footer>
+<div class="modal" id="newsModal" aria-hidden="true"><div class="modal-backdrop" data-close="newsModal"></div><div class="modal-panel news-list-panel" role="dialog" aria-modal="true"><button class="modal-close" data-close="newsModal" aria-label="بستن">×</button><span class="eyebrow">آرشیو اطلاع‌رسانی</span><h2>همه اخبار</h2><div class="all-news-list" id="allNewsList"></div></div></div>
+<div class="modal" id="articleModal" aria-hidden="true"><div class="modal-backdrop" data-close="articleModal"></div><article class="modal-panel article-panel" role="dialog" aria-modal="true"><button class="modal-close" data-close="articleModal" aria-label="بستن">×</button><div id="articleContent"></div></article></div>
+<div class="modal" id="contentModal" aria-hidden="true"><div class="modal-backdrop" data-close="contentModal"></div><article class="modal-panel article-panel" role="dialog" aria-modal="true"><button class="modal-close" data-close="contentModal" aria-label="بستن">×</button><div id="contentModalBody"></div></article></div>
+<script src="config.js"></script><script src="script.js"></script>
+</body></html>
