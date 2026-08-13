@@ -34,9 +34,9 @@ function renderIranDate(){
                 year:'numeric'
             }
         ).format(new Date());
-        el.textContent='امروز '+date;
+        el.textContent=date;
     }catch(e){
-        el.textContent='امروز';
+        el.textContent='';
     }
 }
 renderIranDate();
