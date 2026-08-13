@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
@@ -10,11 +9,26 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<!-- Vazirmatn بدون هیچ تغییر -->
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- فونت اصلی سایت؛ بدون هیچ تغییر -->
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
 
-<!-- IranNastaliq -->
-<link rel="stylesheet" href="https://esm.sh/gh/rahatool/persian-fonts/main.css">
+<!-- فقط فونت نستعلیق عنوان -->
+<style>
+@font-face {
+  font-family: "IranNastaliq3";
+  src: url("https://raw.githubusercontent.com/rahatool/persian-fonts/main/IranNastaliq.regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.database-title {
+  font-family: "IranNastaliq3", serif !important;
+  font-weight: 400;
+}
+</style>
+
+<link rel="stylesheet" href="style.css">
 
 <style>
 
@@ -167,16 +181,7 @@
   color:var(--muted)
 }
 
-
-/* فقط عنوان پایگاه داده با IranNastaliq */
-.database-title{
-  font-family:"IranNastaliq",serif;
-  font-weight:400;
-}
-
-
 @media(max-width:700px){
-
   .admin-grid{
     grid-template-columns:1fr
   }
@@ -190,28 +195,22 @@
     align-items:flex-start;
     flex-direction:column
   }
-
 }
 
 </style>
 </head>
 
-
 <body>
-
 
 <header class="site-header">
 
   <div class="brand-row container">
 
     <div class="brand-side">
-
       <img
         src="https://s6.uupload.ir/files/picsart_26-08-12_20-56-50-770_ahhz.png"
         alt="سازمان امور عشایر ایران">
-
     </div>
-
 
     <div class="brand-title">
 
@@ -223,22 +222,17 @@
 
     </div>
 
-
     <div class="brand-side">
-
       <img
         src="https://s6.uupload.ir/files/1786554350546_9ait.png"
         alt="شرکت تعاونی">
-
     </div>
 
   </div>
 
 </header>
 
-
 <main class="admin-shell">
-
 
 <section id="loginCard" class="admin-card">
 
@@ -249,11 +243,7 @@
     ایمیل خود را وارد کنید تا لینک ورود برای شما ارسال شود.
   </p>
 
-
-  <label for="email">
-    ایمیل
-  </label>
-
+  <label for="email">ایمیل</label>
 
   <input
     id="email"
@@ -262,34 +252,22 @@
     autocomplete="email"
     inputmode="email">
 
-
   <div class="admin-actions">
 
     <button
       class="admin-btn"
       id="sendLogin"
       type="button">
-
       ارسال لینک ورود
-
     </button>
 
   </div>
 
-
-  <div
-    id="loginStatus"
-    class="status">
-  </div>
+  <div id="loginStatus" class="status"></div>
 
 </section>
 
-
-
-<section
-  id="panel"
-  class="hidden">
-
+<section id="panel" class="hidden">
 
   <div class="admin-head">
 
@@ -299,32 +277,22 @@
         پنل مالک
       </span>
 
-
       <h1>
         مدیریت پایگاه داده
       </h1>
 
-
-      <div
-        id="who"
-        class="hint">
-      </div>
+      <div id="who" class="hint"></div>
 
     </div>
-
 
     <button
       class="admin-btn secondary"
       id="logout"
       type="button">
-
       خروج
-
     </button>
 
   </div>
-
-
 
   <div class="admin-card">
 
@@ -332,25 +300,19 @@
       عشایر؛ سرمایه ملّی
     </h2>
 
-
     <div class="admin-grid">
 
       <div>
 
-        <label>
-          عنوان
-        </label>
+        <label>عنوان</label>
 
         <input id="ashTitle">
 
       </div>
 
-
       <div>
 
-        <label>
-          خلاصه
-        </label>
+        <label>خلاصه</label>
 
         <textarea id="ashExcerpt"></textarea>
 
@@ -358,13 +320,9 @@
 
     </div>
 
-
-    <label>
-      متن کامل
-    </label>
+    <label>متن کامل</label>
 
     <textarea id="ashBody"></textarea>
-
 
     <div class="admin-actions">
 
@@ -372,16 +330,12 @@
         class="admin-btn"
         data-save-content="ashayer"
         type="button">
-
         ذخیره متن
-
       </button>
 
     </div>
 
   </div>
-
-
 
   <div class="admin-card">
 
@@ -389,25 +343,19 @@
       چگونگی تعاونی
     </h2>
 
-
     <div class="admin-grid">
 
       <div>
 
-        <label>
-          عنوان
-        </label>
+        <label>عنوان</label>
 
         <input id="coopTitle">
 
       </div>
 
-
       <div>
 
-        <label>
-          خلاصه
-        </label>
+        <label>خلاصه</label>
 
         <textarea id="coopExcerpt"></textarea>
 
@@ -415,13 +363,9 @@
 
     </div>
 
-
-    <label>
-      متن کامل
-    </label>
+    <label>متن کامل</label>
 
     <textarea id="coopBody"></textarea>
-
 
     <div class="admin-actions">
 
@@ -429,16 +373,12 @@
         class="admin-btn"
         data-save-content="cooperative"
         type="button">
-
         ذخیره متن
-
       </button>
 
     </div>
 
   </div>
-
-
 
   <div class="admin-card">
 
@@ -446,41 +386,31 @@
       اخبار
     </h2>
 
-
     <div id="newsAdminList"></div>
 
-
     <hr>
-
 
     <h3 id="newsFormTitle">
       افزودن خبر
     </h3>
 
-
     <input
       type="hidden"
       id="newsId">
-
 
     <div class="admin-grid">
 
       <div>
 
-        <label>
-          عنوان خبر
-        </label>
+        <label>عنوان خبر</label>
 
         <input id="newsTitle">
 
       </div>
 
-
       <div>
 
-        <label>
-          تاریخ
-        </label>
+        <label>تاریخ</label>
 
         <input
           id="newsDate"
@@ -490,24 +420,15 @@
 
     </div>
 
-
-    <label>
-      خلاصه خبر
-    </label>
+    <label>خلاصه خبر</label>
 
     <textarea id="newsExcerpt"></textarea>
 
-
-    <label>
-      متن کامل خبر
-    </label>
+    <label>متن کامل خبر</label>
 
     <textarea id="newsBody"></textarea>
 
-
-    <label>
-      تصاویر خبر
-    </label>
+    <label>تصاویر خبر</label>
 
     <input
       id="newsImages"
@@ -515,17 +436,14 @@
       accept="image/*"
       multiple>
 
-
     <div class="hint">
       تصاویر خبر در Storage سایت ذخیره می‌شوند.
     </div>
-
 
     <div
       id="selectedFiles"
       class="thumbs">
     </div>
-
 
     <div class="admin-actions">
 
@@ -533,26 +451,19 @@
         class="admin-btn"
         id="saveNews"
         type="button">
-
         ذخیره خبر
-
       </button>
-
 
       <button
         class="admin-btn secondary"
         id="cancelNews"
         type="button">
-
         لغو و پاک‌کردن فرم
-
       </button>
 
     </div>
 
   </div>
-
-
 
   <div
     id="adminStatus"
@@ -563,14 +474,9 @@
 
 </main>
 
-
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="config.js"></script>
-
 <script src="admin.js"></script>
-
 
 </body>
 </html>
