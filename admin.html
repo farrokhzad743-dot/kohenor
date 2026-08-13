@@ -1,482 +1,467 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>مدیریت پایگاه داده</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<!-- فونت اصلی سایت؛ بدون هیچ تغییر -->
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
-
-<!-- فقط فونت نستعلیق عنوان -->
-<style>
-@font-face {
-  font-family: "IranNastaliq3";
-  src: url("https://raw.githubusercontent.com/rahatool/persian-fonts/main/IranNastaliq.regular.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-.database-title {
-  font-family: "IranNastaliq3", serif !important;
-  font-weight: 400;
-}
-</style>
-
-<link rel="stylesheet" href="style.css">
-
-<style>
-
-.admin-shell{
-  width:min(1000px,calc(100% - 28px));
-  margin:30px auto 70px
-}
-
-.admin-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:16px;
-  margin-bottom:22px
-}
-
-.admin-head h1{
-  margin:0
-}
-
-.admin-card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:24px;
-  box-shadow:var(--shadow);
-  padding:24px;
-  margin:16px 0
-}
-
-.admin-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px
-}
-
-.admin-card label{
-  display:block;
-  font-weight:700;
-  margin-bottom:7px
-}
-
-.admin-card input,
-.admin-card textarea,
-.admin-card select{
-  width:100%;
-  border:1px solid #dfe5f1;
-  border-radius:14px;
-  padding:12px 14px;
-  font:inherit;
-  color:var(--ink);
-  background:#fbfcff;
-  box-sizing:border-box
-}
-
-.admin-card textarea{
-  min-height:170px;
-  resize:vertical
-}
-
-.admin-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-top:14px
-}
-
-.admin-btn{
-  border:0;
-  border-radius:13px;
-  padding:11px 17px;
-  cursor:pointer;
-  background:var(--blue);
-  color:#fff;
-  font-weight:700
-}
-
-.admin-btn.secondary{
-  background:#edf2ff;
-  color:var(--blue)
-}
-
-.admin-btn.danger{
-  background:#fff0f0;
-  color:#a62020
-}
-
-.status{
-  padding:12px 15px;
-  border-radius:13px;
-  background:#f3f6ff;
-  color:var(--ink);
-  margin:12px 0
-}
-
-.status.error{
-  background:#fff1f1;
-  color:#9b2020
-}
-
-.status.ok{
-  background:#effaf2;
-  color:#1e6b37
-}
-
-.hidden{
-  display:none!important
-}
-
-.news-admin-item{
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:16px;
-  margin:10px 0;
-  display:flex;
-  justify-content:space-between;
-  gap:14px;
-  align-items:center
-}
-
-.news-admin-item h3{
-  margin:0 0 5px
-}
-
-.news-admin-item p{
-  margin:0;
-  color:var(--muted)
-}
-
-.thumbs{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-  margin-top:12px
-}
-
-.thumbs img{
-  width:62px;
-  height:48px;
-  object-fit:cover;
-  border-radius:8px
-}
-
-.hint{
-  font-size:13px;
-  color:var(--muted)
-}
-
-.admin-login-note{
-  line-height:2;
-  color:var(--muted)
-}
-
-@media(max-width:700px){
-  .admin-grid{
-    grid-template-columns:1fr
-  }
-
-  .admin-head{
-    align-items:flex-start;
-    flex-direction:column
-  }
-
-  .news-admin-item{
-    align-items:flex-start;
-    flex-direction:column
-  }
-}
-
-</style>
-</head>
-
-<body>
-
-<header class="site-header">
-
-  <div class="brand-row container">
-
-    <div class="brand-side">
-      <img
-        src="https://s6.uupload.ir/files/picsart_26-08-12_20-56-50-770_ahhz.png"
-        alt="سازمان امور عشایر ایران">
-    </div>
-
-    <div class="brand-title">
-
-      <div class="persian-title database-title">
-        مدیریت پایگاه داده
-      </div>
-
-      <div class="title-line"></div>
-
-    </div>
-
-    <div class="brand-side">
-      <img
-        src="https://s6.uupload.ir/files/1786554350546_9ait.png"
-        alt="شرکت تعاونی">
-    </div>
-
-  </div>
-
-</header>
-
-<main class="admin-shell">
-
-<section id="loginCard" class="admin-card">
-
-  <h1>ورود مالک</h1>
-
-  <p class="admin-login-note">
-    ورود فقط برای ایمیل مالک مجاز است.
-    ایمیل خود را وارد کنید تا لینک ورود برای شما ارسال شود.
-  </p>
-
-  <label for="email">ایمیل</label>
-
-  <input
-    id="email"
-    type="email"
-    placeholder="ایمیل مالک را وارد کنید"
-    autocomplete="email"
-    inputmode="email">
-
-  <div class="admin-actions">
-
-    <button
-      class="admin-btn"
-      id="sendLogin"
-      type="button">
-      ارسال لینک ورود
-    </button>
-
-  </div>
-
-  <div id="loginStatus" class="status"></div>
-
-</section>
-
-<section id="panel" class="hidden">
-
-  <div class="admin-head">
-
-    <div>
-
-      <span class="eyebrow">
-        پنل مالک
-      </span>
-
-      <h1>
-        مدیریت پایگاه داده
-      </h1>
-
-      <div id="who" class="hint"></div>
-
-    </div>
-
-    <button
-      class="admin-btn secondary"
-      id="logout"
-      type="button">
-      خروج
-    </button>
-
-  </div>
-
-  <div class="admin-card">
-
-    <h2>
-      عشایر؛ سرمایه ملّی
-    </h2>
-
-    <div class="admin-grid">
-
-      <div>
-
-        <label>عنوان</label>
-
-        <input id="ashTitle">
-
-      </div>
-
-      <div>
-
-        <label>خلاصه</label>
-
-        <textarea id="ashExcerpt"></textarea>
-
-      </div>
-
-    </div>
-
-    <label>متن کامل</label>
-
-    <textarea id="ashBody"></textarea>
-
-    <div class="admin-actions">
-
-      <button
-        class="admin-btn"
-        data-save-content="ashayer"
-        type="button">
-        ذخیره متن
-      </button>
-
-    </div>
-
-  </div>
-
-  <div class="admin-card">
-
-    <h2>
-      چگونگی تعاونی
-    </h2>
-
-    <div class="admin-grid">
-
-      <div>
-
-        <label>عنوان</label>
-
-        <input id="coopTitle">
-
-      </div>
-
-      <div>
-
-        <label>خلاصه</label>
-
-        <textarea id="coopExcerpt"></textarea>
-
-      </div>
-
-    </div>
-
-    <label>متن کامل</label>
-
-    <textarea id="coopBody"></textarea>
-
-    <div class="admin-actions">
-
-      <button
-        class="admin-btn"
-        data-save-content="cooperative"
-        type="button">
-        ذخیره متن
-      </button>
-
-    </div>
-
-  </div>
-
-  <div class="admin-card">
-
-    <h2>
-      اخبار
-    </h2>
-
-    <div id="newsAdminList"></div>
-
-    <hr>
-
-    <h3 id="newsFormTitle">
-      افزودن خبر
-    </h3>
-
-    <input
-      type="hidden"
-      id="newsId">
-
-    <div class="admin-grid">
-
-      <div>
-
-        <label>عنوان خبر</label>
-
-        <input id="newsTitle">
-
-      </div>
-
-      <div>
-
-        <label>تاریخ</label>
-
-        <input
-          id="newsDate"
-          placeholder="۱۴۰۵/۰۵/۲۰">
-
-      </div>
-
-    </div>
-
-    <label>خلاصه خبر</label>
-
-    <textarea id="newsExcerpt"></textarea>
-
-    <label>متن کامل خبر</label>
-
-    <textarea id="newsBody"></textarea>
-
-    <label>تصاویر خبر</label>
-
-    <input
-      id="newsImages"
-      type="file"
-      accept="image/*"
-      multiple>
-
-    <div class="hint">
-      تصاویر خبر در Storage سایت ذخیره می‌شوند.
-    </div>
-
-    <div
-      id="selectedFiles"
-      class="thumbs">
-    </div>
-
-    <div class="admin-actions">
-
-      <button
-        class="admin-btn"
-        id="saveNews"
-        type="button">
-        ذخیره خبر
-      </button>
-
-      <button
-        class="admin-btn secondary"
-        id="cancelNews"
-        type="button">
-        لغو و پاک‌کردن فرم
-      </button>
-
-    </div>
-
-  </div>
-
-  <div
-    id="adminStatus"
-    class="status">
-  </div>
-
-</section>
-
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
-<script src="admin.js"></script>
-
-</body>
+<!doctype html>  
+<html lang="fa" dir="rtl">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1">  
+  
+<title> مدیریت پایگاه داده </title>  
+  
+<link rel="preconnect" href="https://fonts.googleapis.com">  
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
+  
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">  
+  <link rel="stylesheet" href="style.css">  
+  
+<style>  
+.admin-shell{  
+  width:min(1000px,calc(100% - 28px));  
+  margin:30px auto 70px  
+}  
+  
+.admin-head{  
+  display:flex;  
+  justify-content:space-between;  
+  align-items:center;  
+  gap:16px;  
+  margin-bottom:22px  
+}  
+  
+.admin-head h1{  
+  margin:0  
+}  
+  
+.admin-card{  
+  background:#fff;  
+  border:1px solid var(--line);  
+  border-radius:24px;  
+  box-shadow:var(--shadow);  
+  padding:24px;  
+  margin:16px 0  
+}  
+  
+.admin-grid{  
+  display:grid;  
+  grid-template-columns:1fr 1fr;  
+  gap:16px  
+}  
+  
+.admin-card label{  
+  display:block;  
+  font-weight:700;  
+  margin-bottom:7px  
+}  
+  
+.admin-card input,  
+.admin-card textarea,  
+.admin-card select{  
+  width:100%;  
+  border:1px solid #dfe5f1;  
+  border-radius:14px;  
+  padding:12px 14px;  
+  font:inherit;  
+  color:var(--ink);  
+  background:#fbfcff;  
+  box-sizing:border-box  
+}  
+  
+.admin-card textarea{  
+  min-height:170px;  
+  resize:vertical  
+}  
+  
+.admin-actions{  
+  display:flex;  
+  flex-wrap:wrap;  
+  gap:10px;  
+  margin-top:14px  
+}  
+  
+.admin-btn{  
+  border:0;  
+  border-radius:13px;  
+  padding:11px 17px;  
+  cursor:pointer;  
+  background:var(--blue);  
+  color:#fff;  
+  font-weight:700  
+}  
+  
+.admin-btn.secondary{  
+  background:#edf2ff;  
+  color:var(--blue)  
+}  
+  
+.admin-btn.danger{  
+  background:#fff0f0;  
+  color:#a62020  
+}  
+  
+.status{  
+  padding:12px 15px;  
+  border-radius:13px;  
+  background:#f3f6ff;  
+  color:var(--ink);  
+  margin:12px 0  
+}  
+  
+.status.error{  
+  background:#fff1f1;  
+  color:#9b2020  
+}  
+  
+.status.ok{  
+  background:#effaf2;  
+  color:#1e6b37  
+}  
+  
+.hidden{  
+  display:none!important  
+}  
+  
+.news-admin-item{  
+  border:1px solid var(--line);  
+  border-radius:18px;  
+  padding:16px;  
+  margin:10px 0;  
+  display:flex;  
+  justify-content:space-between;  
+  gap:14px;  
+  align-items:center  
+}  
+  
+.news-admin-item h3{  
+  margin:0 0 5px  
+}  
+  
+.news-admin-item p{  
+  margin:0;  
+  color:var(--muted)  
+}  
+  
+.thumbs{  
+  display:flex;  
+  gap:7px;  
+  flex-wrap:wrap;  
+  margin-top:12px  
+}  
+  
+.thumbs img{  
+  width:62px;  
+  height:48px;  
+  object-fit:cover;  
+  border-radius:8px  
+}  
+  
+.hint{  
+  font-size:13px;  
+  color:var(--muted)  
+}  
+  
+.admin-login-note{  
+  line-height:2;  
+  color:var(--muted)  
+}  
+  
+@media(max-width:700px){  
+  .admin-grid{  
+    grid-template-columns:1fr  
+  }  
+  
+  .admin-head{  
+    align-items:flex-start;  
+    flex-direction:column  
+  }  
+  
+  .news-admin-item{  
+    align-items:flex-start;  
+    flex-direction:column  
+  }  
+}  
+</style>  
+</head>  
+  
+<body>  
+  
+<header class="site-header">  
+  
+  <div class="brand-row container">  
+  
+    <div class="brand-side">  
+      <img  
+        src="https://s6.uupload.ir/files/picsart_26-08-12_20-56-50-770_ahhz.png"  
+        alt="سازمان امور عشایر ایران">  
+    </div>  
+  
+    <div class="brand-title">  
+      <div class="persian-title">  
+        مدیریت پایگاه داده  
+      </div>  
+  
+      <div class="title-line"></div>  
+    </div>  
+  
+    <div class="brand-side">  
+      <img  
+        src="https://s6.uupload.ir/files/1786554350546_9ait.png"  
+        alt="شرکت تعاونی">  
+    </div>  
+  
+  </div>  
+  
+</header>  
+  
+<main class="admin-shell">  
+  
+<section id="loginCard" class="admin-card">  
+  
+  <h1>ورود مالک</h1>  
+  
+  <p class="admin-login-note">  
+    ورود فقط برای ایمیل مالک مجاز است.  
+    ایمیل خود را وارد کنید تا لینک ورود برای شما ارسال شود.  
+  </p>  
+  
+  <label for="email">ایمیل</label>  
+  
+  <input  
+    id="email"  
+    type="email"  
+    placeholder="ایمیل مالک را وارد کنید"  
+    autocomplete="email"  
+    inputmode="email">  
+  
+  <div class="admin-actions">  
+  
+    <button  
+      class="admin-btn"  
+      id="sendLogin"  
+      type="button">  
+      ارسال لینک ورود  
+    </button>  
+  
+  </div>  
+  
+  <div id="loginStatus" class="status"></div>  
+  
+</section>  
+  
+  
+<section id="panel" class="hidden">  
+  
+  <div class="admin-head">  
+  
+    <div>  
+  
+      <span class="eyebrow">  
+        پنل مالک  
+      </span>  
+  
+      <h1>  
+        مدیریت پایگاه داده  
+      </h1>  
+  
+      <div id="who" class="hint"></div>  
+  
+    </div>  
+  
+    <button  
+      class="admin-btn secondary"  
+      id="logout"  
+      type="button">  
+      خروج  
+    </button>  
+  
+  </div>  
+  
+  
+  <div class="admin-card">  
+  
+    <h2>  
+      عشایر؛ سرمایه ملّی  
+    </h2>  
+  
+    <div class="admin-grid">  
+  
+      <div>  
+  
+        <label>عنوان</label>  
+  
+        <input id="ashTitle">  
+  
+      </div>  
+  
+      <div>  
+  
+        <label>خلاصه</label>  
+  
+        <textarea id="ashExcerpt"></textarea>  
+  
+      </div>  
+  
+    </div>  
+  
+    <label>متن کامل</label>  
+  
+    <textarea id="ashBody"></textarea>  
+  
+    <div class="admin-actions">  
+  
+      <button  
+        class="admin-btn"  
+        data-save-content="ashayer"  
+        type="button">  
+        ذخیره متن  
+      </button>  
+  
+    </div>  
+  
+  </div>  
+  
+  
+  <div class="admin-card">  
+  
+    <h2>  
+      چگونگی تعاونی  
+    </h2>  
+  
+    <div class="admin-grid">  
+  
+      <div>  
+  
+        <label>عنوان</label>  
+  
+        <input id="coopTitle">  
+  
+      </div>  
+  
+      <div>  
+  
+        <label>خلاصه</label>  
+  
+        <textarea id="coopExcerpt"></textarea>  
+  
+      </div>  
+  
+    </div>  
+  
+    <label>متن کامل</label>  
+  
+    <textarea id="coopBody"></textarea>  
+  
+    <div class="admin-actions">  
+  
+      <button  
+        class="admin-btn"  
+        data-save-content="cooperative"  
+        type="button">  
+        ذخیره متن  
+      </button>  
+  
+    </div>  
+  
+  </div>  
+  
+  
+  <div class="admin-card">  
+  
+    <h2>  
+      اخبار  
+    </h2>  
+  
+    <div id="newsAdminList"></div>  
+  
+    <hr>  
+  
+    <h3 id="newsFormTitle">  
+      افزودن خبر  
+    </h3>  
+  
+    <input  
+      type="hidden"  
+      id="newsId">  
+  
+    <div class="admin-grid">  
+  
+      <div>  
+  
+        <label>عنوان خبر</label>  
+  
+        <input id="newsTitle">  
+  
+      </div>  
+  
+      <div>  
+  
+        <label>تاریخ</label>  
+  
+        <input  
+          id="newsDate"  
+          placeholder="۱۴۰۵/۰۵/۲۰">  
+  
+      </div>  
+  
+    </div>  
+  
+    <label>خلاصه خبر</label>  
+  
+    <textarea id="newsExcerpt"></textarea>  
+  
+    <label>متن کامل خبر</label>  
+  
+    <textarea id="newsBody"></textarea>  
+  
+    <label>تصاویر خبر</label>  
+  
+    <input  
+      id="newsImages"  
+      type="file"  
+      accept="image/*"  
+      multiple>  
+  
+    <div class="hint">  
+      تصاویر خبر در Storage سایت ذخیره می‌شوند.  
+    </div>  
+  
+    <div  
+      id="selectedFiles"  
+      class="thumbs">  
+    </div>  
+  
+    <div class="admin-actions">  
+  
+      <button  
+        class="admin-btn"  
+        id="saveNews"  
+        type="button">  
+        ذخیره خبر  
+      </button>  
+  
+      <button  
+        class="admin-btn secondary"  
+        id="cancelNews"  
+        type="button">  
+        لغو و پاک‌کردن فرم  
+      </button>  
+  
+    </div>  
+  
+  </div>  
+  
+  
+  <div  
+    id="adminStatus"  
+    class="status">  
+  </div>  
+  
+</section>  
+  
+</main>  
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  
+<script src="config.js"></script>  
+<script src="admin.js"></script>  
+  
+</body>  
 </html>
