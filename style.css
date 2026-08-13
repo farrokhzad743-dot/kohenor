@@ -58,7 +58,7 @@ body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
  .lightbox-arrow.prev{left:8px}.lightbox-arrow.next{right:8px}
 }
 
-/* تاریخ رسمی ایران و روبان پرچم */
+/* تاریخ رسمی ایران */
 .news-actions{display:flex;align-items:center;gap:10px}
 .iran-date{
     min-height:52px;
@@ -76,46 +76,6 @@ body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     font-size:13px;
     font-weight:700;
 }
-.iran-ribbon{
-    position:fixed;
-    top:12px;
-    right:18px;
-    z-index:9999;
-    width:112px;
-    height:42px;
-    pointer-events:none;
-    filter:drop-shadow(0 5px 9px rgba(0,0,0,.18));
-    transform:rotate(0deg);
-}
-.iran-ribbon:before{
-    content:"";
-    position:absolute;
-    inset:0;
-    border-radius:4px 4px 7px 7px;
-    background:linear-gradient(
-        to bottom,
-        #239f40 0 33.333%,
-        #fff 33.333% 66.666%,
-        #da0000 66.666% 100%
-    );
-}
-.iran-ribbon:after{
-    content:"";
-    position:absolute;
-    bottom:-10px;
-    right:0;
-    border-top:10px solid #b00000;
-    border-left:14px solid transparent;
-}
-.iran-ribbon span{
-    position:absolute;
-    left:0;
-    bottom:-10px;
-    width:14px;
-    height:10px;
-    background:#167c34;
-    clip-path:polygon(0 0,100% 0,100% 100%);
-}
 @media(max-width:520px){
     .news-actions{gap:6px}
     .iran-date{
@@ -123,21 +83,5 @@ body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
         padding:0 11px;
         font-size:11px;
         border-radius:14px;
-    }
-    .iran-ribbon{
-        top:8px;
-        right:9px;
-        width:78px;
-        height:29px;
-    }
-    .iran-ribbon:after{
-        bottom:-7px;
-        border-top-width:7px;
-        border-left-width:10px;
-    }
-    .iran-ribbon span{
-        bottom:-7px;
-        width:10px;
-        height:7px;
     }
 }
