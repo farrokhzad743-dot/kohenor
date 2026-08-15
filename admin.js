@@ -582,107 +582,136 @@
     }
   }
 
+  let pendingEmail = '';
+
+  function setOtpMode(enabled) {
+    const box = $('otpBox');
+    const sendButton = $('sendLogin');
+    const emailInput = $('email');
+
+    if (box) box.classList.toggle('hidden', !enabled);
+    if (sendButton) sendButton.textContent = enabled ? 'ارسال دوباره کد' : 'ارسال کد ورود';
+    if (emailInput) emailInput.disabled = enabled;
+  }
+
   async function sendLogin() {
 
     if (!isConfigured()) {
-
-      status(
-        $('loginStatus'),
-        'config.js تنظیم نشده است.',
-        'error'
-      );
-
+      status($('loginStatus'), 'config.js تنظیم نشده است.', 'error');
       return;
     }
 
-    const email =
-      $('email').value
-        .trim()
-        .toLowerCase();
+    const email = $('email').value.trim().toLowerCase();
 
     if (!email) {
-
-      status(
-        $('loginStatus'),
-        'ایمیل را وارد کنید.',
-        'error'
-      );
-
+      status($('loginStatus'), 'ایمیل را وارد کنید.', 'error');
       return;
     }
 
     if (!email.includes('@')) {
-
-      status(
-        $('loginStatus'),
-        'ایمیل واردشده معتبر نیست.',
-        'error'
-      );
-
+      status($('loginStatus'), 'ایمیل واردشده معتبر نیست.', 'error');
       return;
     }
 
-    status(
-      $('loginStatus'),
-      'در حال ارسال لینک ورود...'
-    );
+    status($('loginStatus'), 'در حال ارسال کد ورود...');
 
     try {
-
-      const {
-        error
-      } =
-        await sb.auth.signInWithOtp({
-
-          email,
-
-          options: {
-
-            shouldCreateUser: false,
-
-            emailRedirectTo:
-              new URL(
-                'admin.html',
-                window.location.href
-              ).href
-          }
-
-        });
+      const { error } = await sb.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false
+        }
+      });
 
       if (error) {
-
-        console.error(
-          'Supabase OTP:',
-          error
-        );
-
+        console.error('Supabase email OTP:', error);
         status(
           $('loginStatus'),
-          error.message ||
-          'ارسال لینک ورود انجام نشد.',
+          error.message || 'ارسال کد ورود انجام نشد.',
           'error'
         );
-
         return;
       }
 
+      pendingEmail = email;
+      setOtpMode(true);
+      $('otpCode').value = '';
+      $('otpCode').focus();
+
       status(
         $('loginStatus'),
-        'لینک ورود به ایمیل ارسال شد. ایمیل را بررسی کنید.',
+        'کد ورود به ایمیل ارسال شد. کد را وارد کنید.',
         'ok'
       );
 
     } catch (error) {
-
       console.error(error);
-
       status(
         $('loginStatus'),
-        'خطا در ارسال لینک ورود: ' +
-        (error.message || 'خطای نامشخص'),
+        'خطا در ارسال کد ورود: ' + (error.message || 'خطای نامشخص'),
         'error'
       );
     }
+  }
+
+  async function verifyLogin() {
+
+    const email = pendingEmail || $('email').value.trim().toLowerCase();
+    const token = $('otpCode').value.trim().replace(/\s+/g, '');
+
+    if (!email) {
+      status($('loginStatus'), 'ابتدا ایمیل را وارد کنید.', 'error');
+      return;
+    }
+
+    if (!/^\d{6,8}$/.test(token)) {
+      status($('loginStatus'), 'کد ورود را صحیح وارد کنید.', 'error');
+      return;
+    }
+
+    status($('loginStatus'), 'در حال بررسی کد ورود...');
+
+    try {
+      const { data, error } = await sb.auth.verifyOtp({
+        email,
+        token,
+        type: 'email'
+      });
+
+      if (error) {
+        console.error('Supabase verify OTP:', error);
+        status(
+          $('loginStatus'),
+          error.message || 'کد ورود نادرست یا منقضی شده است.',
+          'error'
+        );
+        return;
+      }
+
+      if (!data?.session) {
+        status($('loginStatus'), 'ورود تأیید نشد. دوباره تلاش کنید.', 'error');
+        return;
+      }
+
+      await afterLogin(data.session);
+
+    } catch (error) {
+      console.error(error);
+      status(
+        $('loginStatus'),
+        'خطا در بررسی کد ورود: ' + (error.message || 'خطای نامشخص'),
+        'error'
+      );
+    }
+  }
+
+  function changeEmail() {
+    pendingEmail = '';
+    setOtpMode(false);
+    $('otpCode').value = '';
+    $('email').disabled = false;
+    $('email').focus();
+    status($('loginStatus'), 'ایمیل را تغییر دهید و دوباره کد بگیرید.');
   }
 
   function setupEvents() {
@@ -692,6 +721,23 @@
 
     if (sendButton) {
       sendButton.onclick = sendLogin;
+    }
+
+    const verifyButton = $('verifyLogin');
+    if (verifyButton) {
+      verifyButton.onclick = verifyLogin;
+    }
+
+    const changeEmailButton = $('changeEmail');
+    if (changeEmailButton) {
+      changeEmailButton.onclick = changeEmail;
+    }
+
+    const otpInput = $('otpCode');
+    if (otpInput) {
+      otpInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') verifyLogin();
+      });
     }
 
     const logoutButton =
