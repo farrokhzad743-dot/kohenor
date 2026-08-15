@@ -460,57 +460,51 @@ async function saveContent(slug) {
 ----------------------------- */
 
 async function uploadFiles(files) {
-
   const urls = [];
+  const MAX_FILE_SIZE = 8 * 1024 * 1024;
+  const MAX_FILES = 10;
 
-
-  for (const file of files) {
-
-    const safeName =
-      file.name
-        .toLowerCase()
-        .replace(/[^a-z0-9._-]/g, '-');
-
-
-    const path =
-      `news/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
-
-
-    const {
-      error
-    } = await supabase
-      .storage
-      .from('site-media')
-      .upload(
-        path,
-        file,
-        {
-          upsert: false,
-          contentType: file.type
-        }
-      );
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    const {
-      data
-    } = supabase
-      .storage
-      .from('site-media')
-      .getPublicUrl(path);
-
-
-    urls.push(data.publicUrl);
-
+  if (files.length > MAX_FILES) {
+    throw new Error(`حداکثر ${MAX_FILES} تصویر برای هر خبر مجاز است.`);
   }
 
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) {
+      throw new Error('فقط فایل‌های تصویری مجاز هستند.');
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error(`حجم تصویر «${file.name}» بیشتر از ۸ مگابایت است.`);
+    }
+
+    const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]/g, '-');
+    const path = `news/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+    const { error } = await supabase.storage.from('site-media').upload(path, file, {
+      upsert: false,
+      contentType: file.type
+    });
+    if (error) throw error;
+
+    const { data } = supabase.storage.from('site-media').getPublicUrl(path);
+    urls.push(data.publicUrl);
+  }
 
   return urls;
+}
 
+
+async function removeStorageFiles(urls) {
+  const marker = '/storage/v1/object/public/site-media/';
+  const paths = (Array.isArray(urls) ? urls : [])
+    .map(url => {
+      const value = String(url || '');
+      const index = value.indexOf(marker);
+      return index >= 0 ? decodeURIComponent(value.slice(index + marker.length)) : null;
+    })
+    .filter(Boolean);
+
+  if (!paths.length) return;
+  const { error } = await supabase.storage.from('site-media').remove(paths);
+  if (error) console.warn('Storage cleanup failed:', error);
 }
 
 
@@ -582,10 +576,12 @@ async function saveNews() {
 
 
     if (files.length) {
+      const newImages = await uploadFiles(files);
+      images = [...images, ...newImages];
+    }
 
-      images =
-        await uploadFiles(files);
-
+    if (images.length > 10) {
+      throw new Error('حداکثر ۱۰ تصویر برای هر خبر مجاز است.');
     }
 
 
@@ -694,28 +690,6 @@ async function sendLogin() {
     return;
   }
 
-
-  /*
-    اول بررسی می‌کنیم ایمیل در owner_access
-    وجود دارد.
-  */
-
-  const allowed =
-    await verifyOwner(email);
-
-
-  if (!allowed) {
-
-    status(
-      $('loginStatus'),
-      'این ایمیل اجازه ورود به پنل مدیریت را ندارد.',
-      'error'
-    );
-
-    return;
-  }
-
-
   const {
     error
   } =
@@ -724,6 +698,8 @@ async function sendLogin() {
       email,
 
       options: {
+
+        shouldCreateUser: false,
 
         emailRedirectTo:
           new URL(
@@ -868,30 +844,24 @@ $('newsAdminList').onclick =
       }
 
 
-      const {
-        error
-      } =
-        await supabase
-          .from('news')
-          .delete()
-          .eq(
-            'id',
-            del.dataset.delete
-          );
+      const item = currentNews.find(
+        n => String(n.id) === String(del.dataset.delete)
+      );
 
+      const { error } = await supabase
+        .from('news')
+        .delete()
+        .eq('id', del.dataset.delete);
+
+      if (!error) {
+        await removeStorageFiles(item?.images || []);
+      }
 
       status(
         $('adminStatus'),
-
-        error
-          ? error.message
-          : 'خبر حذف شد.',
-
-        error
-          ? 'error'
-          : 'ok'
+        error ? error.message : 'خبر حذف شد.',
+        error ? 'error' : 'ok'
       );
-
 
       await loadNews();
 
