@@ -31,3 +31,9 @@ Anon Key در سایت عمومی قابل مشاهده است؛ امنیت وا
 `https://tavonikohenor.ir`
 
 > فایل CNAME عمداً تا زمان اتصال واقعی DNS اضافه نشده است؛ بنابراین GitHub Pages فعلاً با آدرس پیش‌فرض خود کار می‌کند.
+
+## Final security/deployment notes
+- `config.js` contains only the public Supabase URL and Publishable/Anon key. Never place the database password or `service_role` key in the repository.
+- `supabase-security-final.sql` is the final RLS/Storage policy migration. Run it in the Supabase SQL Editor for the project used by this site.
+- Magic-link login sends the email before checking `owner_access`; the owner check happens only after Supabase authenticates the user.
+- `admin.html` no longer pre-fills the owner email.
