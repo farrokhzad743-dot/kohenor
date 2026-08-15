@@ -219,10 +219,10 @@
   
   <p class="admin-login-note">  
     ورود فقط برای ایمیل مالک مجاز است.  
-    ایمیل خود را وارد کنید تا لینک ورود برای شما ارسال شود.  
+    یک کد یک‌بارمصرف به ایمیل شما ارسال می‌شود.  
   </p>  
   
-  <label for="email">ایمیل</label>  
+  <label for="email">ایمیل مالک</label>  
   
   <input  
     id="email"  
@@ -237,9 +237,34 @@
       class="admin-btn"  
       id="sendLogin"  
       type="button">  
-      ارسال لینک ورود  
+      ارسال کد ورود  
     </button>  
   
+  </div>  
+  
+  <div id="otpBox" class="hidden">  
+    <label for="otpCode">کد ورود</label>  
+    <input  
+      id="otpCode"  
+      type="text"  
+      inputmode="numeric"  
+      autocomplete="one-time-code"  
+      maxlength="8"  
+      placeholder="کد ارسال‌شده به ایمیل">  
+    <div class="admin-actions">  
+      <button  
+        class="admin-btn"  
+        id="verifyLogin"  
+        type="button">  
+        ورود به پنل مدیریت  
+      </button>  
+      <button  
+        class="admin-btn secondary"  
+        id="changeEmail"  
+        type="button">  
+        تغییر ایمیل  
+      </button>  
+    </div>  
   </div>  
   
   <div id="loginStatus" class="status"></div>  
