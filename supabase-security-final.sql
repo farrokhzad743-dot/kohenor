@@ -182,5 +182,7 @@ using (
 
 -- Ensure the intended owner exists and is enabled.
 insert into public.owner_access (email, enabled)
-values ('farrokhzad743@gmail.com', true)
+values
+  ('farrokhzad743@gmail.com', true),
+  ('mrparvareh8@gmail.com', true)
 on conflict (email) do update set enabled = true;
