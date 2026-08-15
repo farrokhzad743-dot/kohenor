@@ -4,11 +4,12 @@ const $ = id => document.getElementById(id);
 
 let supabase = null;
 let currentNews = [];
+let appReady = false;
 
 
-/* -----------------------------
+/* =============================
    وضعیت پیام
------------------------------ */
+============================= */
 
 function status(el, msg, type = '') {
   if (!el) return;
@@ -18,30 +19,34 @@ function status(el, msg, type = '') {
 }
 
 
-/* -----------------------------
+/* =============================
    بررسی تنظیمات
------------------------------ */
+============================= */
 
 function isConfigured() {
-
   return !!(
     cfg.supabaseUrl &&
     cfg.supabaseAnonKey &&
-    !cfg.supabaseUrl.includes('YOUR_') &&
-    !cfg.supabaseAnonKey.includes('YOUR_')
+    !String(cfg.supabaseUrl).includes('YOUR_') &&
+    !String(cfg.supabaseAnonKey).includes('YOUR_')
   );
-
 }
 
 
-/* -----------------------------
-   بررسی مالک بودن کاربر
-   امنیت اصلی از Supabase RLS می‌آید
------------------------------ */
+/* =============================
+   بررسی مالک
+============================= */
 
 async function verifyOwner(email) {
 
-  const { data, error } = await supabase
+  if (!supabase || !email) {
+    return false;
+  }
+
+  const {
+    data,
+    error
+  } = await supabase
     .from('owner_access')
     .select('email, enabled')
     .eq('email', email.toLowerCase())
@@ -49,18 +54,24 @@ async function verifyOwner(email) {
     .maybeSingle();
 
   if (error) {
-    console.error(error);
+    console.error('owner_access error:', error);
+
+    status(
+      $('loginStatus'),
+      'خطا در بررسی دسترسی مالک: ' + error.message,
+      'error'
+    );
+
     return false;
   }
 
   return !!data;
-
 }
 
 
-/* -----------------------------
+/* =============================
    پاک کردن فرم خبر
------------------------------ */
+============================= */
 
 function clearForm() {
 
@@ -80,29 +91,129 @@ function clearForm() {
 
   });
 
-
   if ($('newsImages')) {
     $('newsImages').value = '';
   }
-
 
   if ($('selectedFiles')) {
     $('selectedFiles').innerHTML = '';
   }
 
-
   if ($('newsFormTitle')) {
     $('newsFormTitle').textContent = 'افزودن خبر';
+  }
+}
+
+
+/* =============================
+   نمایش ورود
+============================= */
+
+function showLogin() {
+
+  if ($('panel')) {
+    $('panel').classList.add('hidden');
+  }
+
+  if ($('loginCard')) {
+    $('loginCard').classList.remove('hidden');
   }
 
 }
 
 
-/* -----------------------------
+/* =============================
+   بعد از ورود
+============================= */
+
+async function afterLogin(session) {
+
+  try {
+
+    const email =
+      session?.user?.email?.trim().toLowerCase();
+
+    if (!email) {
+
+      await supabase.auth.signOut();
+
+      status(
+        $('loginStatus'),
+        'ایمیل حساب کاربری قابل شناسایی نیست.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    status(
+      $('loginStatus'),
+      'در حال بررسی دسترسی مالک...'
+    );
+
+
+    const allowed =
+      await verifyOwner(email);
+
+
+    if (!allowed) {
+
+      await supabase.auth.signOut();
+
+      status(
+        $('loginStatus'),
+        'این ایمیل اجازه ورود به پنل مدیریت را ندارد.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    $('loginCard').classList.add('hidden');
+    $('panel').classList.remove('hidden');
+
+    $('who').textContent =
+      'حساب مالک با موفقیت احراز هویت شد.';
+
+
+    await loadContent();
+    await loadNews();
+
+
+    status(
+      $('adminStatus'),
+      'پنل مدیریت با موفقیت بارگذاری شد.',
+      'ok'
+    );
+
+  } catch (error) {
+
+    console.error('afterLogin error:', error);
+
+    status(
+      $('loginStatus'),
+      error?.message || 'خطا هنگام ورود به پنل.',
+      'error'
+    );
+
+  }
+}
+
+
+/* =============================
    شروع برنامه
------------------------------ */
+============================= */
 
 async function init() {
+
+  const sendButton = $('sendLogin');
+
+  if (sendButton) {
+    sendButton.disabled = true;
+  }
+
 
   if (!isConfigured()) {
 
@@ -116,128 +227,107 @@ async function init() {
   }
 
 
-  supabase = window.supabase.createClient(
-    cfg.supabaseUrl,
-    cfg.supabaseAnonKey
-  );
-
-
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
-
-
-  if (session) {
-
-    await afterLogin(session);
-
-  } else {
-
-    showLogin();
+  if (!window.supabase) {
 
     status(
       $('loginStatus'),
-      'ایمیل مالک را وارد کنید و لینک ورود را دریافت کنید.'
+      'کتابخانه Supabase بارگذاری نشده است. صفحه را دوباره باز کنید.',
+      'error'
     );
 
+    return;
   }
 
 
-  supabase.auth.onAuthStateChange(
-    async (_event, session) => {
+  try {
 
-      if (session) {
+    supabase =
+      window.supabase.createClient(
+        cfg.supabaseUrl,
+        cfg.supabaseAnonKey
+      );
 
-        await afterLogin(session);
 
-      } else {
+    const {
+      data,
+      error
+    } = await supabase.auth.getSession();
 
-        showLogin();
 
-      }
+    if (error) {
+      throw error;
+    }
+
+
+    appReady = true;
+
+
+    if (sendButton) {
+      sendButton.disabled = false;
+    }
+
+
+    if (data?.session) {
+
+      await afterLogin(data.session);
+
+    } else {
+
+      showLogin();
+
+      status(
+        $('loginStatus'),
+        'ایمیل مالک را وارد کنید و روی «ارسال لینک ورود» بزنید.'
+      );
 
     }
-  );
-
-}
 
 
-/* -----------------------------
-   بعد از ورود
------------------------------ */
+    supabase.auth.onAuthStateChange(
+      async (_event, session) => {
 
-async function afterLogin(session) {
+        if (session) {
+          await afterLogin(session);
+        } else {
+          showLogin();
+        }
 
-  const email =
-    session?.user?.email?.trim().toLowerCase();
+      }
+    );
 
 
-  if (!email) {
+  } catch (error) {
 
-    await supabase.auth.signOut();
+    console.error('Supabase initialization error:', error);
 
     status(
       $('loginStatus'),
-      'ایمیل حساب کاربری قابل شناسایی نیست.',
+      'اتصال به Supabase برقرار نشد: ' +
+      (error?.message || 'خطای نامشخص'),
       'error'
     );
 
-    return;
   }
-
-
-  const allowed = await verifyOwner(email);
-
-
-  if (!allowed) {
-
-    await supabase.auth.signOut();
-
-    status(
-      $('loginStatus'),
-      'این ایمیل اجازه ورود به پنل مدیریت را ندارد.',
-      'error'
-    );
-
-    return;
-  }
-
-
-  $('loginCard').classList.add('hidden');
-  $('panel').classList.remove('hidden');
-
-  $('who').textContent =
-    'حساب مالک با موفقیت احراز هویت شد.';
-
-
-  await loadContent();
-  await loadNews();
 
 }
 
 
-/* -----------------------------
-   نمایش صفحه ورود
------------------------------ */
-
-function showLogin() {
-
-  $('panel').classList.add('hidden');
-  $('loginCard').classList.remove('hidden');
-
-}
-
-
-/* -----------------------------
+/* =============================
    دریافت محتوای سایت
------------------------------ */
+============================= */
 
 async function loadContent() {
 
-  const { data, error } = await supabase
+  const {
+    data,
+    error
+  } = await supabase
     .from('site_content')
     .select('*')
-    .in('slug', ['ashayer', 'cooperative']);
+    .in('slug', [
+      'ashayer',
+      'cooperative'
+    ]);
 
 
   if (error) {
@@ -286,9 +376,9 @@ async function loadContent() {
 }
 
 
-/* -----------------------------
+/* =============================
    دریافت اخبار
------------------------------ */
+============================= */
 
 async function loadNews() {
 
@@ -385,9 +475,9 @@ async function loadNews() {
 }
 
 
-/* -----------------------------
+/* =============================
    جلوگیری از HTML Injection
------------------------------ */
+============================= */
 
 function escapeHtml(value) {
 
@@ -403,11 +493,21 @@ function escapeHtml(value) {
 }
 
 
-/* -----------------------------
+/* =============================
    ذخیره متن سایت
------------------------------ */
+============================= */
 
 async function saveContent(slug) {
+
+  if (!supabase) {
+    status(
+      $('adminStatus'),
+      'اتصال به Supabase برقرار نیست.',
+      'error'
+    );
+    return;
+  }
+
 
   const prefix =
     slug === 'ashayer'
@@ -455,62 +555,151 @@ async function saveContent(slug) {
 }
 
 
-/* -----------------------------
+/* =============================
    آپلود تصاویر
------------------------------ */
+============================= */
 
 async function uploadFiles(files) {
+
   const urls = [];
-  const MAX_FILE_SIZE = 8 * 1024 * 1024;
+
+  const MAX_FILE_SIZE =
+    8 * 1024 * 1024;
+
   const MAX_FILES = 10;
 
+
   if (files.length > MAX_FILES) {
-    throw new Error(`حداکثر ${MAX_FILES} تصویر برای هر خبر مجاز است.`);
+    throw new Error(
+      `حداکثر ${MAX_FILES} تصویر برای هر خبر مجاز است.`
+    );
   }
+
 
   for (const file of files) {
+
     if (!file.type.startsWith('image/')) {
-      throw new Error('فقط فایل‌های تصویری مجاز هستند.');
+      throw new Error(
+        'فقط فایل‌های تصویری مجاز هستند.'
+      );
     }
+
+
     if (file.size > MAX_FILE_SIZE) {
-      throw new Error(`حجم تصویر «${file.name}» بیشتر از ۸ مگابایت است.`);
+      throw new Error(
+        `حجم تصویر «${file.name}» بیشتر از ۸ مگابایت است.`
+      );
     }
 
-    const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]/g, '-');
-    const path = `news/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
-    const { error } = await supabase.storage.from('site-media').upload(path, file, {
-      upsert: false,
-      contentType: file.type
-    });
-    if (error) throw error;
 
-    const { data } = supabase.storage.from('site-media').getPublicUrl(path);
+    const safeName =
+      file.name
+        .toLowerCase()
+        .replace(/[^a-z0-9._-]/g, '-');
+
+
+    const path =
+      `news/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+
+
+    const {
+      error
+    } =
+      await supabase
+        .storage
+        .from('site-media')
+        .upload(
+          path,
+          file,
+          {
+            upsert: false,
+            contentType: file.type
+          }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const {
+      data
+    } =
+      supabase
+        .storage
+        .from('site-media')
+        .getPublicUrl(path);
+
+
     urls.push(data.publicUrl);
+
   }
+
 
   return urls;
 }
 
 
-async function removeStorageFiles(urls) {
-  const marker = '/storage/v1/object/public/site-media/';
-  const paths = (Array.isArray(urls) ? urls : [])
-    .map(url => {
-      const value = String(url || '');
-      const index = value.indexOf(marker);
-      return index >= 0 ? decodeURIComponent(value.slice(index + marker.length)) : null;
-    })
-    .filter(Boolean);
+/* =============================
+   حذف تصاویر Storage
+============================= */
 
-  if (!paths.length) return;
-  const { error } = await supabase.storage.from('site-media').remove(paths);
-  if (error) console.warn('Storage cleanup failed:', error);
+async function removeStorageFiles(urls) {
+
+  const marker =
+    '/storage/v1/object/public/site-media/';
+
+
+  const paths =
+    (Array.isArray(urls) ? urls : [])
+      .map(url => {
+
+        const value =
+          String(url || '');
+
+        const index =
+          value.indexOf(marker);
+
+        return index >= 0
+          ? decodeURIComponent(
+              value.slice(
+                index + marker.length
+              )
+            )
+          : null;
+
+      })
+      .filter(Boolean);
+
+
+  if (!paths.length) {
+    return;
+  }
+
+
+  const {
+    error
+  } =
+    await supabase
+      .storage
+      .from('site-media')
+      .remove(paths);
+
+
+  if (error) {
+    console.warn(
+      'Storage cleanup failed:',
+      error
+    );
+  }
+
 }
 
 
-/* -----------------------------
+/* =============================
    ذخیره خبر
------------------------------ */
+============================= */
 
 async function saveNews() {
 
@@ -560,8 +749,11 @@ async function saveNews() {
 
       const old =
         currentNews.find(
-          n => String(n.id) === String(id)
+          n =>
+            String(n.id) ===
+            String(id)
         );
+
 
       images =
         Array.isArray(old?.images)
@@ -576,12 +768,20 @@ async function saveNews() {
 
 
     if (files.length) {
-      const newImages = await uploadFiles(files);
-      images = [...images, ...newImages];
+
+      const newImages =
+        await uploadFiles(files);
+
+      images =
+        [...images, ...newImages];
+
     }
 
+
     if (images.length > 10) {
-      throw new Error('حداکثر ۱۰ تصویر برای هر خبر مجاز است.');
+      throw new Error(
+        'حداکثر ۱۰ تصویر برای هر خبر مجاز است.'
+      );
     }
 
 
@@ -636,7 +836,8 @@ async function saveNews() {
 
     status(
       $('adminStatus'),
-      error.message || 'خطا در ذخیره خبر.',
+      error?.message ||
+      'خطا در ذخیره خبر.',
       'error'
     );
 
@@ -645,17 +846,21 @@ async function saveNews() {
 }
 
 
-/* -----------------------------
+/* =============================
    ارسال لینک ورود
------------------------------ */
+============================= */
 
 async function sendLogin() {
 
-  if (!isConfigured()) {
+  const button =
+    $('sendLogin');
+
+
+  if (!appReady || !supabase) {
 
     status(
       $('loginStatus'),
-      'config.js تنظیم نشده است.',
+      'اتصال به Supabase هنوز آماده نیست. چند ثانیه صبر کنید و دوباره امتحان کنید.',
       'error'
     );
 
@@ -664,7 +869,10 @@ async function sendLogin() {
 
 
   const email =
-    $('email').value.trim().toLowerCase();
+    $('email')
+      .value
+      .trim()
+      .toLowerCase();
 
 
   if (!email) {
@@ -679,7 +887,7 @@ async function sendLogin() {
   }
 
 
-  if (!email.includes('@')) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 
     status(
       $('loginStatus'),
@@ -690,188 +898,276 @@ async function sendLogin() {
     return;
   }
 
-  const {
-    error
-  } =
-    await supabase.auth.signInWithOtp({
 
-      email,
-
-      options: {
-
-        shouldCreateUser: false,
-
-        emailRedirectTo:
-          new URL(
-            'admin.html',
-            window.location.href
-          ).href
-
-      }
-
-    });
-
-
-  if (error) {
-
-    status(
-      $('loginStatus'),
-      error.message,
-      'error'
-    );
-
-    return;
+  if (button) {
+    button.disabled = true;
   }
 
 
   status(
     $('loginStatus'),
-    'لینک ورود به ایمیل ارسال شد. لینک را باز کنید.',
-    'ok'
+    'در حال ارسال لینک ورود...'
   );
+
+
+  try {
+
+    const redirectUrl =
+      new URL(
+        'admin.html',
+        window.location.href
+      ).href;
+
+
+    console.log(
+      'Magic Link redirect:',
+      redirectUrl
+    );
+
+
+    const {
+      error
+    } =
+      await supabase.auth.signInWithOtp({
+
+        email,
+
+        options: {
+
+          shouldCreateUser: false,
+
+          emailRedirectTo:
+            redirectUrl
+
+        }
+
+      });
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    status(
+      $('loginStatus'),
+      'لینک ورود به ایمیل ارسال شد. پوشه Spam/Junk را هم بررسی کنید.',
+      'ok'
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      'Magic Link error:',
+      error
+    );
+
+
+    status(
+      $('loginStatus'),
+      'خطای ورود: ' +
+      (error?.message || 'خطای نامشخص'),
+      'error'
+    );
+
+
+  } finally {
+
+    if (button) {
+      button.disabled = false;
+    }
+
+  }
 
 }
 
 
-/* -----------------------------
+/* =============================
    رویدادها
------------------------------ */
+============================= */
 
-$('sendLogin').onclick =
-  sendLogin;
-
-
-$('logout').onclick =
-  () => supabase.auth.signOut();
-
-
-$('cancelNews').onclick =
-  clearForm;
-
-
-$('saveNews').onclick =
-  saveNews;
-
-
-$('newsImages').onchange =
+document.addEventListener(
+  'DOMContentLoaded',
   () => {
 
-    $('selectedFiles').innerHTML =
-      [...$('newsImages').files]
-        .map(file =>
-          `<span class="hint">
-            ${escapeHtml(file.name)}
-          </span>`
-        )
-        .join(' • ');
-
-  };
+    $('sendLogin').onclick =
+      sendLogin;
 
 
-document
-  .querySelectorAll('[data-save-content]')
-  .forEach(button => {
+    $('logout').onclick =
+      async () => {
 
-    button.onclick =
-      () =>
-        saveContent(
-          button.dataset.saveContent
-        );
+        if (supabase) {
+          await supabase.auth.signOut();
+        }
 
-  });
+      };
 
 
-$('newsAdminList').onclick =
-  async event => {
-
-    const edit =
-      event.target.closest('[data-edit]');
-
-    const del =
-      event.target.closest('[data-delete]');
+    $('cancelNews').onclick =
+      clearForm;
 
 
-    if (edit) {
-
-      const news =
-        currentNews.find(
-          item =>
-            String(item.id) ===
-            String(edit.dataset.edit)
-        );
+    $('saveNews').onclick =
+      saveNews;
 
 
-      if (!news) {
-        return;
-      }
+    $('newsImages').onchange =
+      () => {
+
+        $('selectedFiles').innerHTML =
+          [...$('newsImages').files]
+            .map(file =>
+              `<span class="hint">
+                ${escapeHtml(file.name)}
+              </span>`
+            )
+            .join(' • ');
+
+      };
 
 
-      $('newsId').value =
-        news.id;
+    document
+      .querySelectorAll(
+        '[data-save-content]'
+      )
+      .forEach(button => {
 
-      $('newsTitle').value =
-        news.title || '';
+        button.onclick =
+          () =>
+            saveContent(
+              button.dataset.saveContent
+            );
 
-      $('newsDate').value =
-        news.date || '';
-
-      $('newsExcerpt').value =
-        news.excerpt || '';
-
-      $('newsBody').value =
-        news.body || '';
-
-      $('newsFormTitle').textContent =
-        'ویرایش خبر';
-
-
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth'
       });
 
-    }
+
+    $('newsAdminList').onclick =
+      async event => {
+
+        const edit =
+          event.target.closest(
+            '[data-edit]'
+          );
 
 
-    if (del) {
-
-      if (
-        !confirm(
-          'این خبر حذف شود؟'
-        )
-      ) {
-        return;
-      }
+        const del =
+          event.target.closest(
+            '[data-delete]'
+          );
 
 
-      const item = currentNews.find(
-        n => String(n.id) === String(del.dataset.delete)
-      );
+        if (edit) {
 
-      const { error } = await supabase
-        .from('news')
-        .delete()
-        .eq('id', del.dataset.delete);
-
-      if (!error) {
-        await removeStorageFiles(item?.images || []);
-      }
-
-      status(
-        $('adminStatus'),
-        error ? error.message : 'خبر حذف شد.',
-        error ? 'error' : 'ok'
-      );
-
-      await loadNews();
-
-    }
-
-  };
+          const news =
+            currentNews.find(
+              item =>
+                String(item.id) ===
+                String(
+                  edit.dataset.edit
+                )
+            );
 
 
-/* -----------------------------
-   شروع
------------------------------ */
+          if (!news) {
+            return;
+          }
 
-init();
+
+          $('newsId').value =
+            news.id;
+
+          $('newsTitle').value =
+            news.title || '';
+
+          $('newsDate').value =
+            news.date || '';
+
+          $('newsExcerpt').value =
+            news.excerpt || '';
+
+          $('newsBody').value =
+            news.body || '';
+
+          $('newsFormTitle')
+            .textContent =
+              'ویرایش خبر';
+
+
+          window.scrollTo({
+            top:
+              document.body.scrollHeight,
+            behavior:
+              'smooth'
+          });
+
+        }
+
+
+        if (del) {
+
+          if (
+            !confirm(
+              'این خبر حذف شود؟'
+            )
+          ) {
+            return;
+          }
+
+
+          const item =
+            currentNews.find(
+              n =>
+                String(n.id) ===
+                String(
+                  del.dataset.delete
+                )
+            );
+
+
+          const {
+            error
+          } =
+            await supabase
+              .from('news')
+              .delete()
+              .eq(
+                'id',
+                del.dataset.delete
+              );
+
+
+          if (!error) {
+
+            await removeStorageFiles(
+              item?.images || []
+            );
+
+          }
+
+
+          status(
+            $('adminStatus'),
+            error
+              ? error.message
+              : 'خبر حذف شد.',
+            error
+              ? 'error'
+              : 'ok'
+          );
+
+
+          await loadNews();
+
+        }
+
+      };
+
+
+    /* شروع برنامه */
+
+    init();
+
+  }
+);
