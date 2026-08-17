@@ -1,415 +1,834 @@
+/* =========================================================
+   KOHENOR ADMIN CMS
+   admin.js
+   ========================================================= */
+
 (() => {
-  'use strict';
+  "use strict";
 
-  const cfg = window.SITE_CONFIG || {};
-  const $ = id => document.getElementById(id);
+  /* =========================================================
+     SUPABASE
+     ========================================================= */
 
-  let sb = null;
-  let currentNews = [];
-  let pendingEmail = '';
-  let authChangeLock = false;
+  const CONFIG = window.SITE_CONFIG || {};
 
-  function status(el, msg, type = '') {
-    if (!el) return;
-    el.textContent = msg || '';
-    el.className = 'status ' + type;
+  const SUPABASE_URL =
+    CONFIG.supabaseUrl ||
+    CONFIG.SUPABASE_URL ||
+    "";
+
+  const SUPABASE_KEY =
+    CONFIG.supabaseAnonKey ||
+    CONFIG.supabaseAnon ||
+    CONFIG.SUPABASE_ANON_KEY ||
+    "";
+
+  if (!window.supabase) {
+    console.error("Supabase JS library not loaded.");
+    return;
   }
 
-  function isConfigured() {
-    return Boolean(
-      cfg.supabaseUrl &&
-      cfg.supabaseAnonKey &&
-      !String(cfg.supabaseUrl).includes('YOUR_') &&
-      !String(cfg.supabaseAnonKey).includes('YOUR_')
-    );
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.error("Supabase configuration is missing.");
   }
 
-  function normalizeEmail(value) {
-    return String(value || '').trim().toLowerCase();
+  const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+  /* =========================================================
+     OWNER
+     ========================================================= */
+
+  const OWNER_EMAIL =
+    "farrokhzad743@gmail.com";
+
+
+  /* =========================================================
+     DOM
+     ========================================================= */
+
+  const $ = (id) => document.getElementById(id);
+
+  const loginCard = $("loginCard");
+  const panel = $("panel");
+
+  const emailInput = $("email");
+  const otpBox = $("otpBox");
+  const otpInput = $("otpCode");
+
+  const sendLoginBtn = $("sendLogin");
+  const verifyLoginBtn = $("verifyLogin");
+  const changeEmailBtn = $("changeEmail");
+
+  const loginStatus = $("loginStatus");
+  const adminStatus = $("adminStatus");
+
+  const logoutBtn = $("logout");
+  const previewSiteBtn = $("previewSite");
+
+  const newsId = $("newsId");
+  const newsTitle = $("newsTitle");
+  const newsDate = $("newsDate");
+  const newsExcerpt = $("newsExcerpt");
+  const newsBody = $("newsBody");
+  const newsImages = $("newsImages");
+
+  const saveNewsBtn = $("saveNews");
+  const cancelNewsBtn = $("cancelNews");
+
+  const docTitle = $("docTitle");
+  const docUrl = $("docUrl");
+  const saveDocBtn = $("saveDoc");
+  const cancelDocBtn = $("cancelDoc");
+
+  const buttonSection = $("buttonSection");
+  const buttonLabel = $("buttonLabel");
+  const buttonTarget = $("buttonTarget");
+  const saveButtonBtn = $("saveButton");
+
+  const newsAdminList = $("newsAdminList");
+  const docsList = $("docsList");
+  const buttonsList = $("buttonsList");
+
+  const previewFrame = $("previewFrame");
+
+  const ashTitle = $("ashTitle");
+  const ashExcerpt = $("ashExcerpt");
+  const ashBody = $("ashBody");
+
+  const coopTitle = $("coopTitle");
+  const coopExcerpt = $("coopExcerpt");
+  const coopBody = $("coopBody");
+
+
+  /* =========================================================
+     STATE
+     ========================================================= */
+
+  let editingNewsId = null;
+  let editingDocumentId = null;
+  let editingButtonId = null;
+
+  let currentUser = null;
+
+
+  /* =========================================================
+     STATUS
+     ========================================================= */
+
+  function setLoginStatus(message, type = "") {
+    if (!loginStatus) return;
+
+    loginStatus.textContent = message;
+    loginStatus.className = "status";
+
+    if (type) {
+      loginStatus.classList.add(type);
+    }
   }
 
-  function isOwnerEmail(email) {
-    const owners = Array.isArray(cfg.ownerEmails)
-      ? cfg.ownerEmails
-      : [];
+  function setAdminStatus(message, type = "") {
+    if (!adminStatus) return;
 
-    return owners
-      .map(normalizeEmail)
-      .includes(normalizeEmail(email));
-  }
+    adminStatus.textContent = message;
+    adminStatus.className = "status";
 
-  async function verifyOwner(email) {
-    const normalized = normalizeEmail(email);
-
-    /*
-      اول مالک بودن را از config.js بررسی می‌کنیم.
-      این جلوی خطای اشتباه owner_access را می‌گیرد.
-    */
-    if (!isOwnerEmail(normalized)) {
-      return false;
-    }
-
-    /*
-      بررسی نهایی از دیتابیس.
-      اگر RPC وجود نداشته باشد، خطای واقعی نمایش داده می‌شود
-      و دیگر به‌اشتباه «ایمیل اجازه ورود ندارد» نشان داده نمی‌شود.
-    */
-    const { data, error } = await sb.rpc('is_approved_owner');
-
-    if (error) {
-      console.error('is_approved_owner:', error);
-
-      throw new Error(
-        'خطا در بررسی دسترسی مالک: ' +
-        (error.message || 'خطای نامشخص')
-      );
-    }
-
-    return data === true;
-  }
-
-  function clearForm() {
-    [
-      'newsId',
-      'newsTitle',
-      'newsDate',
-      'newsExcerpt',
-      'newsBody'
-    ].forEach(id => {
-      const el = $(id);
-      if (el) el.value = '';
-    });
-
-    if ($('newsImages')) {
-      $('newsImages').value = '';
-    }
-
-    if ($('selectedFiles')) {
-      $('selectedFiles').innerHTML = '';
-    }
-
-    if ($('newsFormTitle')) {
-      $('newsFormTitle').textContent = 'افزودن خبر';
-    }
-  }
-
-  function showLogin(message = '') {
-    if ($('panel')) {
-      $('panel').classList.add('hidden');
-    }
-
-    if ($('loginCard')) {
-      $('loginCard').classList.remove('hidden');
+    if (type) {
+      adminStatus.classList.add(type);
     }
 
     if (message) {
-      status($('loginStatus'), message, 'error');
+      setTimeout(() => {
+        if (adminStatus.textContent === message) {
+          adminStatus.textContent = "";
+        }
+      }, 5000);
     }
   }
 
-  async function init() {
-    if (!isConfigured()) {
-      status(
-        $('loginStatus'),
-        'config.js هنوز تنظیم نشده است.',
-        'error'
-      );
-      return;
+
+  /* =========================================================
+     HELPERS
+     ========================================================= */
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  function normalizeImages(value) {
+    if (!value) return [];
+
+    if (Array.isArray(value)) {
+      return value.filter(Boolean);
     }
 
-    if (
-      !window.supabase ||
-      !window.supabase.createClient
-    ) {
-      status(
-        $('loginStatus'),
-        'کتابخانه Supabase بارگذاری نشده است.',
-        'error'
-      );
-      return;
-    }
+    if (typeof value === "string") {
+      try {
+        const parsed = JSON.parse(value);
 
-    sb = window.supabase.createClient(
-      cfg.supabaseUrl,
-      cfg.supabaseAnonKey,
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
+        if (Array.isArray(parsed)) {
+          return parsed.filter(Boolean);
         }
-      }
-    );
+      } catch (_) {}
+
+      return value
+        .split(/\r?\n/)
+        .map((x) => x.trim())
+        .filter(Boolean);
+    }
+
+    return [];
+  }
+
+
+  function refreshPreview() {
+    if (!previewFrame) return;
 
     try {
-      const {
-        data: { session }
-      } = await sb.auth.getSession();
-
-      if (session) {
-        await afterLogin(session);
-      } else {
-        showLogin();
-        status(
-          $('loginStatus'),
-          'ایمیل مالک را وارد کنید و کد ورود را دریافت کنید.'
-        );
-      }
-
-      sb.auth.onAuthStateChange(
-        (_event, nextSession) => {
-          setTimeout(async () => {
-            if (authChangeLock) return;
-
-            authChangeLock = true;
-
-            try {
-              if (nextSession) {
-                await afterLogin(nextSession);
-              } else {
-                showLogin();
-              }
-            } finally {
-              authChangeLock = false;
-            }
-          }, 0);
-        }
-      );
-
-    } catch (error) {
-      console.error(error);
-
-      status(
-        $('loginStatus'),
-        'خطا در اتصال به Supabase: ' +
-        (error.message || 'خطای نامشخص'),
-        'error'
-      );
+      previewFrame.contentWindow.location.reload();
+    } catch (_) {
+      previewFrame.src = "index.html?preview=" + Date.now();
     }
   }
 
-  async function afterLogin(session) {
-    const email = normalizeEmail(
-      session?.user?.email
-    );
+
+  function requireClient() {
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      setLoginStatus(
+        "تنظیمات Supabase در config.js کامل نیست.",
+        "error"
+      );
+
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /* =========================================================
+     LOGIN UI
+     ========================================================= */
+
+  function showLogin() {
+    if (loginCard) {
+      loginCard.classList.remove("hidden");
+    }
+
+    if (panel) {
+      panel.classList.add("hidden");
+    }
+  }
+
+
+  function showPanel() {
+    if (loginCard) {
+      loginCard.classList.add("hidden");
+    }
+
+    if (panel) {
+      panel.classList.remove("hidden");
+    }
+  }
+
+
+  /* =========================================================
+     SEND OTP
+     ========================================================= */
+
+  async function sendOTP() {
+    if (!requireClient()) return;
+
+    let email =
+      (emailInput?.value || OWNER_EMAIL)
+        .trim()
+        .toLowerCase();
 
     if (!email) {
-      await sb.auth.signOut({
-        scope: 'local'
-      });
-
-      showLogin(
-        'ایمیل حساب کاربری قابل شناسایی نیست.'
+      setLoginStatus(
+        "ایمیل مالک را وارد کنید.",
+        "error"
       );
 
       return;
     }
 
-    /*
-      بررسی اول: مالک بودن ایمیل
-    */
-    if (!isOwnerEmail(email)) {
-      await sb.auth.signOut({
-        scope: 'local'
-      });
-
-      showLogin(
-        'این ایمیل اجازه ورود به پنل مدیریت را ندارد.'
+    if (email !== OWNER_EMAIL.toLowerCase()) {
+      setLoginStatus(
+        "این ایمیل اجازه ورود به پنل مدیریت را ندارد.",
+        "error"
       );
 
       return;
     }
 
-    let allowed = false;
+    sendLoginBtn.disabled = true;
+
+    setLoginStatus(
+      "در حال ارسال کد ورود..."
+    );
 
     try {
-      allowed = await verifyOwner(email);
+      const { error } =
+        await client.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: false
+          }
+        });
+
+      if (error) {
+        console.error(error);
+
+        setLoginStatus(
+          error.message ||
+          "ارسال کد ورود ناموفق بود.",
+          "error"
+        );
+
+        return;
+      }
+
+      if (emailInput) {
+        emailInput.value = email;
+      }
+
+      if (otpBox) {
+        otpBox.classList.remove("hidden");
+      }
+
+      if (sendLoginBtn) {
+        sendLoginBtn.textContent =
+          "ارسال دوباره کد";
+      }
+
+      setLoginStatus(
+        "کد ورود به ایمیل مالک ارسال شد.",
+        "ok"
+      );
+
+      otpInput?.focus();
 
     } catch (error) {
+
       console.error(error);
 
-      /*
-        اینجا دیگر خطای دیتابیس را
-        با پیام اشتباه «ایمیل اجازه ورود ندارد»
-        جایگزین نمی‌کنیم.
-      */
-      showLogin(
-        error.message ||
-        'خطا در بررسی دسترسی مالک.'
+      setLoginStatus(
+        "خطا در اتصال به سرویس ورود.",
+        "error"
       );
 
-      return;
+    } finally {
+
+      sendLoginBtn.disabled = false;
+
     }
-
-    if (!allowed) {
-      await sb.auth.signOut({
-        scope: 'local'
-      });
-
-      showLogin(
-        'دسترسی مالک در پایگاه داده فعال نیست.'
-      );
-
-      return;
-    }
-
-    if ($('loginCard')) {
-      $('loginCard').classList.add('hidden');
-    }
-
-    if ($('panel')) {
-      $('panel').classList.remove('hidden');
-    }
-
-    if ($('who')) {
-      $('who').textContent =
-        'حساب مالک با موفقیت احراز هویت شد.';
-    }
-
-    await Promise.all([
-      loadContent(),
-      loadNews()
-    ]);
   }
 
+
+  /* =========================================================
+     VERIFY OTP
+     ========================================================= */
+
+  async function verifyOTP() {
+    if (!requireClient()) return;
+
+    const email =
+      (emailInput?.value || OWNER_EMAIL)
+        .trim()
+        .toLowerCase();
+
+    const token =
+      (otpInput?.value || "")
+        .trim();
+
+    if (email !== OWNER_EMAIL.toLowerCase()) {
+
+      setLoginStatus(
+        "این ایمیل اجازه ورود به پنل مدیریت را ندارد.",
+        "error"
+      );
+
+      return;
+    }
+
+    if (!token) {
+
+      setLoginStatus(
+        "کد ورود را وارد کنید.",
+        "error"
+      );
+
+      return;
+    }
+
+    verifyLoginBtn.disabled = true;
+
+    setLoginStatus(
+      "در حال بررسی کد..."
+    );
+
+    try {
+
+      const { data, error } =
+        await client.auth.verifyOtp({
+          email,
+          token,
+          type: "email"
+        });
+
+      if (error) {
+        console.error(error);
+
+        setLoginStatus(
+          error.message ||
+          "کد ورود صحیح نیست یا منقضی شده است.",
+          "error"
+        );
+
+        return;
+      }
+
+      currentUser = data?.user || null;
+
+      if (!currentUser) {
+        setLoginStatus(
+          "ورود انجام نشد.",
+          "error"
+        );
+
+        return;
+      }
+
+      /*
+       * بررسی نهایی ایمیل
+       */
+      if (
+        String(currentUser.email || "")
+          .toLowerCase() !== OWNER_EMAIL.toLowerCase()
+      ) {
+
+        await client.auth.signOut();
+
+        setLoginStatus(
+          "این ایمیل اجازه ورود به پنل مدیریت را ندارد.",
+          "error"
+        );
+
+        return;
+      }
+
+      /*
+       * ورود موفق
+       */
+      showPanel();
+
+      const who = $("who");
+
+      if (who) {
+        who.textContent =
+          "مالک: " +
+          OWNER_EMAIL +
+          " | پنل مدیریت شرکت تعاونی عشایری کوه نور";
+      }
+
+      setAdminStatus(
+        "ورود مالک با موفقیت انجام شد.",
+        "ok"
+      );
+
+      await loadEverything();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setLoginStatus(
+        "خطا هنگام بررسی کد ورود.",
+        "error"
+      );
+
+    } finally {
+
+      verifyLoginBtn.disabled = false;
+
+    }
+  }
+
+
+  /* =========================================================
+     CHANGE EMAIL
+     ========================================================= */
+
+  function changeEmail() {
+
+    if (otpBox) {
+      otpBox.classList.add("hidden");
+    }
+
+    if (otpInput) {
+      otpInput.value = "";
+    }
+
+    if (sendLoginBtn) {
+      sendLoginBtn.textContent =
+        "ارسال کد ورود";
+    }
+
+    setLoginStatus("");
+
+    emailInput?.focus();
+  }
+
+
+  /* =========================================================
+     AUTH SESSION
+     ========================================================= */
+
+  async function checkSession() {
+
+    if (!requireClient()) return;
+
+    try {
+
+      const {
+        data,
+        error
+      } = await client.auth.getSession();
+
+      if (error) {
+        console.error(error);
+        showLogin();
+        return;
+      }
+
+      const session = data?.session;
+
+      if (!session?.user) {
+        showLogin();
+        return;
+      }
+
+      const user = session.user;
+
+      if (
+        String(user.email || "")
+          .toLowerCase() !== OWNER_EMAIL.toLowerCase()
+      ) {
+
+        await client.auth.signOut();
+
+        showLogin();
+
+        return;
+      }
+
+      currentUser = user;
+
+      showPanel();
+
+      const who = $("who");
+
+      if (who) {
+        who.textContent =
+          "مالک: " +
+          OWNER_EMAIL +
+          " | پنل مدیریت شرکت تعاونی عشایری کوه نور";
+      }
+
+      await loadEverything();
+
+    } catch (error) {
+
+      console.error(error);
+
+      showLogin();
+    }
+  }
+
+
+  /* =========================================================
+     LOGOUT
+     ========================================================= */
+
+  async function logout() {
+
+    try {
+      await client.auth.signOut();
+    } catch (error) {
+      console.error(error);
+    }
+
+    currentUser = null;
+
+    showLogin();
+
+    if (otpBox) {
+      otpBox.classList.add("hidden");
+    }
+
+    if (otpInput) {
+      otpInput.value = "";
+    }
+
+    setLoginStatus(
+      "از پنل مدیریت خارج شدید.",
+      "ok"
+    );
+  }
+
+
+  /* =========================================================
+     CONTENT
+     ========================================================= */
+
   async function loadContent() {
-    const { data, error } = await sb
-      .from('site_content')
-      .select('*')
-      .in('slug', [
-        'ashayer',
-        'cooperative'
+
+    const {
+      data,
+      error
+    } = await client
+      .from("site_content")
+      .select("*")
+      .in("slug", [
+        "ashayer",
+        "cooperative"
       ]);
 
     if (error) {
-      status(
-        $('adminStatus'),
-        error.message,
-        'error'
-      );
+      console.error("site_content:", error);
       return;
     }
 
-    (data || []).forEach(item => {
+    for (const item of data || []) {
 
-      if (item.slug === 'ashayer') {
+      if (item.slug === "ashayer") {
 
-        if ($('ashTitle')) {
-          $('ashTitle').value =
-            item.title || '';
-        }
+        if (ashTitle)
+          ashTitle.value = item.title || "";
 
-        if ($('ashExcerpt')) {
-          $('ashExcerpt').value =
-            item.excerpt || '';
-        }
+        if (ashExcerpt)
+          ashExcerpt.value =
+            item.excerpt || "";
 
-        if ($('ashBody')) {
-          $('ashBody').value =
-            item.body || '';
-        }
+        if (ashBody)
+          ashBody.value =
+            item.body || "";
       }
 
-      if (item.slug === 'cooperative') {
 
-        if ($('coopTitle')) {
-          $('coopTitle').value =
-            item.title || '';
-        }
+      if (item.slug === "cooperative") {
 
-        if ($('coopExcerpt')) {
-          $('coopExcerpt').value =
-            item.excerpt || '';
-        }
+        if (coopTitle)
+          coopTitle.value = item.title || "";
 
-        if ($('coopBody')) {
-          $('coopBody').value =
-            item.body || '';
-        }
+        if (coopExcerpt)
+          coopExcerpt.value =
+            item.excerpt || "";
+
+        if (coopBody)
+          coopBody.value =
+            item.body || "";
       }
-    });
+    }
   }
 
-  async function loadNews() {
-    const { data, error } = await sb
-      .from('news')
-      .select('*')
-      .order('created_at', {
-        ascending: false
-      });
 
-    if (error) {
-      status(
-        $('adminStatus'),
-        error.message,
-        'error'
+  async function saveContent(slug) {
+
+    if (!currentUser) {
+      setAdminStatus(
+        "ابتدا وارد پنل شوید.",
+        "error"
       );
       return;
     }
 
-    currentNews = data || [];
+    let payload = {};
 
-    if (!$('newsAdminList')) {
+    if (slug === "ashayer") {
+
+      payload = {
+        slug: "ashayer",
+        title:
+          ashTitle?.value.trim() || "",
+        excerpt:
+          ashExcerpt?.value.trim() || "",
+        body:
+          ashBody?.value.trim() || ""
+      };
+    }
+
+
+    if (slug === "cooperative") {
+
+      payload = {
+        slug: "cooperative",
+        title:
+          coopTitle?.value.trim() || "",
+        excerpt:
+          coopExcerpt?.value.trim() || "",
+        body:
+          coopBody?.value.trim() || ""
+      };
+    }
+
+
+    try {
+
+      const {
+        error
+      } = await client
+        .from("site_content")
+        .upsert(
+          payload,
+          {
+            onConflict: "slug"
+          }
+        );
+
+      if (error) {
+        console.error(error);
+
+        setAdminStatus(
+          "ذخیره محتوا انجام نشد: " +
+          error.message,
+          "error"
+        );
+
+        return;
+      }
+
+      setAdminStatus(
+        "تغییرات ذخیره شد.",
+        "ok"
+      );
+
+      refreshPreview();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "خطا هنگام ذخیره محتوا.",
+        "error"
+      );
+    }
+  }
+
+
+  /* =========================================================
+     NEWS
+     ========================================================= */
+
+  async function loadNews() {
+
+    const {
+      data,
+      error
+    } = await client
+      .from("news")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
+
+    if (error) {
+
+      console.error("news:", error);
+
+      if (newsAdminList) {
+        newsAdminList.innerHTML =
+          `<p class="status error">
+            خطا در دریافت اخبار:
+            ${escapeHTML(error.message)}
+          </p>`;
+      }
+
       return;
     }
 
-    $('newsAdminList').innerHTML =
-      currentNews.map(news => {
+    renderNewsList(data || []);
+  }
+
+
+  function renderNewsList(items) {
+
+    if (!newsAdminList) return;
+
+    if (!items.length) {
+
+      newsAdminList.innerHTML =
+        "<p>هنوز خبری ثبت نشده است.</p>";
+
+      return;
+    }
+
+
+    newsAdminList.innerHTML =
+      items.map((item) => {
 
         const images =
-          Array.isArray(news.images)
-            ? news.images
-            : [];
+          normalizeImages(item.images);
+
+        const image =
+          images[0]
+            ? `<img
+                 class="thumb"
+                 src="${escapeHTML(images[0])}"
+                 alt=""
+               >`
+            : "";
+
 
         return `
-          <div class="news-admin-item">
+          <div class="list-item">
 
-            <div>
+            <div style="display:flex;gap:12px;align-items:center">
 
-              <h3>
-                ${escapeHtml(news.title)}
-              </h3>
+              ${image}
 
-              <p>
-                ${escapeHtml(news.date)}
-                —
-                ${escapeHtml(news.excerpt)}
-              </p>
+              <div>
 
-              ${
-                images.length
-                  ? `
-                    <div class="thumbs">
-                      ${images
-                        .slice(0, 5)
-                        .map(url => `
-                          <img
-                            src="${escapeHtml(url)}"
-                            alt=""
-                          >
-                        `)
-                        .join('')}
-                    </div>
-                  `
-                  : ''
-              }
+                <strong>
+                  ${escapeHTML(item.title)}
+                </strong>
+
+                <small>
+                  ${escapeHTML(item.date || "")}
+                </small>
+
+              </div>
 
             </div>
 
-            <div class="admin-actions">
+            <div class="row">
 
               <button
                 class="admin-btn secondary"
-                data-edit="${escapeHtml(news.id)}"
                 type="button"
+                data-edit-news="${escapeHTML(item.id)}"
               >
                 ویرایش
               </button>
 
               <button
                 class="admin-btn danger"
-                data-delete="${escapeHtml(news.id)}"
                 type="button"
+                data-delete-news="${escapeHTML(item.id)}"
               >
                 حذف
               </button>
@@ -419,740 +838,1314 @@
           </div>
         `;
 
-      }).join('') ||
-
-      '<p class="hint">هنوز خبری ثبت نشده است.</p>';
+      }).join("");
   }
 
-  function escapeHtml(value) {
-    return String(value ?? '')
-      .replace(
-        /[&<>"']/g,
-        char => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[char])
+
+  async function saveNews() {
+
+    if (!currentUser) return;
+
+    const title =
+      newsTitle?.value.trim() || "";
+
+    const date =
+      newsDate?.value.trim() || "";
+
+    const excerpt =
+      newsExcerpt?.value.trim() || "";
+
+    const body =
+      newsBody?.value.trim() || "";
+
+
+    if (!title) {
+
+      setAdminStatus(
+        "عنوان خبر را وارد کنید.",
+        "error"
       );
-  }
 
-  async function saveContent(slug) {
-    const prefix =
-      slug === 'ashayer'
-        ? 'ash'
-        : 'coop';
-
-    const payload = {
-      title: $(prefix + 'Title').value.trim(),
-      excerpt: $(prefix + 'Excerpt').value.trim(),
-      body: $(prefix + 'Body').value.trim(),
-      updated_at:
-        new Date().toISOString()
-    };
-
-    const { error } = await sb
-      .from('site_content')
-      .update(payload)
-      .eq('slug', slug);
-
-    status(
-      $('adminStatus'),
-      error
-        ? error.message
-        : 'متن با موفقیت ذخیره شد.',
-      error
-        ? 'error'
-        : 'ok'
-    );
-  }
-
-  async function uploadFiles(files) {
-    const urls = [];
-
-    const MAX_FILE_SIZE =
-      8 * 1024 * 1024;
-
-    const MAX_FILES = 10;
-
-    if (files.length > MAX_FILES) {
-      throw new Error(
-        `حداکثر ${MAX_FILES} تصویر برای هر خبر مجاز است.`
-      );
+      return;
     }
 
+
+    const files =
+      Array.from(
+        newsImages?.files || []
+      );
+
+
+    const imageUrls = [];
+
+
+    /*
+     * اگر Storage آماده باشد،
+     * تصاویر را در Storage آپلود می‌کنیم.
+     */
     for (const file of files) {
 
-      if (!file.type.startsWith('image/')) {
-        throw new Error(
-          'فقط فایل‌های تصویری مجاز هستند.'
-        );
-      }
+      try {
 
-      if (file.size > MAX_FILE_SIZE) {
-        throw new Error(
-          `حجم تصویر «${file.name}» بیشتر از ۸ مگابایت است.`
-        );
-      }
+        const path =
+          `news/${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2)}-${file.name}`;
 
-      const safeName =
-        file.name
-          .toLowerCase()
-          .replace(
-            /[^a-z0-9._-]/g,
-            '-'
-          );
 
-      const path =
-        `news/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
-
-      const { error } =
-        await sb.storage
-          .from('site-media')
+        const {
+          error: uploadError
+        } = await client
+          .storage
+          .from("site-media")
           .upload(
             path,
             file,
             {
-              upsert: false,
-              contentType: file.type
+              cacheControl: "3600",
+              upsert: false
             }
           );
 
-      if (error) {
-        throw error;
-      }
 
-      const { data } =
-        sb.storage
-          .from('site-media')
+        if (uploadError) {
+
+          console.warn(
+            "Storage upload failed:",
+            uploadError
+          );
+
+          continue;
+        }
+
+
+        const {
+          data
+        } = client
+          .storage
+          .from("site-media")
           .getPublicUrl(path);
 
-      urls.push(data.publicUrl);
+
+        if (data?.publicUrl) {
+          imageUrls.push(
+            data.publicUrl
+          );
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "Image upload error:",
+          error
+        );
+      }
     }
 
-    return urls;
-  }
-
-  async function removeStorageFiles(urls) {
-    const marker =
-      '/storage/v1/object/public/site-media/';
-
-    const paths =
-      (Array.isArray(urls)
-        ? urls
-        : [])
-        .map(url => {
-
-          const value =
-            String(url || '');
-
-          const index =
-            value.indexOf(marker);
-
-          return index >= 0
-            ? decodeURIComponent(
-                value.slice(
-                  index + marker.length
-                )
-              )
-            : null;
-
-        })
-        .filter(Boolean);
-
-    if (!paths.length) {
-      return;
-    }
-
-    const { error } =
-      await sb.storage
-        .from('site-media')
-        .remove(paths);
-
-    if (error) {
-      console.warn(
-        'Storage cleanup failed:',
-        error
-      );
-    }
-  }
-
-  async function saveNews() {
-    const id =
-      $('newsId').value || null;
 
     const payload = {
-      title:
-        $('newsTitle').value.trim(),
 
-      date:
-        $('newsDate').value.trim(),
+      title,
 
-      excerpt:
-        $('newsExcerpt').value.trim(),
+      date,
 
-      body:
-        $('newsBody').value.trim()
+      excerpt,
+
+      body,
+
+      text: excerpt,
+
+      images: imageUrls
+
     };
 
-    if (
-      !payload.title ||
-      !payload.date ||
-      !payload.body
-    ) {
-      status(
-        $('adminStatus'),
-        'عنوان، تاریخ و متن کامل خبر الزامی است.',
-        'error'
-      );
-
-      return;
-    }
 
     try {
 
-      let images = [];
+      let result;
 
-      if (id) {
 
-        const old =
-          currentNews.find(
-            news =>
-              String(news.id) ===
-              String(id)
-          );
+      if (editingNewsId) {
 
-        images =
-          Array.isArray(old?.images)
-            ? old.images
-            : [];
+        /*
+         * اگر تصویر جدید انتخاب نشده،
+         * تصاویر قبلی حفظ می‌شوند.
+         */
+
+        if (!imageUrls.length) {
+
+          const {
+            data: oldNews
+          } = await client
+            .from("news")
+            .select("images")
+            .eq("id", editingNewsId)
+            .single();
+
+          payload.images =
+            normalizeImages(
+              oldNews?.images
+            );
+        }
+
+
+        result = await client
+          .from("news")
+          .update(payload)
+          .eq("id", editingNewsId);
+
+      } else {
+
+        result = await client
+          .from("news")
+          .insert(payload);
       }
 
-      const files =
-        $('newsImages')
-          ? [...$('newsImages').files]
-          : [];
-
-      if (files.length) {
-
-        const newImages =
-          await uploadFiles(files);
-
-        images = [
-          ...images,
-          ...newImages
-        ];
-      }
-
-      if (images.length > 10) {
-        throw new Error(
-          'حداکثر ۱۰ تصویر برای هر خبر مجاز است.'
-        );
-      }
-
-      payload.images = images;
-
-      const result = id
-
-        ? await sb
-            .from('news')
-            .update({
-              ...payload,
-              updated_at:
-                new Date().toISOString()
-            })
-            .eq('id', id)
-
-        : await sb
-            .from('news')
-            .insert(payload);
 
       if (result.error) {
-        throw result.error;
+
+        console.error(result.error);
+
+        setAdminStatus(
+          "ذخیره خبر انجام نشد: " +
+          result.error.message,
+          "error"
+        );
+
+        return;
       }
 
-      status(
-        $('adminStatus'),
-        'خبر با موفقیت ذخیره شد.',
-        'ok'
-      );
 
-      clearForm();
+      clearNewsForm();
 
       await loadNews();
 
+      setAdminStatus(
+        editingNewsId
+          ? "خبر ویرایش شد."
+          : "خبر جدید اضافه شد.",
+        "ok"
+      );
+
+      refreshPreview();
+
     } catch (error) {
 
       console.error(error);
 
-      status(
-        $('adminStatus'),
-        error.message ||
-          'خطا در ذخیره خبر.',
-        'error'
+      setAdminStatus(
+        "خطا هنگام ذخیره خبر.",
+        "error"
       );
     }
   }
 
-  function setOtpMode(enabled) {
 
-    const box =
-      $('otpBox');
+  async function editNews(id) {
 
-    const sendButton =
-      $('sendLogin');
+    const {
+      data,
+      error
+    } = await client
+      .from("news")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    const emailInput =
-      $('email');
 
-    if (box) {
-      box.classList.toggle(
-        'hidden',
-        !enabled
+    if (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "خبر پیدا نشد.",
+        "error"
       );
+
+      return;
     }
 
-    if (sendButton) {
-      sendButton.textContent =
-        enabled
-          ? 'ارسال دوباره کد'
-          : 'ارسال کد ورود';
+
+    editingNewsId = id;
+
+    if (newsId)
+      newsId.value = id;
+
+    if (newsTitle)
+      newsTitle.value =
+        data.title || "";
+
+    if (newsDate)
+      newsDate.value =
+        data.date || "";
+
+    if (newsExcerpt)
+      newsExcerpt.value =
+        data.excerpt ||
+        data.text ||
+        "";
+
+    if (newsBody)
+      newsBody.value =
+        data.body ||
+        "";
+
+    if (newsImages)
+      newsImages.value = "";
+
+    newsTitle?.focus();
+
+    setAdminStatus(
+      "خبر برای ویرایش آماده شد.",
+      "ok"
+    );
+  }
+
+
+  async function deleteNews(id) {
+
+    if (
+      !confirm(
+        "آیا از حذف این خبر مطمئن هستید؟"
+      )
+    ) {
+      return;
     }
 
-    if (emailInput) {
-      emailInput.disabled =
-        enabled;
+
+    const {
+      error
+    } = await client
+      .from("news")
+      .delete()
+      .eq("id", id);
+
+
+    if (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "حذف خبر انجام نشد: " +
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    await loadNews();
+
+    setAdminStatus(
+      "خبر حذف شد.",
+      "ok"
+    );
+
+    refreshPreview();
+  }
+
+
+  function clearNewsForm() {
+
+    editingNewsId = null;
+
+    if (newsId)
+      newsId.value = "";
+
+    if (newsTitle)
+      newsTitle.value = "";
+
+    if (newsDate)
+      newsDate.value = "";
+
+    if (newsExcerpt)
+      newsExcerpt.value = "";
+
+    if (newsBody)
+      newsBody.value = "";
+
+    if (newsImages)
+      newsImages.value = "";
+  }
+
+
+  /* =========================================================
+     DOCUMENTS
+     ========================================================= */
+
+  async function loadDocuments() {
+
+    const {
+      data,
+      error
+    } = await client
+      .from("site_documents")
+      .select("*")
+      .order(
+        "sort_order",
+        {
+          ascending: true
+        }
+      );
+
+
+    if (error) {
+
+      console.error(
+        "site_documents:",
+        error
+      );
+
+      if (docsList) {
+        docsList.innerHTML =
+          `<p class="status error">
+            خطا در دریافت اسناد:
+            ${escapeHTML(error.message)}
+          </p>`;
+      }
+
+      return;
+    }
+
+
+    renderDocuments(data || []);
+  }
+
+
+  function renderDocuments(items) {
+
+    if (!docsList) return;
+
+
+    if (!items.length) {
+
+      docsList.innerHTML =
+        "<p>هنوز سندی ثبت نشده است.</p>";
+
+      return;
+    }
+
+
+    docsList.innerHTML =
+      items.map((item) => {
+
+        return `
+          <div class="list-item">
+
+            <div>
+
+              <strong>
+                ${escapeHTML(item.title)}
+              </strong>
+
+              <small>
+                ${escapeHTML(item.url)}
+              </small>
+
+            </div>
+
+            <div class="row">
+
+              <button
+                class="admin-btn secondary"
+                type="button"
+                data-edit-doc="${escapeHTML(item.id)}"
+              >
+                ویرایش
+              </button>
+
+              <button
+                class="admin-btn danger"
+                type="button"
+                data-delete-doc="${escapeHTML(item.id)}"
+              >
+                حذف
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+  }
+
+
+  async function saveDocument() {
+
+    const title =
+      docTitle?.value.trim() || "";
+
+    const url =
+      docUrl?.value.trim() || "";
+
+
+    if (!title || !url) {
+
+      setAdminStatus(
+        "عنوان و آدرس سند را وارد کنید.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    try {
+
+      let result;
+
+
+      if (editingDocumentId) {
+
+        result = await client
+          .from("site_documents")
+          .update({
+            title,
+            url,
+            updated_at:
+              new Date().toISOString()
+          })
+          .eq(
+            "id",
+            editingDocumentId
+          );
+
+      } else {
+
+        const {
+          count
+        } = await client
+          .from("site_documents")
+          .select(
+            "id",
+            {
+              count: "exact",
+              head: true
+            }
+          );
+
+
+        result = await client
+          .from("site_documents")
+          .insert({
+            title,
+            url,
+            sort_order:
+              Number(count || 0)
+          });
+      }
+
+
+      if (result.error) {
+
+        console.error(result.error);
+
+        setAdminStatus(
+          "ذخیره سند انجام نشد: " +
+          result.error.message,
+          "error"
+        );
+
+        return;
+      }
+
+
+      clearDocumentForm();
+
+      await loadDocuments();
+
+      setAdminStatus(
+        editingDocumentId
+          ? "سند ویرایش شد."
+          : "سند اضافه شد.",
+        "ok"
+      );
+
+      refreshPreview();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "خطا هنگام ذخیره سند.",
+        "error"
+      );
     }
   }
 
-  async function sendLogin() {
 
-    if (!isConfigured()) {
-      status(
-        $('loginStatus'),
-        'config.js تنظیم نشده است.',
-        'error'
+  async function editDocument(id) {
+
+    const {
+      data,
+      error
+    } = await client
+      .from("site_documents")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+
+    if (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "سند پیدا نشد.",
+        "error"
       );
+
       return;
     }
 
-    const email =
-      normalizeEmail(
-        $('email').value
-      );
 
-    if (!email) {
-      status(
-        $('loginStatus'),
-        'ایمیل را وارد کنید.',
-        'error'
-      );
+    editingDocumentId = id;
+
+    if (docTitle)
+      docTitle.value =
+        data.title || "";
+
+    if (docUrl)
+      docUrl.value =
+        data.url || "";
+
+    docTitle?.focus();
+  }
+
+
+  async function deleteDocument(id) {
+
+    if (
+      !confirm(
+        "آیا از حذف این سند مطمئن هستید؟"
+      )
+    ) {
       return;
     }
 
-    if (!email.includes('@')) {
-      status(
-        $('loginStatus'),
-        'ایمیل واردشده معتبر نیست.',
-        'error'
+
+    const {
+      error
+    } = await client
+      .from("site_documents")
+      .delete()
+      .eq("id", id);
+
+
+    if (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "حذف سند انجام نشد: " +
+        error.message,
+        "error"
       );
+
       return;
     }
 
-    if (!isOwnerEmail(email)) {
-      status(
-        $('loginStatus'),
-        'این ایمیل مالک ثبت‌شده نیست.',
-        'error'
+
+    await loadDocuments();
+
+    setAdminStatus(
+      "سند حذف شد.",
+      "ok"
+    );
+
+    refreshPreview();
+  }
+
+
+  function clearDocumentForm() {
+
+    editingDocumentId = null;
+
+    if (docTitle)
+      docTitle.value = "";
+
+    if (docUrl)
+      docUrl.value = "";
+  }
+
+
+  /* =========================================================
+     BUTTONS
+     ========================================================= */
+
+  async function loadButtons() {
+
+    const {
+      data,
+      error
+    } = await client
+      .from("site_buttons")
+      .select("*")
+      .order(
+        "sort_order",
+        {
+          ascending: true
+        }
       );
+
+
+    if (error) {
+
+      console.error(
+        "site_buttons:",
+        error
+      );
+
+      if (buttonsList) {
+        buttonsList.innerHTML =
+          `<p class="status error">
+            خطا در دریافت دکمه‌ها:
+            ${escapeHTML(error.message)}
+          </p>`;
+      }
+
       return;
     }
 
-    status(
-      $('loginStatus'),
-      'در حال ارسال کد ورود...'
+
+    renderButtons(data || []);
+  }
+
+
+  function renderButtons(items) {
+
+    if (!buttonsList) return;
+
+
+    if (!items.length) {
+
+      buttonsList.innerHTML =
+        "<p>هنوز دکمه‌ای ثبت نشده است.</p>";
+
+      return;
+    }
+
+
+    buttonsList.innerHTML =
+      items.map((item) => {
+
+        return `
+          <div class="list-item">
+
+            <div>
+
+              <strong>
+                ${escapeHTML(item.label)}
+              </strong>
+
+              <small>
+                ${escapeHTML(item.section_slug)}
+                →
+                ${escapeHTML(item.target_value || "")}
+              </small>
+
+            </div>
+
+            <div class="row">
+
+              <button
+                class="admin-btn secondary"
+                type="button"
+                data-edit-button="${escapeHTML(item.id)}"
+              >
+                ویرایش
+              </button>
+
+              <button
+                class="admin-btn danger"
+                type="button"
+                data-delete-button="${escapeHTML(item.id)}"
+              >
+                حذف
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+  }
+
+
+  async function saveButton() {
+
+    const section =
+      buttonSection?.value || "";
+
+    const label =
+      buttonLabel?.value.trim() || "";
+
+    const target =
+      buttonTarget?.value.trim() || "";
+
+
+    if (!section || !label) {
+
+      setAdminStatus(
+        "بخش و متن دکمه را وارد کنید.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    try {
+
+      let result;
+
+
+      if (editingButtonId) {
+
+        result = await client
+          .from("site_buttons")
+          .update({
+            section_slug: section,
+            label,
+            target_type:
+              target.startsWith("http")
+                ? "url"
+                : "content",
+            target_value: target,
+            updated_at:
+              new Date().toISOString()
+          })
+          .eq(
+            "id",
+            editingButtonId
+          );
+
+      } else {
+
+        const {
+          count
+        } = await client
+          .from("site_buttons")
+          .select(
+            "id",
+            {
+              count: "exact",
+              head: true
+            }
+          );
+
+
+        result = await client
+          .from("site_buttons")
+          .insert({
+            section_slug: section,
+            label,
+            target_type:
+              target.startsWith("http")
+                ? "url"
+                : "content",
+            target_value: target,
+            enabled: true,
+            sort_order:
+              Number(count || 0)
+          });
+      }
+
+
+      if (result.error) {
+
+        console.error(result.error);
+
+        setAdminStatus(
+          "ذخیره دکمه انجام نشد: " +
+          result.error.message,
+          "error"
+        );
+
+        return;
+      }
+
+
+      clearButtonForm();
+
+      await loadButtons();
+
+      setAdminStatus(
+        editingButtonId
+          ? "دکمه ویرایش شد."
+          : "دکمه اضافه شد.",
+        "ok"
+      );
+
+      refreshPreview();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "خطا هنگام ذخیره دکمه.",
+        "error"
+      );
+    }
+  }
+
+
+  async function editButton(id) {
+
+    const {
+      data,
+      error
+    } = await client
+      .from("site_buttons")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+
+    if (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "دکمه پیدا نشد.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    editingButtonId = id;
+
+    if (buttonSection)
+      buttonSection.value =
+        data.section_slug || "ashayer";
+
+    if (buttonLabel)
+      buttonLabel.value =
+        data.label || "";
+
+    if (buttonTarget)
+      buttonTarget.value =
+        data.target_value || "";
+
+    buttonLabel?.focus();
+  }
+
+
+  async function deleteButton(id) {
+
+    if (
+      !confirm(
+        "آیا از حذف این دکمه مطمئن هستید؟"
+      )
+    ) {
+      return;
+    }
+
+
+    const {
+      error
+    } = await client
+      .from("site_buttons")
+      .delete()
+      .eq("id", id);
+
+
+    if (error) {
+
+      console.error(error);
+
+      setAdminStatus(
+        "حذف دکمه انجام نشد: " +
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    await loadButtons();
+
+    setAdminStatus(
+      "دکمه حذف شد.",
+      "ok"
+    );
+
+    refreshPreview();
+  }
+
+
+  function clearButtonForm() {
+
+    editingButtonId = null;
+
+    if (buttonSection)
+      buttonSection.value = "ashayer";
+
+    if (buttonLabel)
+      buttonLabel.value = "";
+
+    if (buttonTarget)
+      buttonTarget.value = "";
+  }
+
+
+  /* =========================================================
+     LOAD EVERYTHING
+     ========================================================= */
+
+  async function loadEverything() {
+
+    setAdminStatus(
+      "در حال دریافت اطلاعات..."
     );
 
     try {
 
-      const { error } =
-        await sb.auth.signInWithOtp({
-          email,
-          options: {
-            shouldCreateUser: false
-          }
-        });
+      await Promise.all([
+        loadContent(),
+        loadNews(),
+        loadDocuments(),
+        loadButtons()
+      ]);
 
-      if (error) {
-
-        console.error(
-          'Supabase email OTP:',
-          error
-        );
-
-        status(
-          $('loginStatus'),
-          error.message ||
-            'ارسال کد ورود انجام نشد.',
-          'error'
-        );
-
-        return;
-      }
-
-      pendingEmail = email;
-
-      setOtpMode(true);
-
-      $('otpCode').value = '';
-
-      $('otpCode').focus();
-
-      status(
-        $('loginStatus'),
-        'کد ورود به ایمیل ارسال شد. کد را وارد کنید.',
-        'ok'
+      setAdminStatus(
+        "اطلاعات پنل با موفقیت بارگذاری شد.",
+        "ok"
       );
 
     } catch (error) {
 
       console.error(error);
 
-      status(
-        $('loginStatus'),
-        'خطا در ارسال کد ورود: ' +
-        (error.message ||
-          'خطای نامشخص'),
-        'error'
+      setAdminStatus(
+        "برخی اطلاعات بارگذاری نشد.",
+        "error"
       );
     }
   }
 
-  async function verifyLogin() {
 
-    const email =
-      pendingEmail ||
-      normalizeEmail(
-        $('email').value
+  /* =========================================================
+     EVENTS
+     ========================================================= */
+
+  sendLoginBtn?.addEventListener(
+    "click",
+    sendOTP
+  );
+
+  verifyLoginBtn?.addEventListener(
+    "click",
+    verifyOTP
+  );
+
+  changeEmailBtn?.addEventListener(
+    "click",
+    changeEmail
+  );
+
+  logoutBtn?.addEventListener(
+    "click",
+    logout
+  );
+
+
+  previewSiteBtn?.addEventListener(
+    "click",
+    () => {
+
+      window.open(
+        "index.html",
+        "_blank"
       );
 
-    const token =
-      $('otpCode')
-        .value
-        .trim()
-        .replace(/\s+/g, '');
-
-    if (!email) {
-      status(
-        $('loginStatus'),
-        'ابتدا ایمیل را وارد کنید.',
-        'error'
-      );
-      return;
     }
+  );
 
-    if (!isOwnerEmail(email)) {
-      status(
-        $('loginStatus'),
-        'این ایمیل مالک ثبت‌شده نیست.',
-        'error'
-      );
-      return;
-    }
 
-    if (!/^\d{6,8}$/.test(token)) {
-      status(
-        $('loginStatus'),
-        'کد ورود را صحیح وارد کنید.',
-        'error'
-      );
-      return;
-    }
+  /*
+   * Enter داخل ایمیل
+   */
+  emailInput?.addEventListener(
+    "keydown",
+    (event) => {
 
-    status(
-      $('loginStatus'),
-      'در حال بررسی کد ورود...'
-    );
-
-    try {
-
-      const { data, error } =
-        await sb.auth.verifyOtp({
-          email,
-          token,
-          type: 'email'
-        });
-
-      if (error) {
-
-        console.error(
-          'Supabase verify OTP:',
-          error
-        );
-
-        status(
-          $('loginStatus'),
-          error.message ||
-            'کد ورود نادرست یا منقضی شده است.',
-          'error'
-        );
-
-        return;
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendOTP();
       }
 
-      if (!data?.session) {
-        status(
-          $('loginStatus'),
-          'ورود تأیید نشد. دوباره تلاش کنید.',
-          'error'
-        );
+    }
+  );
 
-        return;
+
+  /*
+   * Enter داخل کد
+   */
+  otpInput?.addEventListener(
+    "keydown",
+    (event) => {
+
+      if (event.key === "Enter") {
+        event.preventDefault();
+        verifyOTP();
       }
 
-      await afterLogin(
-        data.session
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      status(
-        $('loginStatus'),
-        'خطا در بررسی کد ورود: ' +
-        (error.message ||
-          'خطای نامشخص'),
-        'error'
-      );
     }
-  }
+  );
 
-  function changeEmail() {
 
-    pendingEmail = '';
+  /*
+   * محتوای سایت
+   */
+  document
+    .querySelectorAll(
+      "[data-save-content]"
+    )
+    .forEach((button) => {
 
-    setOtpMode(false);
+      button.addEventListener(
+        "click",
+        () => {
 
-    if ($('otpCode')) {
-      $('otpCode').value = '';
-    }
-
-    if ($('email')) {
-
-      $('email').disabled = false;
-
-      $('email').focus();
-    }
-
-    status(
-      $('loginStatus'),
-      'ایمیل را تغییر دهید و دوباره کد بگیرید.'
-    );
-  }
-
-  function setupEvents() {
-
-    if ($('sendLogin')) {
-      $('sendLogin').onclick =
-        sendLogin;
-    }
-
-    if ($('verifyLogin')) {
-      $('verifyLogin').onclick =
-        verifyLogin;
-    }
-
-    if ($('changeEmail')) {
-      $('changeEmail').onclick =
-        changeEmail;
-    }
-
-    if ($('otpCode')) {
-
-      $('otpCode').addEventListener(
-        'keydown',
-        event => {
-
-          if (event.key === 'Enter') {
-            verifyLogin();
-          }
+          saveContent(
+            button.dataset.saveContent
+          );
 
         }
       );
+
+    });
+
+
+  /*
+   * News
+   */
+  saveNewsBtn?.addEventListener(
+    "click",
+    saveNews
+  );
+
+  cancelNewsBtn?.addEventListener(
+    "click",
+    clearNewsForm
+  );
+
+
+  newsAdminList?.addEventListener(
+    "click",
+    (event) => {
+
+      const edit =
+        event.target.closest(
+          "[data-edit-news]"
+        );
+
+      if (edit) {
+
+        editNews(
+          edit.dataset.editNews
+        );
+
+        return;
+      }
+
+
+      const del =
+        event.target.closest(
+          "[data-delete-news]"
+        );
+
+      if (del) {
+
+        deleteNews(
+          del.dataset.deleteNews
+        );
+
+      }
+
     }
+  );
 
-    if ($('logout')) {
 
-      $('logout').onclick =
-        async () => {
+  /*
+   * Documents
+   */
+  saveDocBtn?.addEventListener(
+    "click",
+    saveDocument
+  );
 
-          await sb.auth.signOut({
-            scope: 'local'
-          });
+  cancelDocBtn?.addEventListener(
+    "click",
+    clearDocumentForm
+  );
 
-          pendingEmail = '';
 
-          setOtpMode(false);
+  docsList?.addEventListener(
+    "click",
+    (event) => {
 
-          showLogin(
-            'از پنل مدیریت خارج شدید.'
-          );
-        };
+      const edit =
+        event.target.closest(
+          "[data-edit-doc]"
+        );
+
+      if (edit) {
+
+        editDocument(
+          edit.dataset.editDoc
+        );
+
+        return;
+      }
+
+
+      const del =
+        event.target.closest(
+          "[data-delete-doc]"
+        );
+
+      if (del) {
+
+        deleteDocument(
+          del.dataset.deleteDoc
+        );
+
+      }
+
     }
+  );
 
-    if ($('cancelNews')) {
-      $('cancelNews').onclick =
-        clearForm;
+
+  /*
+   * Buttons
+   */
+  saveButtonBtn?.addEventListener(
+    "click",
+    saveButton
+  );
+
+
+  buttonsList?.addEventListener(
+    "click",
+    (event) => {
+
+      const edit =
+        event.target.closest(
+          "[data-edit-button]"
+        );
+
+      if (edit) {
+
+        editButton(
+          edit.dataset.editButton
+        );
+
+        return;
+      }
+
+
+      const del =
+        event.target.closest(
+          "[data-delete-button]"
+        );
+
+      if (del) {
+
+        deleteButton(
+          del.dataset.deleteButton
+        );
+
+      }
+
     }
+  );
 
-    if ($('saveNews')) {
-      $('saveNews').onclick =
-        saveNews;
+
+  /*
+   * فایل‌های انتخاب‌شده
+   */
+  newsImages?.addEventListener(
+    "change",
+    () => {
+
+      const container =
+        $("selectedFiles");
+
+      if (!container) return;
+
+      const files =
+        Array.from(
+          newsImages.files || []
+        );
+
+      container.innerHTML =
+        files.map(
+          file =>
+            `<small>
+              ${escapeHTML(file.name)}
+            </small>`
+        ).join("<br>");
+
     }
+  );
 
-    if ($('newsImages')) {
 
-      $('newsImages').onchange =
-        () => {
+  /* =========================================================
+     AUTH STATE
+     ========================================================= */
 
-          if (!$('selectedFiles')) {
-            return;
-          }
+  client.auth.onAuthStateChange(
+    async (event, session) => {
 
-          $('selectedFiles').innerHTML =
-            [...$('newsImages').files]
-              .map(
-                file =>
-                  `<span class="hint">${escapeHtml(file.name)}</span>`
-              )
-              .join(' • ');
-        };
+      if (
+        event === "SIGNED_OUT"
+      ) {
+
+        currentUser = null;
+
+        showLogin();
+
+        return;
+      }
+
+
+      if (
+        session?.user &&
+        String(session.user.email || "")
+          .toLowerCase() ===
+          OWNER_EMAIL.toLowerCase()
+      ) {
+
+        currentUser =
+          session.user;
+
+        showPanel();
+
+      }
+
     }
+  );
 
-    document
-      .querySelectorAll(
-        '[data-save-content]'
-      )
-      .forEach(button => {
 
-        button.onclick =
-          () =>
-            saveContent(
-              button.dataset.saveContent
-            );
-      });
+  /* =========================================================
+     START
+     ========================================================= */
 
-    if ($('newsAdminList')) {
-
-      $('newsAdminList').onclick =
-        async event => {
-
-          const edit =
-            event.target.closest(
-              '[data-edit]'
-            );
-
-          const del =
-            event.target.closest(
-              '[data-delete]'
-            );
-
-          if (edit) {
-
-            const news =
-              currentNews.find(
-                item =>
-                  String(item.id) ===
-                  String(
-                    edit.dataset.edit
-                  )
-              );
-
-            if (!news) {
-              return;
-            }
-
-            $('newsId').value =
-              news.id;
-
-            $('newsTitle').value =
-              news.title || '';
-
-            $('newsDate').value =
-              news.date || '';
-
-            $('newsExcerpt').value =
-              news.excerpt || '';
-
-            $('newsBody').value =
-              news.body || '';
-
-            if ($('newsFormTitle')) {
-              $('newsFormTitle').textContent =
-                'ویرایش خبر';
-            }
-
-            window.scrollTo({
-              top:
-                document.body.scrollHeight,
-              behavior:
-                'smooth'
-            });
-          }
-
-          if (del) {
-
-            if (
-              !confirm(
-                'این خبر حذف شود؟'
-              )
-            ) {
-              return;
-            }
-
-            const item =
-              currentNews.find(
-                news =>
-                  String(news.id) ===
-                  String(
-                    del.dataset.delete
-                  )
-              );
-
-            const { error } =
-              await sb
-                .from('news')
-                .delete()
-                .eq(
-                  'id',
-                  del.dataset.delete
-                );
-
-            if (!error) {
-              await removeStorageFiles(
-                item?.images || []
-              );
-            }
-
-            status(
-              $('adminStatus'),
-              error
-                ? error.message
-                : 'خبر حذف شد.',
-              error
-                ? 'error'
-                : 'ok'
-            );
-
-            await loadNews();
-          }
-        };
-    }
+  if (emailInput) {
+    emailInput.value =
+      OWNER_EMAIL;
   }
 
-  setupEvents();
-  init();
+  checkSession();
 
 })();
