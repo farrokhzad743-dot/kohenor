@@ -1,985 +1,130 @@
-/* =========================================================
-   KOHENOR WEBSITE CMS
-   script.js
-   ========================================================= */
-
-(() => {
-  "use strict";
-
-  /* =========================================================
-     CONFIG
-  ========================================================= */
-
-  const CONFIG = window.SITE_CONFIG || {};
-
-  const SUPABASE_URL =
-    CONFIG.supabaseUrl ||
-    CONFIG.SUPABASE_URL ||
-    "";
-
-  const SUPABASE_KEY =
-    CONFIG.supabaseAnonKey ||
-    CONFIG.supabaseAnon ||
-    CONFIG.SUPABASE_ANON_KEY ||
-    "";
-
-  if (!window.supabase) {
-    console.error("Supabase JS library is not loaded.");
-    return;
-  }
-
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    console.warn(
-      "Supabase configuration is missing. CMS content will not load."
-    );
-    return;
-  }
-
-  const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-  /* =========================================================
-     HELPERS
-  ========================================================= */
-
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-
-  function normalizeImages(value) {
-
-    if (!value) {
-      return [];
-    }
-
-    if (Array.isArray(value)) {
-      return value.filter(Boolean);
-    }
-
-    if (typeof value === "string") {
-
-      try {
-
-        const parsed =
-          JSON.parse(value);
-
-        if (Array.isArray(parsed)) {
-          return parsed.filter(Boolean);
-        }
-
-      } catch (_) {}
-
-      return value
-        .split(/\r?\n/)
-        .map(x => x.trim())
-        .filter(Boolean);
-    }
-
-    return [];
-  }
-
-
-  function findElement(...selectors) {
-
-    for (const selector of selectors) {
-
-      try {
-
-        const element =
-          document.querySelector(selector);
-
-        if (element) {
-          return element;
-        }
-
-      } catch (_) {}
-
-    }
-
-    return null;
-  }
-
-
-  function setText(selectors, value) {
-
-    const element =
-      findElement(...selectors);
-
-    if (!element || value == null) {
-      return;
-    }
-
-    element.textContent =
-      value;
-  }
-
-
-  function setHTML(selectors, value) {
-
-    const element =
-      findElement(...selectors);
-
-    if (!element || value == null) {
-      return;
-    }
-
-    element.innerHTML =
-      value;
-  }
-
-
-  /* =========================================================
-     CONTENT
-  ========================================================= */
-
-  async function loadSiteContent() {
-
-    try {
-
-      const {
-        data,
-        error
-      } = await db
-        .from("site_content")
-        .select("*")
-        .in(
-          "slug",
-          [
-            "ashayer",
-            "cooperative"
-          ]
-        );
-
-
-      if (error) {
-        console.warn(
-          "CMS content:",
-          error.message
-        );
-
-        return;
-      }
-
-
-      for (const item of data || []) {
-
-        if (item.slug === "ashayer") {
-
-          applyAshayerContent(item);
-
-        }
-
-
-        if (item.slug === "cooperative") {
-
-          applyCooperativeContent(item);
-
-        }
-
-      }
-
-    } catch (error) {
-
-      console.warn(
-        "Unable to load CMS content.",
-        error
-      );
-    }
-  }
-
-
-  /* =========================================================
-     ASHAYER
-  ========================================================= */
-
-  function applyAshayerContent(item) {
-
-    /*
-     * چند selector مختلف قرار داده شده تا
-     * با ساختار فعلی سایتت کار کند.
-     */
-
-    setText(
-      [
-        "#ashayer-title",
-        "#ashayerTitle",
-        "[data-content='ashayer-title']",
-        "[data-cms='ashayer-title']"
-      ],
-      item.title
-    );
-
-
-    setText(
-      [
-        "#ashayer-excerpt",
-        "#ashayerExcerpt",
-        "[data-content='ashayer-excerpt']",
-        "[data-cms='ashayer-excerpt']"
-      ],
-      item.excerpt
-    );
-
-
-    setText(
-      [
-        "#ashayer-body",
-        "#ashayerBody",
-        "[data-content='ashayer-body']",
-        "[data-cms='ashayer-body']"
-      ],
-      item.body
-    );
-
-
-    /*
-     * اگر بخش به صورت data attribute ساخته شده باشد.
-     */
-
-    document
-      .querySelectorAll(
-        "[data-cms-section='ashayer']"
-      )
-      .forEach(section => {
-
-        const title =
-          section.querySelector(
-            "[data-cms-field='title']"
-          );
-
-        const excerpt =
-          section.querySelector(
-            "[data-cms-field='excerpt']"
-          );
-
-        const body =
-          section.querySelector(
-            "[data-cms-field='body']"
-          );
-
-
-        if (title) {
-          title.textContent =
-            item.title || "";
-        }
-
-        if (excerpt) {
-          excerpt.textContent =
-            item.excerpt || "";
-        }
-
-        if (body) {
-          body.textContent =
-            item.body || "";
-        }
-
-      });
-  }
-
-
-  /* =========================================================
-     COOPERATIVE
-  ========================================================= */
-
-  function applyCooperativeContent(item) {
-
-    setText(
-      [
-        "#cooperative-title",
-        "#cooperativeTitle",
-        "#coop-title",
-        "#coopTitle",
-        "[data-content='cooperative-title']",
-        "[data-cms='cooperative-title']"
-      ],
-      item.title
-    );
-
-
-    setText(
-      [
-        "#cooperative-excerpt",
-        "#cooperativeExcerpt",
-        "#coop-excerpt",
-        "#coopExcerpt",
-        "[data-content='cooperative-excerpt']",
-        "[data-cms='cooperative-excerpt']"
-      ],
-      item.excerpt
-    );
-
-
-    setText(
-      [
-        "#cooperative-body",
-        "#cooperativeBody",
-        "#coop-body",
-        "#coopBody",
-        "[data-content='cooperative-body']",
-        "[data-cms='cooperative-body']"
-      ],
-      item.body
-    );
-
-
-    document
-      .querySelectorAll(
-        "[data-cms-section='cooperative']"
-      )
-      .forEach(section => {
-
-        const title =
-          section.querySelector(
-            "[data-cms-field='title']"
-          );
-
-        const excerpt =
-          section.querySelector(
-            "[data-cms-field='excerpt']"
-          );
-
-        const body =
-          section.querySelector(
-            "[data-cms-field='body']"
-          );
-
-
-        if (title) {
-          title.textContent =
-            item.title || "";
-        }
-
-        if (excerpt) {
-          excerpt.textContent =
-            item.excerpt || "";
-        }
-
-        if (body) {
-          body.textContent =
-            item.body || "";
-        }
-
-      });
-  }
-
-
-  /* =========================================================
-     NEWS
-  ========================================================= */
-
-  async function loadNews() {
-
-    try {
-
-      const {
-        data,
-        error
-      } = await db
-        .from("news")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        );
-
-
-      if (error) {
-
-        console.warn(
-          "CMS news:",
-          error.message
-        );
-
-        return;
-      }
-
-
-      renderNews(data || []);
-
-    } catch (error) {
-
-      console.warn(
-        "Unable to load news.",
-        error
-      );
-    }
-  }
-
-
-  function renderNews(items) {
-
-    /*
-     * ابتدا دنبال containerهای رایج اخبار می‌گردیم.
-     */
-
-    const container =
-      findElement(
-        "#news-list",
-        "#newsList",
-        "#news-container",
-        "#newsContainer",
-        "[data-cms-news]",
-        "[data-news-list]"
-      );
-
-
-    if (!container) {
-
-      /*
-       * اگر سایت فعلی container مشخصی ندارد،
-       * هیچ چیز را تغییر نمی‌دهیم.
-       */
-
-      return;
-    }
-
-
-    if (!items.length) {
-
-      return;
-    }
-
-
-    container.innerHTML =
-      items.map(item => {
-
-        const images =
-          normalizeImages(
-            item.images
-          );
-
-        const image =
-          images[0] || "";
-
-
-        return `
-          <article
-            class="news-item"
-            data-news-id="${escapeHTML(item.id)}"
-          >
-
-            ${
-              image
-                ? `
-                  <img
-                    src="${escapeHTML(image)}"
-                    alt="${escapeHTML(item.title)}"
-                    loading="lazy"
-                  >
-                `
-                : ""
-            }
-
-            <div class="news-content">
-
-              ${
-                item.date
-                  ? `
-                    <time>
-                      ${escapeHTML(item.date)}
-                    </time>
-                  `
-                  : ""
-              }
-
-              <h3>
-                ${escapeHTML(item.title)}
-              </h3>
-
-              ${
-                item.excerpt || item.text
-                  ? `
-                    <p>
-                      ${escapeHTML(
-                        item.excerpt ||
-                        item.text ||
-                        ""
-                      )}
-                    </p>
-                  `
-                  : ""
-              }
-
-            </div>
-
-          </article>
-        `;
-
-      }).join("");
-  }
-
-
-  /* =========================================================
-     DOCUMENTS
-  ========================================================= */
-
-  async function loadDocuments() {
-
-    try {
-
-      const {
-        data,
-        error
-      } = await db
-        .from("site_documents")
-        .select("*")
-        .order(
-          "sort_order",
-          {
-            ascending: true
-          }
-        );
-
-
-      if (error) {
-
-        console.warn(
-          "CMS documents:",
-          error.message
-        );
-
-        return;
-      }
-
-
-      renderDocuments(data || []);
-
-    } catch (error) {
-
-      console.warn(
-        "Unable to load documents.",
-        error
-      );
-    }
-  }
-
-
-  function renderDocuments(items) {
-
-    const container =
-      findElement(
-        "#documents-list",
-        "#documentsList",
-        "#documents-container",
-        "#documentsContainer",
-        "[data-cms-documents]",
-        "[data-documents-list]"
-      );
-
-
-    if (!container) {
-      return;
-    }
-
-
-    if (!items.length) {
-      return;
-    }
-
-
-    container.innerHTML =
-      items.map(item => {
-
-        return `
-          <a
-            class="document-item"
-            href="${escapeHTML(item.url)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ${escapeHTML(item.title)}
-          </a>
-        `;
-
-      }).join("");
-  }
-
-
-  /* =========================================================
-     BUTTONS
-  ========================================================= */
-
-  async function loadButtons() {
-
-    try {
-
-      const {
-        data,
-        error
-      } = await db
-        .from("site_buttons")
-        .select("*")
-        .eq(
-          "enabled",
-          true
-        )
-        .order(
-          "sort_order",
-          {
-            ascending: true
-          }
-        );
-
-
-      if (error) {
-
-        console.warn(
-          "CMS buttons:",
-          error.message
-        );
-
-        return;
-      }
-
-
-      applyButtons(
-        data || []
-      );
-
-    } catch (error) {
-
-      console.warn(
-        "Unable to load buttons.",
-        error
-      );
-    }
-  }
-
-
-  function applyButtons(items) {
-
-    for (const item of items) {
-
-      const selectors = [
-
-        `[data-cms-button="${CSS.escape(
-          item.id
-        )}"]`,
-
-        `[data-cms-section-button="${CSS.escape(
-          item.section_slug
-        )}"]`
-
-      ];
-
-
-      document
-        .querySelectorAll(
-          selectors.join(",")
-        )
-        .forEach(button => {
-
-          button.textContent =
-            item.label || button.textContent;
-
-
-          if (
-            item.target_type === "url" &&
-            item.target_value
-          ) {
-
-            button.href =
-              item.target_value;
-
-            button.target =
-              "_blank";
-
-            button.rel =
-              "noopener noreferrer";
-
-          }
-
-        });
-    }
-  }
-
-
-  /* =========================================================
-     DATA ATTRIBUTES
-  ========================================================= */
-
-  function applyGenericCMSFields() {
-
-    document
-      .querySelectorAll(
-        "[data-cms-text]"
-      )
-      .forEach(element => {
-
-        const key =
-          element.dataset.cmsText;
-
-        if (!key) return;
-
-
-        const [table, slug, field] =
-          key.split(":");
-
-
-        if (
-          table === "site_content" &&
-          slug &&
-          field
-        ) {
-
-          loadSingleContentField(
-            element,
-            slug,
-            field
-          );
-
-        }
-
-      });
-  }
-
-
-  async function loadSingleContentField(
-    element,
-    slug,
-    field
-  ) {
-
-    try {
-
-      const {
-        data,
-        error
-      } = await db
-        .from("site_content")
-        .select(field)
-        .eq(
-          "slug",
-          slug
-        )
-        .single();
-
-
-      if (
-        error ||
-        !data
-      ) {
-        return;
-      }
-
-
-      element.textContent =
-        data[field] || "";
-
-    } catch (_) {}
-
-  }
-
-
-  /* =========================================================
-     NEWS DETAIL
-  ========================================================= */
-
-  async function loadNewsDetail() {
-
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
-
-    const id =
-      params.get("news");
-
-    if (!id) {
-      return;
-    }
-
-
-    try {
-
-      const {
-        data,
-        error
-      } = await db
-        .from("news")
-        .select("*")
-        .eq(
-          "id",
-          id
-        )
-        .single();
-
-
-      if (error) {
-
-        console.warn(
-          "News detail:",
-          error.message
-        );
-
-        return;
-      }
-
-
-      applyNewsDetail(
-        data
-      );
-
-    } catch (error) {
-
-      console.warn(
-        "Unable to load news detail.",
-        error
-      );
-    }
-  }
-
-
-  function applyNewsDetail(item) {
-
-    setText(
-      [
-        "#news-detail-title",
-        "#newsDetailTitle",
-        "[data-news-detail='title']"
-      ],
-      item.title
-    );
-
-
-    setText(
-      [
-        "#news-detail-date",
-        "#newsDetailDate",
-        "[data-news-detail='date']"
-      ],
-      item.date
-    );
-
-
-    setText(
-      [
-        "#news-detail-excerpt",
-        "#newsDetailExcerpt",
-        "[data-news-detail='excerpt']"
-      ],
-      item.excerpt ||
-      item.text
-    );
-
-
-    setText(
-      [
-        "#news-detail-body",
-        "#newsDetailBody",
-        "[data-news-detail='body']"
-      ],
-      item.body ||
-      item.text
-    );
-
-
-    const images =
-      normalizeImages(
-        item.images
-      );
-
-
-    const gallery =
-      findElement(
-        "#news-gallery",
-        "#newsGallery",
-        "[data-news-gallery]"
-      );
-
-
-    if (
-      gallery &&
-      images.length
-    ) {
-
-      gallery.innerHTML =
-        images.map(
-          src =>
-            `
-              <img
-                src="${escapeHTML(src)}"
-                alt="${escapeHTML(item.title)}"
-                loading="lazy"
-              >
-            `
-        ).join("");
-    }
-  }
-
-
-  /* =========================================================
-     INITIALIZE
-  ========================================================= */
-
-  async function initializeCMS() {
-
-    /*
-     * سایت بدون CMS هم باید عادی باز شود.
-     * بنابراین هیچ خطای Supabase نباید مانع
-     * اجرای بقیه سایت شود.
-     */
-
-    try {
-      await loadSiteContent();
-    } catch (_) {}
-
-
-    try {
-      await loadNews();
-    } catch (_) {}
-
-
-    try {
-      await loadDocuments();
-    } catch (_) {}
-
-
-    try {
-      await loadButtons();
-    } catch (_) {}
-
-
-    try {
-      await loadNewsDetail();
-    } catch (_) {}
-
-
-    try {
-      applyGenericCMSFields();
-    } catch (_) {}
-  }
-
-
-  /* =========================================================
-     START
-  ========================================================= */
-
-  if (
-    document.readyState ===
-    "loading"
-  ) {
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      initializeCMS
-    );
-
-  } else {
-
-    initializeCMS();
-
-  }
-
+(()=>{"use strict";
+const c=window.supabaseClient||window.supabase;
+if(!c)return;
+const $=id=>document.getElementById(id);
+let NEWS=[],BUTTONS=[],DOCS=[],CONTENT={};
+let currentNews=0, newsTimer=null;
+
+const esc=x=>String(x??"").replace(/[&<>'"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#039;",'"':"&quot;"}[m]));
+const text=x=>String(x??"");
+const contentVal=(...keys)=>{for(const k of keys){if(CONTENT[k]?.value!=null)return CONTENT[k].value}return""};
+
+function setText(id,value){const el=$(id);if(el)el.textContent=value||""}
+function openModal(id){const el=$(id);if(!el)return;el.classList.add("open");el.setAttribute("aria-hidden","false");document.body.classList.add("modal-open")}
+function closeModal(id){const el=$(id);if(!el)return;el.classList.remove("open");el.setAttribute("aria-hidden","true");if(!document.querySelector(".modal.open"))document.body.classList.remove("modal-open")}
+
+function renderHeader(){
+  const title=contentVal("site_title")||"شرکت تعاونی عشایری کوه نور کهگیلویه";
+  document.querySelectorAll(".persian-title").forEach(x=>x.textContent=title);
+  const imgs=document.querySelectorAll(".brand-side img");
+  if(imgs[0])imgs[0].src=contentVal("logo_left")||imgs[0].src;
+  if(imgs[1])imgs[1].src=contentVal("logo_right")||imgs[1].src;
+}
+
+function renderContent(){
+  setText("ashayerExcerpt",contentVal("ashayer_excerpt"));
+  setText("cooperativeExcerpt",contentVal("cooperative_excerpt"));
+  const aTitle=contentVal("ashayer_title");if(aTitle)setText("ashayer",aTitle);
+  const cTitle=contentVal("cooperative_title");if(cTitle)setText("cooperative",cTitle);
+  const aboutTitle=contentVal("about_title");if(aboutTitle)setText("about",aboutTitle);
+  const about=document.querySelector("#about .about-card p");if(about)about.textContent=contentVal("about_body")||about.textContent;
+  const ah=document.querySelector("#ashayer h2");if(ah)ah.textContent=aTitle||ah.textContent;
+  const ch=document.querySelector("#cooperative h2");if(ch)ch.textContent=cTitle||ch.textContent;
+  const abh=document.querySelector("#about h2");if(abh)abh.textContent=aboutTitle||abh.textContent;
+}
+
+function renderButtons(){
+  const wrap=document.querySelector(".quick-menu");if(!wrap)return;
+  if(!BUTTONS.length)return;
+  wrap.innerHTML=BUTTONS.map(b=>`<button class="menu-card" data-target="${esc(b.target||"")}"><span>${esc(b.label||b.title||"")}</span><b>←</b></button>`).join("");
+  wrap.querySelectorAll(".menu-card").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const target=btn.dataset.target||"";
+      if(target.startsWith("http"))location.href=target;
+      else{const el=document.getElementById(target.replace(/^#/,""));if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}
+    });
+  });
+}
+
+function renderDocs(){
+  const tabs=document.querySelector(".document-buttons"),viewer=$("documentViewer");if(!tabs||!viewer)return;
+  tabs.innerHTML=DOCS.map((d,i)=>`<button class="document-tab ${i===0?"active":""}" data-doc="${i}">${esc(d.title)}</button>`).join("");
+  const show=i=>{
+    const d=DOCS[i];if(!d)return;
+    viewer.innerHTML=`<div style="padding:18px;text-align:center"><a href="${esc(d.file_url||d.url||"#")}" target="_blank" rel="noopener" style="font-weight:800">${esc(d.title)}</a></div>`;
+    tabs.querySelectorAll(".document-tab").forEach((x,j)=>x.classList.toggle("active",j===i));
+  };
+  tabs.querySelectorAll(".document-tab").forEach((b,i)=>b.addEventListener("click",()=>show(i)));
+  if(DOCS.length)show(0);
+}
+
+function dateFa(v){
+  try{return new Intl.DateTimeFormat("fa-IR",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(v))}
+  catch{return""}
+}
+
+function renderNews(){
+  const track=$("newsTrack"),dots=$("newsDots");if(!track)return;
+  if(!NEWS.length){track.innerHTML='<div class="news-empty">خبری برای نمایش وجود ندارد.</div>';if(dots)dots.innerHTML="";return}
+  track.innerHTML=NEWS.map((n,i)=>`
+    <article class="news-card" data-index="${i}">
+      <div class="news-image-wrap">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:"<div class='news-no-image'>تصویر خبر</div>"}</div>
+      <div class="news-card-body">
+        <div class="news-card-date">${dateFa(n.created_at)}</div>
+        <h3>${esc(n.title)}</h3>
+        <p>${esc(n.excerpt)}</p>
+      </div>
+    </article>`).join("");
+  if(dots)dots.innerHTML=NEWS.map((_,i)=>`<button class="news-dot ${i===0?"active":""}" data-i="${i}" aria-label="خبر ${i+1}"></button>`).join("");
+  track.querySelectorAll(".news-card").forEach(card=>card.addEventListener("click",()=>openArticle(Number(card.dataset.index))));
+  dots?.querySelectorAll(".news-dot").forEach(d=>d.addEventListener("click",e=>{e.stopPropagation();showNews(Number(d.dataset.i))}));
+  showNews(0);
+  clearInterval(newsTimer);if(NEWS.length>1)newsTimer=setInterval(()=>showNews((currentNews+1)%NEWS.length),6000);
+}
+function showNews(i){
+  currentNews=(i+NEWS.length)%NEWS.length;
+  const track=$("newsTrack");if(!track)return;
+  track.style.transform=`translateX(${currentNews*100}%)`;
+  document.querySelectorAll(".news-dot").forEach((d,j)=>d.classList.toggle("active",j===currentNews));
+}
+function openArticle(i){
+  const n=NEWS[i];if(!n)return;
+  const body=$("articleContent");if(!body)return;
+  body.innerHTML=`<span class="eyebrow">خبر شرکت</span><h2>${esc(n.title)}</h2><div class="article-date">${dateFa(n.created_at)}</div>${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}" style="width:100%;border-radius:20px;margin:16px 0">`:""}<div class="article-text">${esc(n.content||n.excerpt).replace(/\n/g,"<br>")}</div>`;
+  openModal("articleModal");
+}
+function renderAllNews(){
+  const list=$("allNewsList");if(!list)return;
+  list.innerHTML=NEWS.map((n,i)=>`<button class="all-news-item" data-i="${i}"><strong>${esc(n.title)}</strong><span>${esc(n.excerpt||"")}</span></button>`).join("");
+  list.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>{closeModal("newsModal");openArticle(Number(b.dataset.i))}));
+}
+
+function bindStatic(){
+  $("openNews")?.addEventListener("click",()=>{renderAllNews();openModal("newsModal")});
+  $("nextNews")?.addEventListener("click",()=>showNews(currentNews+1));
+  $("prevNews")?.addEventListener("click",()=>showNews(currentNews-1));
+  document.querySelectorAll("[data-close]").forEach(x=>x.addEventListener("click",()=>closeModal(x.dataset.close)));
+  document.querySelectorAll(".read-more").forEach(btn=>btn.addEventListener("click",()=>{
+    const k=btn.dataset.content;
+    const title=k==="ashayer"?contentVal("ashayer_title"):"چگونگی تعاونی";
+    const body=k==="ashayer"?contentVal("ashayer_body"):contentVal("cooperative_body");
+    const el=$("contentModalBody");if(el)el.innerHTML=`<span class="eyebrow">${esc(title)}</span><h2>${esc(title)}</h2><div class="article-text">${esc(body).replace(/\n/g,"<br>")}</div>`;
+    openModal("contentModal");
+  }));
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal.open").forEach(m=>closeModal(m.id))});
+}
+
+async function init(){
+  const [a,n,d,b]=await Promise.all([
+    c.from("site_content").select("*"),
+    c.from("news").select("*").order("created_at",{ascending:false}),
+    c.from("documents").select("*").order("created_at",{ascending:true}),
+    c.from("site_buttons").select("*").order("sort_order",{ascending:true})
+  ]);
+  CONTENT={};(a.data||[]).forEach(x=>CONTENT[x.key]=x);
+  NEWS=n.data||[];DOCS=d.data||[];BUTTONS=b.data||[];
+  renderHeader();renderContent();renderButtons();renderDocs();renderNews();bindStatic();
+  const dateEl=$("iranDate");if(dateEl)dateEl.textContent=new Intl.DateTimeFormat("fa-IR",{year:"numeric",month:"long",day:"numeric"}).format(new Date());
+}
+init();
 })();
