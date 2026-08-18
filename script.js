@@ -13,40 +13,46 @@ const fallbackContent = {
 
 let news = [
   {
-    date: '۱۴۰۳/۱۲/۲۹',
-    title: 'برگزاری مجمع عمومی عادی سالیانه شرکت',
-    text: 'جلسه مجمع عمومی عادی سالیانه شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید.',
-    body: 'جلسه مجمع عمومی عادی سالیانه سال مالی منتهی به 1403/12/29 شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه صورتهای مالی سال 1403 به تصویب اعضاء مجمع رسید.',
+    date: '۱۴۰۴',
+    title: 'تداوم خدمات آبرسانی و پشتیبانی از عشایر شهرستان کهگیلویه',
+    excerpt: 'خدمات آبرسانی سیار و توزیع اقلام مورد نیاز عشایر شهرستان کهگیلویه در سال ۱۴۰۴ به صورت مستمر توسط شرکت تعاونی عشایری کوه نور دهدشت انجام شده است.',
+    body: 'خدمات آبرسانی سیار با تانکر به عشایر شهرستان کهگیلویه توسط شرکت تعاونی عشایری کوه نور دهدشت به صورت مستمر صورت می پذیرد. آقای پروره مدیرعامل تعاونی عشایری کوه نور دهدشت در همین راستا بیان کردند که طی سال 1404 قریب به 1500 سرویس 12000 لیتری آب شرب با تانکر سیار تحویل عشایر شهرستان کهگیلویه گردیده است. وی افزود سال 1404 خدماتی اعم از توزیع آرد، علوفه دامی، توزیع نفت سفید، توزیع سیلندر گاز مایع و...... به صورت مستمر در اختیار عشایر تحت پوشش و سهامدار شرکت تعاونی قرار گرفته است.',
     images: [
-      'https://s6.uupload.ir/files/img_20260812_214231_921_rebj.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214235_290_uw11.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214236_565_7pnm.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214240_309_d7re.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214243_421_m4nm.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214249_165_wdkv.jpg'
+      'https://ibb.co/xKWHYsJr','https://ibb.co/QFVJcQVQ','https://ibb.co/Rp2sWYQK','https://ibb.co/ycZD71PH','https://ibb.co/fV3Kdp6c','https://ibb.co/Zz5hgxk6','https://ibb.co/Y7rBLBWM'
     ]
   },
   {
-    date: '۱۴۰۴',
-    title: 'تداوم خدمات آبرسانی و پشتیبانی از عشایر شهرستان کهگیلویه',
-    text: 'خدمات آبرسانی سیار و توزیع اقلام مورد نیاز عشایر شهرستان کهگیلویه به صورت مستمر انجام می‌شود.',
-    body: 'خدمات آبرسانی سیار با تانکر به عشایر شهرستان کهگیلویه توسط شرکت تعاونی عشایری کوه نور دهدشت به صورت مستمر صورت می پذیرد. آقای پروره مدیرعامل تعاونی عشایری کوه نور دهدشت در همین راستا بیان کردند که طی سال 1404 قریب به 1500 سرویس 12000 لیتری آب شرب با تانکر سیار تحویل عشایر شهرستان کهگیلویه گردیده است. وی افزود سال 1404 خدماتی اعم از توزیع آرد، علوفه دامی، توزیع نفت سفید، توزیع سیلندر گاز مایع و...... به صورت مستمر در اختیار عشایر تحت پوشش و سهامدار شرکت تعاونی قرار گرفته است.',
+    date: '۲۹/۱۲/۱۴۰۳',
+    title: 'برگزاری مجمع عمومی عادی سالیانه شرکت',
+    excerpt: 'جلسه مجمع عمومی عادی سالیانه شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار و صورت‌های مالی سال ۱۴۰۳ تصویب شد.',
+    body: 'جلسه مجمع عمومی عادی سالیانه سال مالی منتهی به 1403/12/29 شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه صورتهای مالی سال 1403 به تصویب اعضاء مجمع رسید.',
     images: [
-      'https://s6.uupload.ir/files/img_20260812_215010_415_84rr.jpg',
-      'https://s6.uupload.ir/files/img_20260812_215006_572_bmkq.jpg',
-      'https://s6.uupload.ir/files/img_20260812_215004_101_yomi.jpg',
-      'https://s6.uupload.ir/files/img_20260812_215000_262_fr6a.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214958_234_7hze.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214956_145_e3p3.jpg',
-      'https://s6.uupload.ir/files/img_20260812_214954_885_neu7.jpg'
+      'https://ibb.co/XrpwsJ9b','https://ibb.co/jZ11bjH6','https://ibb.co/WvZ3zLCH','https://ibb.co/kVxXv4ZL','https://ibb.co/Zpz2hFkS','https://ibb.co/Q7NrB892'
+    ]
+  },
+  {
+    date: '۲۱/۹/۱۴۰۴',
+    title: 'توزیع نفت سفید به عشایر محترم حوزه',
+    excerpt: 'توزیع نفت سفید به عشایر محترم حوزه در محوطه شرکت تعاونی عشایری کوه نور دهدشت انجام شد.',
+    body: 'توزیع نفت سفید به عشایر محترم حوزه در محوطهٔ شرکت.',
+    images: ['https://ibb.co/S7r9KY64','https://ibb.co/KcRShWN5']
+  },
+  {
+    date: '۲۱/۱۰/۱۴۰۰',
+    title: 'برگزاری مجمع عمومی فوق‌العاده شرکت',
+    excerpt: 'جلسه مجمع عمومی بطور فوق العاده شرکت تعاونی عشایری کوه نور دهدشت برگزار و اساسنامه جدید شرکت به تصویب اعضاء رسید.',
+    body: 'جلسه مجمع عمومی بطور فوق العاده شرکت تعاونی عشایری کوه نور دهدشت در تاریخ 1400/10/21 رأس ساعت 16 در محل شرکت واقع در دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه اساسنامه جدید شرکت با 70 ماده و 51 تبصره و 135 بند به تصویب اعضاء مجمع رسیده است.',
+    images: [
+      'https://ibb.co/CshY940f','https://ibb.co/0jY0Tb1w','https://ibb.co/mwP9bFG','https://ibb.co/ym0yVZRP','https://ibb.co/7xMBt8Qk','https://ibb.co/gLQ3PjL5','https://ibb.co/TDjQS272','https://ibb.co/0yqTRHvK','https://ibb.co/24yPXMN','https://ibb.co/Kct64y74','https://ibb.co/TDh9XPyV'
     ]
   }
 ];
 
 const docs = [
-  { title: 'استعلام شناسه ملی', url: 'https://s6.uupload.ir/files/picsart_26-08-12_20-52-02-273_symw.png' },
-  { title: 'ثبت شرکت در دهدشت', url: 'https://s6.uupload.ir/files/picsart_26-08-12_20-52-39-057_vja0.png' },
-  { title: 'آگهی تأسیس', url: 'https://s6.uupload.ir/files/picsart_26-08-12_20-53-10-531_krf2.png' }
+  { title: 'استعلام شناسه ملی', url: 'https://ibb.co/W4nDjgT1' },
+  { title: 'ثبت شرکت در دهدشت', url: 'https://ibb.co/Z6NZyJcy' },
+  { title: 'آگهی تأسیس', url: 'https://ibb.co/d0t1nDCd' },
+  { title: 'اساسنامه', url: './asasname.pdf' }
 ];
 
 const track = document.getElementById('newsTrack');
@@ -115,8 +121,7 @@ function renderNews() {
     <article class="news-card" data-index="${i}">
       <div class="news-cover">
         ${n.images?.[0]
-          ? `<img src="${esc(n.images[0])}" alt="${esc(n.title)}" loading="lazy"
-               onerror="this.parentElement.classList.add('image-failed');this.remove()">`
+          ? `<a class="news-image-link" href="${esc(n.images[0])}" target="_blank" rel="noopener">مشاهده تصویر خبر</a>`
           : '<span aria-hidden="true">✦</span>'}
       </div>
       <div class="news-body">
@@ -166,7 +171,7 @@ function showArticle(index) {
   const gallery = item.images?.length
     ? `<div class="article-gallery">
         ${item.images.map((src, j) =>
-          `<img src="${esc(src)}" alt="${esc(item.title)} - تصویر ${j + 1}" loading="lazy">`
+          `<a class="article-image-link" href="${esc(src)}" target="_blank" rel="noopener">تصویر ${j + 1}<span>مشاهده</span></a>`
         ).join('')}
        </div>`
     : '';
@@ -389,13 +394,12 @@ function renderDoc(index = 0) {
   const doc = docs[index];
   if (!doc) return;
 
-  viewer.innerHTML = `
-    <img src="${esc(doc.url)}" alt="${esc(doc.title)}" loading="lazy">
-    <div class="document-caption">
-      <strong>${esc(doc.title)}</strong><br>
-      تصویر سند رسمی ارائه‌شده در بخش اسناد و مدارک.
-    </div>
-  `;
+  const isLocalPdf = /\.pdf(?:$|[?#])/i.test(doc.url);
+  viewer.innerHTML = isLocalPdf
+    ? `<iframe src="${esc(doc.url)}" title="${esc(doc.title)}" style="width:100%;min-height:70vh;border:0;border-radius:18px;background:#fff"></iframe>
+       <div class="document-caption"><strong>${esc(doc.title)}</strong><br>اساسنامه رسمی شرکت.</div>`
+    : `<div class="document-caption"><strong>${esc(doc.title)}</strong><br>برای مشاهده سند روی دکمه زیر بزنید.</div>
+       <a href="${esc(doc.url)}" target="_blank" rel="noopener" class="document-open-link">باز کردن سند</a>`;
 
   document.querySelectorAll('.document-tab').forEach((button, i) => {
     button.classList.toggle('active', i === index);
