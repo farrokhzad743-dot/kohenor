@@ -1,1479 +1,2666 @@
-(()=>{"use strict";
+(() => {
+  "use strict";
 
-const OWNER_EMAIL="farrokhzad743@gmail.com";
-const $=id=>document.getElementById(id);
+  /*
+   * =========================================================
+   * KOHENOR ADMIN PANEL
+   * نسخه مدیریت مستقیم سایت
+   * =========================================================
+   */
 
-const cfg=window.SITE_CONFIG||{};
+  const OWNER_EMAIL = "farrokhzad743@gmail.com";
+  const BUCKET = "site-media";
 
-const c=
-  window.supabaseClient ||
-  (
-    window.supabase?.createClient &&
-    cfg.supabaseUrl &&
-    cfg.supabaseAnonKey
-      ? window.supabase.createClient(
-          cfg.supabaseUrl,
-          cfg.supabaseAnonKey
+  const $ = (id) => document.getElementById(id);
+
+  /*
+   * ---------------------------------------------------------
+   * SUPABASE
+   * ---------------------------------------------------------
+   */
+
+  const config =
+    window.SITE_CONFIG ||
+    window.siteConfig ||
+    {};
+
+  const SUPABASE_URL =
+    config.supabaseUrl ||
+    config.SUPABASE_URL ||
+    config.url ||
+    "";
+
+  const SUPABASE_KEY =
+    config.supabaseAnonKey ||
+    config.supabaseAnon ||
+    config.SUPABASE_ANON_KEY ||
+    config.anonKey ||
+    "";
+
+  let client =
+    window.supabaseClient ||
+    null;
+
+  if (!client && window.supabase && SUPABASE_URL && SUPABASE_KEY) {
+    client = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+  }
+
+  if (!client) {
+    document.body.innerHTML = `
+      <div style="
+        padding:40px;
+        font-family:Tahoma,sans-serif;
+        direction:rtl;
+        text-align:center;
+      ">
+        <h2>خطا در اتصال به Supabase</h2>
+        <p>
+          فایل config.js پیدا نشد یا تنظیمات Supabase کامل نیست.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * STATE
+   * ---------------------------------------------------------
+   */
+
+  let S = {
+    news: [],
+    buttons: [],
+    docs: [],
+    content: {}
+  };
+
+  let pendingDeletes = {
+    news: new Set(),
+    buttons: new Set(),
+    docs: new Set()
+  };
+
+
+  /*
+   * ---------------------------------------------------------
+   * HELPERS
+   * ---------------------------------------------------------
+   */
+
+  function esc(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function setLoginMsg(message, type = "") {
+    const el = $("loginMsg");
+
+    if (!el) return;
+
+    el.textContent = message || "";
+    el.className = "status";
+
+    if (type) {
+      el.classList.add(type);
+    }
+  }
+
+  function setSaveMsg(message, type = "") {
+    const el = $("saveMsg");
+
+    if (!el) return;
+
+    el.textContent = message || "";
+    el.className = "status";
+
+    if (type) {
+      el.classList.add(type);
+    }
+  }
+
+  function isOwner(user) {
+    return String(user?.email || "")
+      .trim()
+      .toLowerCase() === OWNER_EMAIL.toLowerCase();
+  }
+
+  function hideLogin() {
+    $("panelView")?.classList.add("hidden");
+    $("loginView")?.classList.remove("hidden");
+  }
+
+  function showPanel() {
+    $("loginView")?.classList.add("hidden");
+    $("panelView")?.classList.remove("hidden");
+  }
+
+  function todayFa() {
+    return new Intl.DateTimeFormat(
+      "fa-IR",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }
+    ).format(new Date());
+  }
+
+  function normalizeUrl(value) {
+    return String(value || "").trim();
+  }
+
+  function getContent(key, fallback = "") {
+    return S.content[key]?.value ?? fallback;
+  }
+
+  function fileNameSafe(name) {
+    return String(name || "file")
+      .replace(/[^\w\u0600-\u06FF.\- ]+/g, "-")
+      .replace(/\s+/g, "-")
+      .slice(0, 120);
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * LOGIN
+   * ---------------------------------------------------------
+   *
+   * عمداً session قبلی را برای این صفحه نگه نمی‌داریم.
+   * بنابراین ورود پنل همیشه با ایمیل + کد انجام می‌شود.
+   */
+
+  async function forceFreshLogin() {
+    try {
+      await client.auth.signOut({
+        scope: "local"
+      });
+    } catch (_) {}
+
+    hideLogin();
+
+    $("otpBox")?.classList.add("hidden");
+
+    if ($("emailInput")) {
+      $("emailInput").value = OWNER_EMAIL;
+    }
+
+    if ($("otpInput")) {
+      $("otpInput").value = "";
+    }
+
+    setLoginMsg("");
+  }
+
+
+  async function sendOtp() {
+
+    const email =
+      $("emailInput")?.value
+        .trim()
+        .toLowerCase();
+
+    if (email !== OWNER_EMAIL.toLowerCase()) {
+
+      setLoginMsg(
+        "این ایمیل اجازه ورود به پنل مدیریت را ندارد.",
+        "error"
+      );
+
+      return;
+    }
+
+    const button = $("sendOtp");
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = "در حال ارسال...";
+    }
+
+    setLoginMsg("در حال ارسال کد ورود...");
+
+    try {
+
+      const { error } =
+        await client.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: false
+          }
+        });
+
+      if (error) {
+        setLoginMsg(
+          error.message ||
+          "ارسال کد ورود ناموفق بود.",
+          "error"
+        );
+
+        return;
+      }
+
+      $("otpBox")?.classList.remove("hidden");
+      $("resendOtp")?.classList.remove("hidden");
+
+      setLoginMsg(
+        "کد ورود به ایمیل مالک ارسال شد.",
+        "ok"
+      );
+
+      $("otpInput")?.focus();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setLoginMsg(
+        "خطا در اتصال به سرویس ورود.",
+        "error"
+      );
+
+    } finally {
+
+      if (button) {
+        button.disabled = false;
+        button.textContent = "ارسال کد ورود";
+      }
+
+    }
+  }
+
+
+  async function verifyOtp() {
+
+    const email =
+      $("emailInput")?.value
+        .trim()
+        .toLowerCase();
+
+    const token =
+      $("otpInput")?.value
+        .trim();
+
+    if (email !== OWNER_EMAIL.toLowerCase()) {
+
+      setLoginMsg(
+        "این ایمیل اجازه ورود به پنل مدیریت را ندارد.",
+        "error"
+      );
+
+      return;
+    }
+
+    if (!token) {
+
+      setLoginMsg(
+        "کد ورود را وارد کنید.",
+        "error"
+      );
+
+      return;
+    }
+
+    const button = $("verifyOtp");
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = "در حال بررسی...";
+    }
+
+    try {
+
+      const {
+        data,
+        error
+      } = await client.auth.verifyOtp({
+        email,
+        token,
+        type: "email"
+      });
+
+      if (error) {
+
+        setLoginMsg(
+          error.message ||
+          "کد ورود صحیح نیست یا منقضی شده است.",
+          "error"
+        );
+
+        return;
+      }
+
+      if (!isOwner(data?.user)) {
+
+        await client.auth.signOut({
+          scope: "local"
+        });
+
+        setLoginMsg(
+          "این حساب مالک نیست.",
+          "error"
+        );
+
+        return;
+      }
+
+      showPanel();
+
+      await load();
+
+      setSaveMsg(
+        "✓ ورود مالک با موفقیت انجام شد.",
+        "ok"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      setLoginMsg(
+        "خطا هنگام بررسی کد ورود.",
+        "error"
+      );
+
+    } finally {
+
+      if (button) {
+        button.disabled = false;
+        button.textContent = "ورود به پنل مدیریت";
+      }
+
+    }
+  }
+
+
+  function changeEmail() {
+
+    $("otpBox")?.classList.add("hidden");
+
+    if ($("otpInput")) {
+      $("otpInput").value = "";
+    }
+
+    setLoginMsg("");
+
+    $("emailInput")?.focus();
+  }
+
+
+  async function logout() {
+
+    try {
+
+      await client.auth.signOut({
+        scope: "local"
+      });
+
+    } catch (_) {}
+
+    hideLogin();
+
+    $("otpBox")?.classList.add("hidden");
+
+    if ($("otpInput")) {
+      $("otpInput").value = "";
+    }
+
+    setLoginMsg(
+      "از پنل مدیریت خارج شدید.",
+      "ok"
+    );
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * STORAGE
+   * ---------------------------------------------------------
+   */
+
+  async function uploadFile(file, folder) {
+
+    if (!file) {
+      return null;
+    }
+
+    const safe =
+      fileNameSafe(file.name);
+
+    const path =
+      `${folder}/${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 9)}-${safe}`;
+
+    const {
+      error
+    } = await client.storage
+      .from(BUCKET)
+      .upload(
+        path,
+        file,
+        {
+          cacheControl: "3600",
+          upsert: false
+        }
+      );
+
+    if (error) {
+      throw error;
+    }
+
+    const {
+      data
+    } = client.storage
+      .from(BUCKET)
+      .getPublicUrl(path);
+
+    if (!data?.publicUrl) {
+      throw new Error(
+        "آدرس عمومی فایل ساخته نشد."
+      );
+    }
+
+    return data.publicUrl;
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * LOAD EVERYTHING
+   * ---------------------------------------------------------
+   */
+
+  async function load() {
+
+    setSaveMsg(
+      "در حال دریافت اطلاعات سایت..."
+    );
+
+    const [
+      contentResult,
+      newsResult,
+      docsResult,
+      buttonsResult
+    ] = await Promise.all([
+
+      client
+        .from("site_content")
+        .select("*"),
+
+      client
+        .from("news")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        ),
+
+      client
+        .from("documents")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending: true
+          }
+        ),
+
+      client
+        .from("site_buttons")
+        .select("*")
+        .order(
+          "sort_order",
+          {
+            ascending: true
+          }
         )
-      : null
-  );
 
-if(c) window.supabaseClient=c;
+    ]);
 
-if(!c){
-  document.body.innerHTML=`
-    <p style="
-      padding:30px;
-      font-family:sans-serif;
-      direction:rtl;
-      text-align:center
-    ">
-      اتصال به Supabase پیدا نشد.
-    </p>
-  `;
-  return;
-}
 
-let S={
-  news:[],
-  buttons:[],
-  docs:[],
-  content:{}
-};
-
-
-/* =========================
-   ابزارهای عمومی
-========================= */
-
-const isOwner=u=>
-  String(u?.email||"")
-    .trim()
-    .toLowerCase()===OWNER_EMAIL;
-
-
-const setMsg=(id,text,bad=false)=>{
-  const el=$(id);
-
-  if(!el)return;
-
-  el.textContent=text;
-
-  el.style.color=
-    bad
-      ? "#d92d3a"
-      : "#16703c";
-};
-
-
-const hide=()=>{
-  $("panelView")?.classList.add("hidden");
-  $("loginView")?.classList.remove("hidden");
-};
-
-
-const show=async()=>{
-  $("loginView")?.classList.add("hidden");
-  $("panelView")?.classList.remove("hidden");
-
-  await load();
-};
-
-
-const esc=x=>
-  String(x??"").replace(
-    /[&<>'"]/g,
-    m=>({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      "'":"&#039;",
-      '"':"&quot;"
-    }[m])
-  );
-
-
-const today=()=>{
-  return new Intl.DateTimeFormat(
-    "fa-IR",
-    {
-      year:"numeric",
-      month:"long",
-      day:"numeric"
-    }
-  ).format(new Date());
-};
-
-
-/* =========================
-   ورود مالک
-========================= */
-
-async function session(){
-
-  const {data,error}=await c.auth.getSession();
-
-  if(error){
-    hide();
-    return;
-  }
-
-  if(isOwner(data.session?.user)){
-    await show();
-  }else{
-    hide();
-  }
-}
-
-
-async function send(){
-
-  const e=
-    $("emailInput")
-      .value
-      .trim()
-      .toLowerCase();
-
-  if(e!==OWNER_EMAIL){
-
-    setMsg(
-      "loginMsg",
-      "این ایمیل اجازه ورود به پنل مدیریت را ندارد.",
-      true
-    );
-
-    return;
-  }
-
-
-  setMsg(
-    "loginMsg",
-    "در حال ارسال کد..."
-  );
-
-
-  const {error}=await c.auth.signInWithOtp({
-
-    email:e,
-
-    options:{
-      shouldCreateUser:true
-    }
-
-  });
-
-
-  if(error){
-
-    setMsg(
-      "loginMsg",
-      "خطا در ارسال کد: "+error.message,
-      true
-    );
-
-    return;
-  }
-
-
-  $("otpBox")?.classList.remove("hidden");
-
-  $("resendOtp")?.classList.remove("hidden");
-
-
-  setMsg(
-    "loginMsg",
-    "کد ورود به ایمیل مالک ارسال شد."
-  );
-}
-
-
-async function verify(){
-
-  const e=
-    $("emailInput")
-      .value
-      .trim()
-      .toLowerCase();
-
-  const token=
-    $("otpInput")
-      .value
-      .trim();
-
-
-  if(e!==OWNER_EMAIL){
-
-    setMsg(
-      "loginMsg",
-      "این ایمیل اجازه ورود به پنل مدیریت را ندارد.",
-      true
-    );
-
-    return;
-  }
-
-
-  if(!token){
-
-    setMsg(
-      "loginMsg",
-      "کد ورود را وارد کنید.",
-      true
-    );
-
-    return;
-  }
-
-
-  setMsg(
-    "loginMsg",
-    "در حال بررسی کد..."
-  );
-
-
-  const {data,error}=
-    await c.auth.verifyOtp({
-
-      email:e,
-
-      token:token,
-
-      type:"email"
-
-    });
-
-
-  if(error){
-
-    setMsg(
-      "loginMsg",
-      "کد ورود صحیح نیست یا منقضی شده است.",
-      true
-    );
-
-    return;
-  }
-
-
-  if(!isOwner(data.user)){
-
-    await c.auth.signOut();
-
-    setMsg(
-      "loginMsg",
-      "این حساب مالک نیست.",
-      true
-    );
-
-    return;
-  }
-
-
-  await show();
-}
-
-
-/* =========================
-   خواندن اطلاعات سایت
-========================= */
-
-async function load(){
-
-  setMsg("saveMsg","");
-
-
-  const [
-    contentResult,
-    newsResult,
-    docsResult,
-    buttonsResult
-  ]=await Promise.all([
-
-    c
-      .from("site_content")
-      .select("*"),
-
-    c
-      .from("news")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      ),
-
-    c
-      .from("documents")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending:true
-        }
-      ),
-
-    c
-      .from("site_buttons")
-      .select("*")
-      .order(
-        "sort_order",
-        {
-          ascending:true
-        }
-      )
-
-  ]);
-
-
-  if(
-    contentResult.error ||
-    newsResult.error ||
-    docsResult.error ||
-    buttonsResult.error
-  ){
-
-    const error=
+    const error =
       contentResult.error ||
       newsResult.error ||
       docsResult.error ||
       buttonsResult.error;
 
+    if (error) {
 
-    setMsg(
-      "saveMsg",
-      "خطا در خواندن اطلاعات: "+error.message,
-      true
+      console.error(error);
+
+      setSaveMsg(
+        "خطا در دریافت اطلاعات: " +
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    S.content = {};
+
+    (contentResult.data || [])
+      .forEach(row => {
+
+        S.content[row.key] = row;
+
+      });
+
+
+    S.news =
+      newsResult.data || [];
+
+    S.docs =
+      docsResult.data || [];
+
+    S.buttons =
+      buttonsResult.data || [];
+
+
+    renderHeader();
+    renderNews();
+    renderButtons();
+    renderContent();
+    renderDocs();
+    renderAbout();
+    renderFooter();
+
+
+    setSaveMsg("");
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * HEADER
+   * ---------------------------------------------------------
+   */
+
+  function renderHeader() {
+
+    $("siteTitle").value =
+      getContent(
+        "site_title",
+        getContent(
+          "cooperative:title",
+          "شرکت تعاونی عشایری کوه نور کهگیلویه"
+        )
+      );
+
+    $("siteDate").value =
+      todayFa();
+
+
+    renderLogo(
+      "rightLogoPreview",
+      getContent("logo_right", "")
     );
 
-    return;
+    renderLogo(
+      "leftLogoPreview",
+      getContent("logo_left", "")
+    );
   }
 
 
-  S.content={};
+  function renderLogo(id, url) {
 
+    const box = $(id);
 
-  (contentResult.data||[])
-    .forEach(x=>{
-      S.content[x.key]=x;
-    });
+    if (!box) return;
 
+    if (!url) {
 
-  S.news=
-    newsResult.data||[];
+      box.innerHTML =
+        `<span class="empty-preview">
+          لوگویی انتخاب نشده است
+        </span>`;
 
+      return;
+    }
 
-  S.docs=
-    docsResult.data||[];
-
-
-  S.buttons=
-    buttonsResult.data||[];
-
-
-  $("siteTitle").value=
-    S.content.site_title?.value ||
-    "شرکت تعاونی عشایری کوه نور کهگیلویه";
-
-
-  $("siteDate").value=today();
-
-
-  $("logoRight").value=
-    S.content.logo_right?.value||"";
-
-
-  $("logoLeft").value=
-    S.content.logo_left?.value||"";
-
-
-  $("ashayerTitle").value=
-    S.content.ashayer_title?.value ||
-    "عشایر؛ سرمایه ملّی";
-
-
-  $("ashayerExcerpt").value=
-    S.content.ashayer_excerpt?.value||"";
-
-
-  $("ashayerBody").value=
-    S.content.ashayer_body?.value||"";
-
-
-  $("coopTitle").value=
-    S.content.cooperative_title?.value ||
-    "چگونگی تعاونی";
-
-
-  $("coopExcerpt").value=
-    S.content.cooperative_excerpt?.value||"";
-
-
-  $("coopBody").value=
-    S.content.cooperative_body?.value||"";
-
-
-  $("aboutTitle").value=
-    S.content.about_title?.value ||
-    "درباره ما";
-
-
-  $("aboutBody").value=
-    S.content.about_body?.value||"";
-
-
-  render();
-}
-
-
-/* =========================
-   نمایش پنل
-========================= */
-
-function render(){
-
-  if($("titlePreview")){
-
-    $("titlePreview").textContent=
-      $("siteTitle").value ||
-      "شرکت تعاونی عشایری کوه نور کهگیلویه";
+    box.innerHTML =
+      `<img src="${esc(url)}" alt="">`;
   }
 
 
-  if($("leftPreview")){
+  /*
+   * ---------------------------------------------------------
+   * NEWS
+   * ---------------------------------------------------------
+   */
 
-    $("leftPreview").src=
-      $("logoLeft").value||"";
-  }
+  function renderNews() {
 
+    const list =
+      $("newsList");
 
-  if($("rightPreview")){
+    if (!list) return;
 
-    $("rightPreview").src=
-      $("logoRight").value||"";
-  }
+    if (!S.news.length) {
 
+      list.innerHTML =
+        `<p style="color:#687386">
+          هنوز خبری ثبت نشده است.
+        </p>`;
 
-  /* ---------- اخبار ---------- */
-
-  $("newsList").innerHTML=
-
-    S.news.map((n,i)=>`
-
-      <div class="item">
-
-        <div class="item-head">
-
-          <div>
-            <span class="item-index">
-              خبر ${i+1}
-            </span>
-          </div>
-
-          <button
-            class="delete-x"
-            data-del-news="${esc(n.id)}"
-            title="حذف خبر"
-          >
-            ×
-          </button>
-
-        </div>
+      return;
+    }
 
 
-        <div class="news-admin-card">
+    list.innerHTML =
+      S.news.map(
+        (n, index) => {
 
-          <div class="field">
+          const image =
+            normalizeNewsImage(n);
 
-            <label>
-              تصویر خبر — URL
-            </label>
+          return `
 
-            <input
-              data-n="${esc(n.id)}"
-              data-k="image_url"
-              value="${esc(n.image_url)}"
-              placeholder="https://..."
+            <article
+              class="item"
+              data-news-item="${esc(n.id)}"
             >
 
-          </div>
+              <div class="item-head">
 
+                <div>
+                  <div class="item-title">
+                    خبر ${index + 1}
+                  </div>
 
-          ${
-            n.image_url
-              ? `
-                <img
-                  class="news-cover"
-                  src="${esc(n.image_url)}"
-                  alt=""
+                  <div class="item-sub">
+                    تاریخ: ${esc(
+                      n.date ||
+                      formatDate(n.created_at)
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  class="delete-x"
+                  type="button"
+                  data-delete-news="${esc(n.id)}"
+                  title="حذف خبر"
                 >
-              `
-              :""
-          }
+                  ×
+                </button>
+
+              </div>
 
 
-          <div class="grid">
-
-            <div class="field">
-
-              <label>
-                عنوان خبر
-              </label>
-
-              <input
-                data-n="${esc(n.id)}"
-                data-k="title"
-                value="${esc(n.title)}"
-              >
-
-            </div>
+              ${
+                image
+                  ? `
+                    <img
+                      class="image-preview"
+                      src="${esc(image)}"
+                      alt=""
+                    >
+                  `
+                  : ""
+              }
 
 
-            <div class="field">
+              <div class="file-picker">
 
-              <label>
-                خلاصه خبر
-              </label>
+                <strong>
+                  تغییر تصویر خبر
+                </strong>
 
-              <textarea
-                data-n="${esc(n.id)}"
-                data-k="excerpt"
-              >${esc(n.excerpt)}</textarea>
+                <span>
+                  تصویر را مستقیم از گوشی یا کامپیوتر انتخاب کن.
+                </span>
 
-            </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  data-news-file="${esc(n.id)}"
+                >
 
+                <div
+                  class="selected-file"
+                  id="news-file-name-${esc(n.id)}"
+                ></div>
+
+              </div>
+
+
+              <div class="grid">
+
+                <div class="field grid-full">
+
+                  <label>
+                    عنوان خبر
+                  </label>
+
+                  <input
+                    data-news-id="${esc(n.id)}"
+                    data-news-key="title"
+                    value="${esc(n.title)}"
+                  >
+
+                </div>
+
+
+                <div class="field grid-full">
+
+                  <label>
+                    خلاصه خبر
+                  </label>
+
+                  <textarea
+                    data-news-id="${esc(n.id)}"
+                    data-news-key="excerpt"
+                  >${esc(
+                    n.excerpt ||
+                    n.text ||
+                    ""
+                  )}</textarea>
+
+                </div>
+
+
+                <div class="field grid-full">
+
+                  <label>
+                    متن کامل خبر
+                  </label>
+
+                  <textarea
+                    data-news-id="${esc(n.id)}"
+                    data-news-key="content"
+                  >${esc(
+                    n.content ||
+                    n.body ||
+                    ""
+                  )}</textarea>
+
+                </div>
+
+              </div>
+
+            </article>
+
+          `;
+
+        }
+      ).join("");
+  }
+
+
+  function normalizeNewsImage(n) {
+
+    if (n.image_url) {
+      return n.image_url;
+    }
+
+    if (Array.isArray(n.images)) {
+      return n.images[0] || "";
+    }
+
+    if (typeof n.images === "string") {
+
+      try {
+
+        const parsed =
+          JSON.parse(n.images);
+
+        if (Array.isArray(parsed)) {
+          return parsed[0] || "";
+        }
+
+      } catch (_) {}
+
+      return n.images.split(/\r?\n/)[0] || "";
+    }
+
+    return "";
+  }
+
+
+  function formatDate(value) {
+
+    if (!value) return "";
+
+    try {
+
+      return new Intl.DateTimeFormat(
+        "fa-IR",
+        {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }
+      ).format(
+        new Date(value)
+      );
+
+    } catch (_) {
+
+      return "";
+
+    }
+  }
+
+
+  function syncNewsFields() {
+
+    document
+      .querySelectorAll("[data-news-id]")
+      .forEach(input => {
+
+        const id =
+          String(input.dataset.newsId);
+
+        const key =
+          input.dataset.newsKey;
+
+        const item =
+          S.news.find(
+            x => String(x.id) === id
+          );
+
+        if (item) {
+          item[key] = input.value;
+        }
+
+      });
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * BUTTONS
+   * ---------------------------------------------------------
+   */
+
+  function renderButtons() {
+
+    const list =
+      $("buttonsList");
+
+    if (!list) return;
+
+    if (!S.buttons.length) {
+
+      list.innerHTML =
+        `<p style="color:#687386">
+          هنوز باتنی ثبت نشده است.
+        </p>`;
+
+      return;
+    }
+
+
+    list.innerHTML =
+      S.buttons.map(
+        (b, index) => {
+
+          return `
 
             <div
-              class="field full"
+              class="site-button-item"
+              data-button-item="${esc(b.id)}"
             >
 
-              <label>
-                متن کامل خبر
-              </label>
+              <div class="item-head">
 
-              <textarea
-                data-n="${esc(n.id)}"
-                data-k="content"
-              >${esc(n.content)}</textarea>
+                <div>
+                  <div class="item-title">
+                    باتن ${index + 1}
+                  </div>
+
+                  <div class="item-sub">
+                    دکمه صفحه اصلی
+                  </div>
+                </div>
+
+                <button
+                  class="delete-x"
+                  type="button"
+                  data-delete-button="${esc(b.id)}"
+                  title="حذف باتن"
+                >
+                  ×
+                </button>
+
+              </div>
+
+
+              <div class="field">
+
+                <label>
+                  متن باتن
+                </label>
+
+                <input
+                  data-button-id="${esc(b.id)}"
+                  data-button-key="label"
+                  value="${esc(
+                    b.label ||
+                    b.title ||
+                    ""
+                  )}"
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label>
+                  مقصد باتن
+                </label>
+
+                <select
+                  data-button-target="${esc(b.id)}"
+                >
+
+                  <option
+                    value="ashayer"
+                    ${
+                      targetOf(b) === "ashayer"
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    عشایر؛ سرمایه ملّی
+                  </option>
+
+                  <option
+                    value="cooperative"
+                    ${
+                      targetOf(b) === "cooperative"
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    چگونگی تعاونی
+                  </option>
+
+                  <option
+                    value="documents"
+                    ${
+                      targetOf(b) === "documents"
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    اسناد و مدارک
+                  </option>
+
+                  <option
+                    value="about"
+                    ${
+                      targetOf(b) === "about"
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    درباره ما
+                  </option>
+
+                </select>
+
+              </div>
 
             </div>
 
-          </div>
+          `;
 
-        </div>
+        }
+      ).join("");
+  }
 
-      </div>
 
-    `).join("")
+  function targetOf(b) {
 
-    ||
+    return (
+      b.target ||
+      b.target_value ||
+      b.section_slug ||
+      "ashayer"
+    );
 
-    `
-      <p class="section-note">
-        هنوز خبری ثبت نشده است.
-      </p>
-    `;
+  }
 
 
-  /* ---------- باتن‌ها ---------- */
+  function syncButtons() {
 
-  $("buttonsList").innerHTML=
+    document
+      .querySelectorAll("[data-button-id]")
+      .forEach(input => {
 
-    S.buttons.map((b,i)=>`
+        const id =
+          String(input.dataset.buttonId);
 
-      <div class="item">
+        const item =
+          S.buttons.find(
+            x => String(x.id) === id
+          );
 
-        <div class="item-head">
+        if (item) {
 
-          <div>
+          item[
+            input.dataset.buttonKey
+          ] = input.value;
 
-            <span class="item-index">
-              باتن ${i+1}
-            </span>
+        }
 
-          </div>
+      });
 
 
-          <button
-            class="delete-x"
-            data-del-button="${esc(b.id)}"
-            title="حذف باتن"
-          >
-            ×
-          </button>
+    document
+      .querySelectorAll("[data-button-target]")
+      .forEach(select => {
 
-        </div>
+        const id =
+          String(select.dataset.buttonTarget);
 
+        const item =
+          S.buttons.find(
+            x => String(x.id) === id
+          );
 
-        <div class="grid">
+        if (item) {
 
-          <div class="field">
+          item.target =
+            select.value;
 
-            <label>
-              متن باتن
-            </label>
+          if ("target_value" in item) {
+            item.target_value =
+              select.value;
+          }
 
-            <input
-              data-b="${esc(b.id)}"
-              data-k="label"
-              value="${esc(b.label||b.title)}"
-            >
+          if ("section_slug" in item) {
+            item.section_slug =
+              select.value;
+          }
 
-          </div>
+        }
 
+      });
+  }
 
-          <div class="field">
 
-            <label>
-              مقصد / شناسه بخش یا URL
-            </label>
+  /*
+   * ---------------------------------------------------------
+   * CONTENT
+   * ---------------------------------------------------------
+   */
 
-            <input
-              data-b="${esc(b.id)}"
-              data-k="target"
-              value="${esc(b.target)}"
-            >
+  function renderContent() {
 
-          </div>
-
-        </div>
-
-      </div>
-
-    `).join("")
-
-    ||
-
-    `
-      <p class="section-note">
-        هنوز باتنی ثبت نشده است.
-      </p>
-    `;
-
-
-  /* ---------- اسناد ---------- */
-
-  $("docsList").innerHTML=
-
-    S.docs.map((d,i)=>`
-
-      <div class="item">
-
-        <div class="item-head">
-
-          <div>
-
-            <span class="item-index">
-              سند ${i+1}
-            </span>
-
-          </div>
-
-
-          <button
-            class="delete-x"
-            data-del-doc="${esc(d.id)}"
-            title="حذف سند"
-          >
-            ×
-          </button>
-
-        </div>
-
-
-        <div class="grid">
-
-          <div class="field">
-
-            <label>
-              عنوان سند
-            </label>
-
-            <input
-              data-d="${esc(d.id)}"
-              data-k="title"
-              value="${esc(d.title)}"
-            >
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              لینک فایل / URL
-            </label>
-
-            <input
-              data-d="${esc(d.id)}"
-              data-k="file_url"
-              value="${esc(d.file_url||d.url||"")}"
-              placeholder="https://..."
-            >
-
-          </div>
-
-        </div>
-
-      </div>
-
-    `).join("")
-
-    ||
-
-    `
-      <p class="section-note">
-        هنوز سندی ثبت نشده است.
-      </p>
-    `;
-}
-
-
-/* =========================
-   هماهنگ کردن فرم با حافظه
-========================= */
-
-function sync(){
-
-  document
-    .querySelectorAll("[data-n]")
-    .forEach(x=>{
-
-      const o=
-        S.news.find(
-          v=>String(v.id)===x.dataset.n
-        );
-
-      if(o){
-
-        o[x.dataset.k]=x.value;
-
-      }
-
-    });
-
-
-  document
-    .querySelectorAll("[data-b]")
-    .forEach(x=>{
-
-      const o=
-        S.buttons.find(
-          v=>String(v.id)===x.dataset.b
-        );
-
-      if(o){
-
-        o[x.dataset.k]=x.value;
-
-      }
-
-    });
-
-
-  document
-    .querySelectorAll("[data-d]")
-    .forEach(x=>{
-
-      const o=
-        S.docs.find(
-          v=>String(v.id)===x.dataset.d
-        );
-
-      if(o){
-
-        o[x.dataset.k]=x.value;
-
-      }
-
-    });
-
-}
-
-
-/* =========================
-   ذخیره محتوای عمومی
-========================= */
-
-async function upsertContent(
-  key,
-  value
-){
-
-  const old=
-    S.content[key];
-
-
-  if(old?.id){
-
-    return await c
-      .from("site_content")
-      .update({
-        value
-      })
-      .eq(
-        "id",
-        old.id
+    $("ashayerTitle").value =
+      getContent(
+        "ashayer_title",
+        "عشایر؛ سرمایه ملّی"
       );
 
-  }
-
-
-  return await c
-    .from("site_content")
-    .insert({
-      key,
-      value
-    });
-
-}
-
-
-/* =========================
-   ذخیره کل پنل
-========================= */
-
-async function save(){
-
-  sync();
-
-  setMsg(
-    "saveMsg",
-    "در حال ذخیره تغییرات..."
-  );
-
-
-  const jobs=[];
-
-
-  const values={
-
-    site_title:
-      $("siteTitle").value,
-
-    logo_right:
-      $("logoRight").value,
-
-    logo_left:
-      $("logoLeft").value,
-
-    ashayer_title:
-      $("ashayerTitle").value,
-
-    ashayer_excerpt:
-      $("ashayerExcerpt").value,
-
-    ashayer_body:
-      $("ashayerBody").value,
-
-    cooperative_title:
-      $("coopTitle").value,
-
-    cooperative_excerpt:
-      $("coopExcerpt").value,
-
-    cooperative_body:
-      $("coopBody").value,
-
-    about_title:
-      $("aboutTitle").value,
-
-    about_body:
-      $("aboutBody").value
-
-  };
-
-
-  for(
-    const [k,v]
-    of Object.entries(values)
-  ){
-
-    jobs.push(
-      upsertContent(k,v)
-    );
-
-  }
-
-
-  /* اخبار */
-
-  for(
-    const n
-    of S.news
-  ){
-
-    const x={
-
-      title:n.title,
-
-      excerpt:n.excerpt,
-
-      content:n.content,
-
-      image_url:n.image_url
-
-    };
-
-
-    jobs.push(
-
-      n._new
-
-        ? c
-            .from("news")
-            .insert(x)
-
-        : c
-            .from("news")
-            .update(x)
-            .eq("id",n.id)
-
-    );
-
-  }
-
-
-  /* باتن‌ها */
-
-  for(
-    const b
-    of S.buttons
-  ){
-
-    const x={
-
-      label:b.label,
-
-      target:b.target,
-
-      sort_order:
-        S.buttons.indexOf(b)
-
-    };
-
-
-    jobs.push(
-
-      b._new
-
-        ? c
-            .from("site_buttons")
-            .insert(x)
-
-        : c
-            .from("site_buttons")
-            .update(x)
-            .eq("id",b.id)
-
-    );
-
-  }
-
-
-  /* اسناد */
-
-  for(
-    const d
-    of S.docs
-  ){
-
-    const x={
-
-      title:d.title,
-
-      file_url:d.file_url
-
-    };
-
-
-    jobs.push(
-
-      d._new
-
-        ? c
-            .from("documents")
-            .insert(x)
-
-        : c
-            .from("documents")
-            .update(x)
-            .eq("id",d.id)
-
-    );
-
-  }
-
-
-  const results=
-    await Promise.all(jobs);
-
-
-  const bad=
-    results.find(
-      r=>r.error
-    );
-
-
-  if(bad){
-
-    setMsg(
-      "saveMsg",
-      "خطا: "+bad.error.message,
-      true
-    );
-
-    return;
-  }
-
-
-  setMsg(
-    "saveMsg",
-    "✓ همه تغییرات با موفقیت ذخیره شد."
-  );
-
-
-  await load();
-
-
-  setTimeout(
-    ()=>{
-      setMsg(
-        "saveMsg",
+    $("ashayerExcerpt").value =
+      getContent(
+        "ashayer_excerpt",
         ""
       );
-    },
-    3500
-  );
 
-}
-
-
-/* =========================
-   حذف خبر
-========================= */
-
-async function deleteNews(id){
-
-  if(
-    String(id).startsWith("new-")
-  ){
-
-    S.news=
-      S.news.filter(
-        x=>String(x.id)!==String(id)
+    $("ashayerBody").value =
+      getContent(
+        "ashayer_body",
+        ""
       );
 
-    render();
 
-    return;
-  }
-
-
-  const {error}=
-    await c
-      .from("news")
-      .delete()
-      .eq("id",id);
-
-
-  if(error){
-
-    setMsg(
-      "saveMsg",
-      "خطا در حذف خبر: "+error.message,
-      true
-    );
-
-    return;
-  }
-
-
-  S.news=
-    S.news.filter(
-      x=>String(x.id)!==String(id)
-    );
-
-
-  render();
-
-
-  setMsg(
-    "saveMsg",
-    "خبر حذف شد."
-  );
-
-}
-
-
-/* =========================
-   حذف باتن
-========================= */
-
-async function deleteButton(id){
-
-  if(
-    String(id).startsWith("new-")
-  ){
-
-    S.buttons=
-      S.buttons.filter(
-        x=>String(x.id)!==String(id)
+    $("coopTitle").value =
+      getContent(
+        "cooperative_title",
+        "چگونگی تعاونی"
       );
 
-    render();
-
-    return;
-  }
-
-
-  const {error}=
-    await c
-      .from("site_buttons")
-      .delete()
-      .eq("id",id);
-
-
-  if(error){
-
-    setMsg(
-      "saveMsg",
-      "خطا در حذف باتن: "+error.message,
-      true
-    );
-
-    return;
-  }
-
-
-  S.buttons=
-    S.buttons.filter(
-      x=>String(x.id)!==String(id)
-    );
-
-
-  render();
-
-
-  setMsg(
-    "saveMsg",
-    "باتن حذف شد."
-  );
-
-}
-
-
-/* =========================
-   حذف سند
-========================= */
-
-async function deleteDoc(id){
-
-  if(
-    String(id).startsWith("new-")
-  ){
-
-    S.docs=
-      S.docs.filter(
-        x=>String(x.id)!==String(id)
+    $("coopExcerpt").value =
+      getContent(
+        "cooperative_excerpt",
+        ""
       );
 
-    render();
+    $("coopBody").value =
+      getContent(
+        "cooperative_body",
+        ""
+      );
 
-    return;
   }
 
 
-  const {error}=
-    await c
-      .from("documents")
-      .delete()
-      .eq("id",id);
+  /*
+   * ---------------------------------------------------------
+   * DOCUMENTS
+   * ---------------------------------------------------------
+   */
+
+  function renderDocs() {
+
+    const list =
+      $("docsList");
+
+    if (!list) return;
+
+    if (!S.docs.length) {
+
+      list.innerHTML =
+        `<p style="color:#687386">
+          هنوز سندی ثبت نشده است.
+        </p>`;
+
+      return;
+    }
 
 
-  if(error){
+    list.innerHTML =
+      S.docs.map(
+        (d, index) => {
 
-    setMsg(
-      "saveMsg",
-      "خطا در حذف سند: "+error.message,
-      true
-    );
+          return `
 
-    return;
+            <article
+              class="item"
+              data-doc-item="${esc(d.id)}"
+            >
+
+              <div class="item-head">
+
+                <div>
+
+                  <div class="item-title">
+                    سند ${index + 1}
+                  </div>
+
+                  <div class="item-sub">
+                    فایل فعلی:
+                    ${
+                      d.file_url
+                        ? "ثبت شده"
+                        : "ندارد"
+                    }
+                  </div>
+
+                </div>
+
+                <button
+                  class="delete-x"
+                  type="button"
+                  data-delete-doc="${esc(d.id)}"
+                  title="حذف سند"
+                >
+                  ×
+                </button>
+
+              </div>
+
+
+              <div class="field">
+
+                <label>
+                  عنوان سند
+                </label>
+
+                <input
+                  data-doc-id="${esc(d.id)}"
+                  data-doc-key="title"
+                  value="${esc(d.title)}"
+                >
+
+              </div>
+
+
+              <div class="file-picker">
+
+                <strong>
+                  انتخاب فایل سند
+                </strong>
+
+                <span>
+                  PDF، تصویر یا هر فایل مورد نیاز را مستقیم انتخاب کن.
+                </span>
+
+                <input
+                  type="file"
+                  accept=".pdf,image/*,.doc,.docx,.xls,.xlsx"
+                  data-doc-file="${esc(d.id)}"
+                >
+
+                <div
+                  class="selected-file"
+                  id="doc-file-name-${esc(d.id)}"
+                ></div>
+
+              </div>
+
+            </article>
+
+          `;
+
+        }
+      ).join("");
   }
 
 
-  S.docs=
-    S.docs.filter(
-      x=>String(x.id)!==String(id)
-    );
+  function syncDocs() {
 
+    document
+      .querySelectorAll("[data-doc-id]")
+      .forEach(input => {
 
-  render();
+        const id =
+          String(input.dataset.docId);
 
+        const item =
+          S.docs.find(
+            x => String(x.id) === id
+          );
 
-  setMsg(
-    "saveMsg",
-    "سند حذف شد."
-  );
+        if (item) {
+          item[
+            input.dataset.docKey
+          ] = input.value;
+        }
 
-}
+      });
+  }
 
 
-/* =========================
-   افزودن خبر
-========================= */
+  /*
+   * ---------------------------------------------------------
+   * ABOUT / FOOTER
+   * ---------------------------------------------------------
+   */
 
-function addNews(){
+  function renderAbout() {
 
-  S.news.unshift({
+    $("aboutTitle").value =
+      getContent(
+        "about_title",
+        "درباره ما"
+      );
 
-    id:"new-"+Date.now(),
+    $("aboutBody").value =
+      getContent(
+        "about_body",
+        ""
+      );
 
-    title:"خبر جدید",
+    $("supervisionLabel").value =
+      getContent(
+        "supervision_label",
+        "تحت نظارت"
+      );
 
-    excerpt:"",
+    $("supervisionName").value =
+      getContent(
+        "supervision_name",
+        "سازمان امور عشایر ایران"
+      );
+  }
 
-    content:"",
 
-    image_url:"",
+  function renderFooter() {
 
-    _new:true
+    $("footerTitle").value =
+      getContent(
+        "footer_title",
+        "شرکت تعاونی عشایری کوه نور کهگیلویه"
+      );
 
-  });
+    $("footerSubtitle").value =
+      getContent(
+        "footer_subtitle",
+        "پایگاه اطلاع‌رسانی و معرفی شرکت"
+      );
 
+    $("footerNote").value =
+      getContent(
+        "footer_note",
+        "© تمامی حقوق این وب‌سایت محفوظ است."
+      );
 
-  render();
+  }
 
 
-  window.scrollTo({
+  /*
+   * ---------------------------------------------------------
+   * CONTENT SAVE HELPERS
+   * ---------------------------------------------------------
+   */
 
-    top:document.body.scrollHeight,
+  function contentValue(key) {
 
-    behavior:"smooth"
+    const map = {
 
-  });
+      site_title:
+        $("siteTitle").value,
 
-}
+      logo_right:
+        S.content.logo_right?.value || "",
 
+      logo_left:
+        S.content.logo_left?.value || "",
 
-/* =========================
-   افزودن باتن
-========================= */
+      ashayer_title:
+        $("ashayerTitle").value,
 
-function addButton(){
+      ashayer_excerpt:
+        $("ashayerExcerpt").value,
 
-  S.buttons.push({
+      ashayer_body:
+        $("ashayerBody").value,
 
-    id:"new-"+Date.now(),
+      cooperative_title:
+        $("coopTitle").value,
 
-    label:"باتن جدید",
+      cooperative_excerpt:
+        $("coopExcerpt").value,
 
-    target:"",
+      cooperative_body:
+        $("coopBody").value,
 
-    _new:true
+      about_title:
+        $("aboutTitle").value,
 
-  });
+      about_body:
+        $("aboutBody").value,
 
+      supervision_label:
+        $("supervisionLabel").value,
 
-  render();
+      supervision_name:
+        $("supervisionName").value,
 
+      footer_title:
+        $("footerTitle").value,
 
-  window.scrollTo({
+      footer_subtitle:
+        $("footerSubtitle").value,
 
-    top:document.body.scrollHeight,
+      footer_note:
+        $("footerNote").value
 
-    behavior:"smooth"
-
-  });
-
-}
-
-
-/* =========================
-   افزودن سند
-========================= */
-
-function addDoc(){
-
-  S.docs.push({
-
-    id:"new-"+Date.now(),
-
-    title:"سند جدید",
-
-    file_url:"",
-
-    _new:true
-
-  });
-
-
-  render();
-
-
-  window.scrollTo({
-
-    top:document.body.scrollHeight,
-
-    behavior:"smooth"
-
-  });
-
-}
-
-
-/* =========================
-   دکمه‌های پنل
-========================= */
-
-$("sendOtp").onclick=send;
-
-$("resendOtp").onclick=send;
-
-$("verifyOtp").onclick=verify;
-
-
-$("logout").onclick=
-  async()=>{
-    await c.auth.signOut();
-    hide();
-  };
-
-
-if($("viewSite")){
-
-  $("viewSite").onclick=
-    ()=>{
-      location.href="/";
     };
 
-}
-
-
-$("addNews").onclick=addNews;
-
-if($("addNewsBottom"))
-  $("addNewsBottom").onclick=addNews;
-
-
-$("addButton").onclick=addButton;
-
-if($("addButtonBottom"))
-  $("addButtonBottom").onclick=addButton;
-
-
-$("addDoc").onclick=addDoc;
-
-if($("addDocBottom"))
-  $("addDocBottom").onclick=addDoc;
-
-
-$("saveAll").onclick=save;
-
-
-/* =========================
-   پیش‌نمایش زنده هدر
-========================= */
-
-$("siteTitle")?.addEventListener(
-  "input",
-  ()=>{
-    if($("titlePreview"))
-      $("titlePreview").textContent=
-        $("siteTitle").value;
+    return map[key] ?? "";
   }
-);
 
 
-$("logoLeft")?.addEventListener(
-  "input",
-  ()=>{
-    if($("leftPreview"))
-      $("leftPreview").src=
-        $("logoLeft").value;
+  async function upsertContent(
+    key,
+    value
+  ) {
+
+    const existing =
+      S.content[key];
+
+    if (existing?.id) {
+
+      return client
+        .from("site_content")
+        .update({
+          value
+        })
+        .eq(
+          "id",
+          existing.id
+        );
+
+    }
+
+    return client
+      .from("site_content")
+      .insert({
+        key,
+        value
+      });
   }
-);
 
 
-$("logoRight")?.addEventListener(
-  "input",
-  ()=>{
-    if($("rightPreview"))
-      $("rightPreview").src=
-        $("logoRight").value;
-  }
-);
+  /*
+   * ---------------------------------------------------------
+   * SAVE EVERYTHING
+   * ---------------------------------------------------------
+   */
+
+  async function save() {
+
+    syncNewsFields();
+    syncButtons();
+    syncDocs();
 
 
-/* =========================
-   حذف‌ها
-========================= */
+    const saveButton =
+      $("saveAll");
 
-document.addEventListener(
-  "click",
-  e=>{
+    saveButton?.classList.add("saving");
 
-    if(e.target.dataset.delNews){
+    if (saveButton) {
+      saveButton.textContent =
+        "در حال ذخیره همه تغییرات...";
+    }
 
-      deleteNews(
-        e.target.dataset.delNews
+    setSaveMsg(
+      "در حال ذخیره..."
+    );
+
+
+    try {
+
+      /*
+       * -----------------------------------------------------
+       * UPLOAD HEADER LOGOS
+       * -----------------------------------------------------
+       */
+
+      const rightFile =
+        $("rightLogoFile")?.files?.[0];
+
+      const leftFile =
+        $("leftLogoFile")?.files?.[0];
+
+
+      if (rightFile) {
+
+        const url =
+          await uploadFile(
+            rightFile,
+            "logos"
+          );
+
+        S.content.logo_right = {
+          ...(S.content.logo_right || {}),
+          value: url
+        };
+
+      }
+
+
+      if (leftFile) {
+
+        const url =
+          await uploadFile(
+            leftFile,
+            "logos"
+          );
+
+        S.content.logo_left = {
+          ...(S.content.logo_left || {}),
+          value: url
+        };
+
+      }
+
+
+      /*
+       * -----------------------------------------------------
+       * CONTENT
+       * -----------------------------------------------------
+       */
+
+      const contentKeys = [
+
+        "site_title",
+
+        "logo_right",
+        "logo_left",
+
+        "ashayer_title",
+        "ashayer_excerpt",
+        "ashayer_body",
+
+        "cooperative_title",
+        "cooperative_excerpt",
+        "cooperative_body",
+
+        "about_title",
+        "about_body",
+
+        "supervision_label",
+        "supervision_name",
+
+        "footer_title",
+        "footer_subtitle",
+        "footer_note"
+
+      ];
+
+
+      for (const key of contentKeys) {
+
+        const result =
+          await upsertContent(
+            key,
+            contentValue(key)
+          );
+
+        if (result.error) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+       * -----------------------------------------------------
+       * NEWS
+       * -----------------------------------------------------
+       */
+
+      for (const n of S.news) {
+
+        if (
+          pendingDeletes.news.has(
+            String(n.id)
+          )
+        ) {
+          continue;
+        }
+
+
+        let imageUrl =
+          normalizeNewsImage(n);
+
+
+        const file =
+          document.querySelector(
+            `[data-news-file="${CSS.escape(String(n.id))}"]`
+          )?.files?.[0];
+
+
+        if (file) {
+
+          imageUrl =
+            await uploadFile(
+              file,
+              "news"
+            );
+
+        }
+
+
+        const payload = {
+
+          title:
+            n.title || "",
+
+          excerpt:
+            n.excerpt ||
+            n.text ||
+            "",
+
+          content:
+            n.content ||
+            n.body ||
+            "",
+
+          image_url:
+            imageUrl || ""
+
+        };
+
+
+        /*
+         * بعضی نسخه‌های قدیمی سایت فیلد text
+         * را هم استفاده می‌کنند.
+         */
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            n,
+            "text"
+          )
+        ) {
+          payload.text =
+            payload.excerpt;
+        }
+
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            n,
+            "body"
+          )
+        ) {
+          payload.body =
+            payload.content;
+        }
+
+
+        let result;
+
+
+        if (
+          String(n.id).startsWith("new-")
+        ) {
+
+          result =
+            await client
+              .from("news")
+              .insert(payload);
+
+        } else {
+
+          result =
+            await client
+              .from("news")
+              .update(payload)
+              .eq(
+                "id",
+                n.id
+              );
+
+        }
+
+
+        if (result.error) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+       * DELETE NEWS
+       */
+
+      for (
+        const id of pendingDeletes.news
+      ) {
+
+        if (
+          String(id).startsWith("new-")
+        ) {
+          continue;
+        }
+
+        const result =
+          await client
+            .from("news")
+            .delete()
+            .eq("id", id);
+
+        if (result.error) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+       * -----------------------------------------------------
+       * BUTTONS
+       * -----------------------------------------------------
+       */
+
+      for (
+        let i = 0;
+        i < S.buttons.length;
+        i++
+      ) {
+
+        const b =
+          S.buttons[i];
+
+        if (
+          pendingDeletes.buttons.has(
+            String(b.id)
+          )
+        ) {
+          continue;
+        }
+
+
+        const target =
+          b.target ||
+          b.target_value ||
+          b.section_slug ||
+          "ashayer";
+
+
+        /*
+         * ساخت payload بر اساس ساختار فعلی
+         * و در عین حال حفظ فیلدهای موجود.
+         */
+
+        const payload = {
+
+          label:
+            b.label ||
+            b.title ||
+            "",
+
+          target,
+
+          sort_order:
+            i
+
+        };
+
+
+        /*
+         * اگر جدول نسخه جدید این فیلدها را داشته باشد
+         * مقدارشان نیز تنظیم می‌شود.
+         */
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            b,
+            "section_slug"
+          )
+        ) {
+          payload.section_slug =
+            target;
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            b,
+            "target_value"
+          )
+        ) {
+          payload.target_value =
+            target;
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            b,
+            "target_type"
+          )
+        ) {
+          payload.target_type =
+            "content";
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            b,
+            "enabled"
+          )
+        ) {
+          payload.enabled = true;
+        }
+
+
+        let result;
+
+
+        if (
+          String(b.id).startsWith("new-")
+        ) {
+
+          result =
+            await client
+              .from("site_buttons")
+              .insert(payload);
+
+        } else {
+
+          result =
+            await client
+              .from("site_buttons")
+              .update(payload)
+              .eq(
+                "id",
+                b.id
+              );
+
+        }
+
+
+        if (result.error) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+       * DELETE BUTTONS
+       */
+
+      for (
+        const id of pendingDeletes.buttons
+      ) {
+
+        if (
+          String(id).startsWith("new-")
+        ) {
+          continue;
+        }
+
+        const result =
+          await client
+            .from("site_buttons")
+            .delete()
+            .eq("id", id);
+
+        if (result.error) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+       * -----------------------------------------------------
+       * DOCUMENTS
+       * -----------------------------------------------------
+       */
+
+      for (const d of S.docs) {
+
+        if (
+          pendingDeletes.docs.has(
+            String(d.id)
+          )
+        ) {
+          continue;
+        }
+
+
+        let fileUrl =
+          d.file_url ||
+          d.url ||
+          "";
+
+
+        const file =
+          document.querySelector(
+            `[data-doc-file="${CSS.escape(String(d.id))}"]`
+          )?.files?.[0];
+
+
+        if (file) {
+
+          fileUrl =
+            await uploadFile(
+              file,
+              "documents"
+            );
+
+        }
+
+
+        const payload = {
+
+          title:
+            d.title ||
+            "سند جدید",
+
+          file_url:
+            fileUrl
+
+        };
+
+
+        /*
+         * اگر نسخه‌ای از جدول url داشته باشد،
+         * آن را هم هماهنگ می‌کنیم.
+         */
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            d,
+            "url"
+          )
+        ) {
+          payload.url =
+            fileUrl;
+        }
+
+
+        let result;
+
+
+        if (
+          String(d.id).startsWith("new-")
+        ) {
+
+          result =
+            await client
+              .from("documents")
+              .insert(payload);
+
+        } else {
+
+          result =
+            await client
+              .from("documents")
+              .update(payload)
+              .eq(
+                "id",
+                d.id
+              );
+
+        }
+
+
+        if (result.error) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+       * DELETE DOCUMENTS
+       */
+
+      for (
+        const id of pendingDeletes.docs
+      ) {
+
+        if (
+          String(id).startsWith("new-")
+        ) {
+          continue;
+        }
+
+        const result =
+          await client
+            .from("documents")
+            .delete()
+            .eq("id", id);
+
+        if (result.error) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+       * RESET
+       */
+
+      pendingDeletes = {
+        news: new Set(),
+        buttons: new Set(),
+        docs: new Set()
+      };
+
+
+      if ($("rightLogoFile")) {
+        $("rightLogoFile").value = "";
+      }
+
+      if ($("leftLogoFile")) {
+        $("leftLogoFile").value = "";
+      }
+
+
+      setSaveMsg(
+        "✓ همه تغییرات با موفقیت ذخیره شد.",
+        "ok"
       );
 
-    }
+
+      await load();
 
 
-    if(e.target.dataset.delButton){
+    } catch (error) {
 
-      deleteButton(
-        e.target.dataset.delButton
+      console.error(error);
+
+      setSaveMsg(
+        "خطا هنگام ذخیره: " +
+        (error?.message || error),
+        "error"
       );
 
-    }
+    } finally {
 
+      saveButton?.classList.remove("saving");
 
-    if(e.target.dataset.delDoc){
-
-      deleteDoc(
-        e.target.dataset.delDoc
-      );
+      if (saveButton) {
+        saveButton.textContent =
+          "✓ تأیید و ذخیره همه تغییرات";
+      }
 
     }
 
   }
-);
 
 
-/* =========================
-   وضعیت ورود
-========================= */
+  /*
+   * ---------------------------------------------------------
+   * ADD
+   * ---------------------------------------------------------
+   */
 
-c.auth.onAuthStateChange(
-  (event,sessionUser)=>{
+  function addNews() {
 
-    if(event==="SIGNED_OUT"){
+    S.news.unshift({
 
-      hide();
+      id:
+        "new-" +
+        Date.now(),
 
-    }
+      title:
+        "خبر جدید",
 
-    else if(
-      event==="SIGNED_IN" &&
-      isOwner(sessionUser?.user)
-    ){
+      excerpt:
+        "",
 
-      show();
+      content:
+        "",
 
-    }
+      image_url:
+        "",
+
+      _new:
+        true
+
+    });
+
+    renderNews();
+
+    window.scrollTo({
+      top:
+        document.body.scrollHeight,
+      behavior:
+        "smooth"
+    });
 
   }
-);
 
 
-/* =========================
-   شروع
-========================= */
+  function addButton() {
 
-session();
+    S.buttons.push({
+
+      id:
+        "new-" +
+        Date.now(),
+
+      label:
+        "باتن جدید",
+
+      target:
+        "ashayer",
+
+      sort_order:
+        S.buttons.length,
+
+      _new:
+        true
+
+    });
+
+    renderButtons();
+
+    window.scrollTo({
+      top:
+        document.body.scrollHeight,
+      behavior:
+        "smooth"
+    });
+
+  }
+
+
+  function addDoc() {
+
+    S.docs.push({
+
+      id:
+        "new-" +
+        Date.now(),
+
+      title:
+        "سند جدید",
+
+      file_url:
+        "",
+
+      _new:
+        true
+
+    });
+
+    renderDocs();
+
+    window.scrollTo({
+      top:
+        document.body.scrollHeight,
+      behavior:
+        "smooth"
+    });
+
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * DELETE
+   * ---------------------------------------------------------
+   */
+
+  function deleteNews(id) {
+
+    const ok =
+      confirm(
+        "آیا از حذف این خبر مطمئن هستید؟"
+      );
+
+    if (!ok) return;
+
+
+    pendingDeletes.news.add(
+      String(id)
+    );
+
+
+    S.news =
+      S.news.filter(
+        n =>
+          String(n.id) !==
+          String(id)
+      );
+
+
+    renderNews();
+
+    setSaveMsg(
+      "خبر برای حذف علامت‌گذاری شد. برای نهایی شدن، ذخیره را بزن."
+    );
+
+  }
+
+
+  function deleteButton(id) {
+
+    const ok =
+      confirm(
+        "آیا از حذف این باتن مطمئن هستید؟"
+      );
+
+    if (!ok) return;
+
+
+    pendingDeletes.buttons.add(
+      String(id)
+    );
+
+
+    S.buttons =
+      S.buttons.filter(
+        b =>
+          String(b.id) !==
+          String(id)
+      );
+
+
+    renderButtons();
+
+    setSaveMsg(
+      "باتن برای حذف علامت‌گذاری شد. برای نهایی شدن، ذخیره را بزن."
+    );
+
+  }
+
+
+  function deleteDoc(id) {
+
+    const ok =
+      confirm(
+        "آیا از حذف این سند مطمئن هستید؟"
+      );
+
+    if (!ok) return;
+
+
+    pendingDeletes.docs.add(
+      String(id)
+    );
+
+
+    S.docs =
+      S.docs.filter(
+        d =>
+          String(d.id) !==
+          String(id)
+      );
+
+
+    renderDocs();
+
+    setSaveMsg(
+      "سند برای حذف علامت‌گذاری شد. برای نهایی شدن، ذخیره را بزن."
+    );
+
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * LOGO DELETE
+   * ---------------------------------------------------------
+   */
+
+  function removeLogo(key, previewId) {
+
+    const ok =
+      confirm(
+        "آیا می‌خواهید این لوگو حذف شود؟"
+      );
+
+    if (!ok) return;
+
+
+    if (!S.content[key]) {
+
+      S.content[key] = {
+        key,
+        value: ""
+      };
+
+    } else {
+
+      S.content[key].value = "";
+
+    }
+
+
+    renderLogo(
+      previewId,
+      ""
+    );
+
+  }
+
+
+  /*
+   * ---------------------------------------------------------
+   * EVENTS
+   * ---------------------------------------------------------
+   */
+
+  $("sendOtp")?.addEventListener(
+    "click",
+    sendOtp
+  );
+
+  $("resendOtp")?.addEventListener(
+    "click",
+    sendOtp
+  );
+
+  $("verifyOtp")?.addEventListener(
+    "click",
+    verifyOtp
+  );
+
+  $("changeEmail")?.addEventListener(
+    "click",
+    changeEmail
+  );
+
+  $("logout")?.addEventListener(
+    "click",
+    logout
+  );
+
+  $("viewSite")?.addEventListener(
+    "click",
+    () => {
+      window.open(
+        "/",
+        "_blank"
+      );
+    }
+  );
+
+  $("addNews")?.addEventListener(
+    "click",
+    addNews
+  );
+
+  $("addNewsBottom")?.addEventListener(
+    "click",
+    addNews
+  );
+
+  $("addButton")?.addEventListener(
+    "click",
+    addButton
+  );
+
+  $("addButtonBottom")?.addEventListener(
+    "click",
+    addButton
+  );
+
+  $("addDoc")?.addEventListener(
+    "click",
+    addDoc
+  );
+
+  $("addDocBottom")?.addEventListener(
+    "click",
+    addDoc
+  );
+
+  $("saveAll")?.addEventListener(
+    "click",
+    save
+  );
+
+
+  $("removeRightLogo")?.addEventListener(
+    "click",
+    () =>
+      removeLogo(
+        "logo_right",
+        "rightLogoPreview"
+      )
+  );
+
+
+  $("removeLeftLogo")?.addEventListener(
+    "click",
+    () =>
+      removeLogo(
+        "logo_left",
+        "leftLogoPreview"
+      )
+  );
+
+
+  /*
+   * NEWS DELETE
+   */
+
+  document.addEventListener(
+    "click",
+    event => {
+
+      const news =
+        event.target.closest(
+          "[data-delete-news]"
+        );
+
+      if (news) {
+        deleteNews(
+          news.dataset.deleteNews
+        );
+        return;
+      }
+
+
+      const button =
+        event.target.closest(
+          "[data-delete-button]"
+        );
+
+      if (button) {
+        deleteButton(
+          button.dataset.deleteButton
+        );
+        return;
+      }
+
+
+      const doc =
+        event.target.closest(
+          "[data-delete-doc]"
+        );
+
+      if (doc) {
+        deleteDoc(
+          doc.dataset.deleteDoc
+        );
+
+      }
+
+    }
+  );
+
+
+  /*
+   * FILE PREVIEW
+   */
+
+  document.addEventListener(
+    "change",
+    event => {
+
+      const input =
+        event.target;
+
+
+      if (
+        input.matches(
+          "[data-news-file]"
+        )
+      ) {
+
+        const file =
+          input.files?.[0];
+
+        const id =
+          input.dataset.newsFile;
+
+        const label =
+          $(
+            "news-file-name-" +
+            id
+          );
+
+        if (label) {
+
+          label.textContent =
+            file
+              ? "انتخاب شد: " +
+                file.name
+              : "";
+
+        }
+
+        return;
+      }
+
+
+      if (
+        input.matches(
+          "[data-doc-file]"
+        )
+      ) {
+
+        const file =
+          input.files?.[0];
+
+        const id =
+          input.dataset.docFile;
+
+        const label =
+          $(
+            "doc-file-name-" +
+            id
+          );
+
+        if (label) {
+
+          label.textContent =
+            file
+              ? "انتخاب شد: " +
+                file.name
+              : "";
+
+        }
+
+        return;
+      }
+
+
+      if (
+        input.id ===
+        "rightLogoFile"
+      ) {
+
+        const file =
+          input.files?.[0];
+
+        if (!file) return;
+
+        const reader =
+          new FileReader();
+
+        reader.onload =
+          () => {
+
+            renderLogo(
+              "rightLogoPreview",
+              reader.result
+            );
+
+          };
+
+        reader.readAsDataURL(file);
+
+        return;
+      }
+
+
+      if (
+        input.id ===
+        "leftLogoFile"
+      ) {
+
+        const file =
+          input.files?.[0];
+
+        if (!file) return;
+
+        const reader =
+          new FileReader();
+
+        reader.onload =
+          () => {
+
+            renderLogo(
+              "leftLogoPreview",
+              reader.result
+            );
+
+          };
+
+        reader.readAsDataURL(file);
+
+      }
+
+    }
+  );
+
+
+  /*
+   * ENTER LOGIN
+   */
+
+  $("emailInput")?.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key ===
+        "Enter"
+      ) {
+
+        event.preventDefault();
+
+        sendOtp();
+
+      }
+
+    }
+  );
+
+
+  $("otpInput")?.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key ===
+        "Enter"
+      ) {
+
+        event.preventDefault();
+
+        verifyOtp();
+
+      }
+
+    }
+  );
+
+
+  /*
+   * AUTH STATE
+   */
+
+  client.auth.onAuthStateChange(
+    (event, session) => {
+
+      if (
+        event ===
+        "SIGNED_OUT"
+      ) {
+
+        hideLogin();
+
+        return;
+      }
+
+
+      if (
+        event ===
+          "SIGNED_IN" &&
+        isOwner(
+          session?.user
+        )
+      ) {
+
+        showPanel();
+
+      }
+
+    }
+  );
+
+
+  /*
+   * START
+   */
+
+  (async () => {
+
+    /*
+     * مهم:
+     * session قبلی عمداً پاک می‌شود
+     * تا پنل بدون ایمیل و کد باز نشود.
+     */
+
+    await forceFreshLogin();
+
+  })();
 
 })();
