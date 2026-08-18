@@ -1,188 +1,402 @@
--- Kohenor final security migration
--- Run once in Supabase SQL Editor.
--- This migration is idempotent: existing policies with these names are removed first.
+/* =========================================================
+   KOHENOR — SUPABASE SECURITY
+   Owner:
+   farrokhzad743@gmail.com
+   ========================================================= */
 
-alter table public.owner_access enable row level security;
+
+/* =========================================================
+   OWNER CHECK
+   ========================================================= */
+
+create or replace function public.kohenor_is_owner()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select lower(
+    coalesce(
+      auth.jwt() ->> 'email',
+      ''
+    )
+  ) = 'farrokhzad743@gmail.com';
+$$;
+
+revoke all
+on function public.kohenor_is_owner()
+from public;
+
+grant execute
+on function public.kohenor_is_owner()
+to authenticated;
+
+
+/* =========================================================
+   ENABLE RLS
+   ========================================================= */
+
 alter table public.site_content enable row level security;
 alter table public.news enable row level security;
+alter table public.site_documents enable row level security;
+alter table public.site_buttons enable row level security;
 
--- owner_access is never publicly readable. An authenticated owner can only read their own row.
-drop policy if exists "owner read access list" on public.owner_access;
-create policy "owner read own access" on public.owner_access
-for select to authenticated
-using (
-  lower(email) = lower(coalesce(auth.jwt()->>'email', ''))
-  and enabled = true
-);
 
--- No INSERT/UPDATE/DELETE policies are intentionally created for owner_access.
--- Owner access is managed from the Supabase dashboard / trusted SQL, not the public app.
+/* =========================================================
+   REMOVE OLD POLICIES
+   Only policies on these four site tables are removed.
+   ========================================================= */
 
--- Public website: read only.
-drop policy if exists "public read site content" on public.site_content;
-create policy "public read site content" on public.site_content
-for select to anon, authenticated
+
+/* site_content */
+
+drop policy if exists "site content public read"
+on public.site_content;
+
+drop policy if exists "site content owner insert"
+on public.site_content;
+
+drop policy if exists "site content owner update"
+on public.site_content;
+
+drop policy if exists "site content owner delete"
+on public.site_content;
+
+drop policy if exists "owner read site content"
+on public.site_content;
+
+drop policy if exists "owner insert site content"
+on public.site_content;
+
+drop policy if exists "owner update site content"
+on public.site_content;
+
+drop policy if exists "owner delete site content"
+on public.site_content;
+
+
+/* news */
+
+drop policy if exists "news public read"
+on public.news;
+
+drop policy if exists "news owner insert"
+on public.news;
+
+drop policy if exists "news owner update"
+on public.news;
+
+drop policy if exists "news owner delete"
+on public.news;
+
+drop policy if exists "owner read news"
+on public.news;
+
+drop policy if exists "owner insert news"
+on public.news;
+
+drop policy if exists "owner update news"
+on public.news;
+
+drop policy if exists "owner delete news"
+on public.news;
+
+
+/* site_documents */
+
+drop policy if exists "documents public read"
+on public.site_documents;
+
+drop policy if exists "documents owner insert"
+on public.site_documents;
+
+drop policy if exists "documents owner update"
+on public.site_documents;
+
+drop policy if exists "documents owner delete"
+on public.site_documents;
+
+drop policy if exists "owner read documents"
+on public.site_documents;
+
+drop policy if exists "owner insert documents"
+on public.site_documents;
+
+drop policy if exists "owner update documents"
+on public.site_documents;
+
+drop policy if exists "owner delete documents"
+on public.site_documents;
+
+
+/* site_buttons */
+
+drop policy if exists "buttons public read"
+on public.site_buttons;
+
+drop policy if exists "buttons owner insert"
+on public.site_buttons;
+
+drop policy if exists "buttons owner update"
+on public.site_buttons;
+
+drop policy if exists "buttons owner delete"
+on public.site_buttons;
+
+drop policy if exists "owner read buttons"
+on public.site_buttons;
+
+drop policy if exists "owner insert buttons"
+on public.site_buttons;
+
+drop policy if exists "owner update buttons"
+on public.site_buttons;
+
+drop policy if exists "owner delete buttons"
+on public.site_buttons;
+
+
+/* =========================================================
+   SITE CONTENT POLICIES
+   ========================================================= */
+
+create policy "site content public read"
+on public.site_content
+for select
+to anon, authenticated
 using (true);
 
-drop policy if exists "public read news" on public.news;
-create policy "public read news" on public.news
-for select to anon, authenticated
+
+create policy "site content owner insert"
+on public.site_content
+for insert
+to authenticated
+with check (
+  public.kohenor_is_owner()
+);
+
+
+create policy "site content owner update"
+on public.site_content
+for update
+to authenticated
+using (
+  public.kohenor_is_owner()
+)
+with check (
+  public.kohenor_is_owner()
+);
+
+
+create policy "site content owner delete"
+on public.site_content
+for delete
+to authenticated
+using (
+  public.kohenor_is_owner()
+);
+
+
+/* =========================================================
+   NEWS POLICIES
+   ========================================================= */
+
+create policy "news public read"
+on public.news
+for select
+to anon, authenticated
 using (true);
 
--- Approved owner: full content management.
-drop policy if exists "approved owner insert content" on public.site_content;
-create policy "approved owner insert content" on public.site_content
-for insert to authenticated
+
+create policy "news owner insert"
+on public.news
+for insert
+to authenticated
 with check (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 );
 
-drop policy if exists "approved owner update content" on public.site_content;
-create policy "approved owner update content" on public.site_content
-for update to authenticated
+
+create policy "news owner update"
+on public.news
+for update
+to authenticated
 using (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 )
 with check (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 );
 
-drop policy if exists "approved owner delete content" on public.site_content;
-create policy "approved owner delete content" on public.site_content
-for delete to authenticated
+
+create policy "news owner delete"
+on public.news
+for delete
+to authenticated
 using (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 );
 
-drop policy if exists "approved owner insert news" on public.news;
-create policy "approved owner insert news" on public.news
-for insert to authenticated
+
+/* =========================================================
+   DOCUMENT POLICIES
+   ========================================================= */
+
+create policy "documents public read"
+on public.site_documents
+for select
+to anon, authenticated
+using (true);
+
+
+create policy "documents owner insert"
+on public.site_documents
+for insert
+to authenticated
 with check (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 );
 
-drop policy if exists "approved owner update news" on public.news;
-create policy "approved owner update news" on public.news
-for update to authenticated
+
+create policy "documents owner update"
+on public.site_documents
+for update
+to authenticated
 using (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 )
 with check (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 );
 
-drop policy if exists "approved owner delete news" on public.news;
-create policy "approved owner delete news" on public.news
-for delete to authenticated
+
+create policy "documents owner delete"
+on public.site_documents
+for delete
+to authenticated
 using (
-  exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  public.kohenor_is_owner()
 );
 
--- Public media bucket: read only for everyone; writes only for approved owners.
-insert into storage.buckets (id, name, public)
-values ('site-media', 'site-media', true)
-on conflict (id) do update set public = true;
 
-drop policy if exists "public read site media" on storage.objects;
-create policy "public read site media" on storage.objects
-for select to anon, authenticated
-using (bucket_id = 'site-media');
+/* =========================================================
+   BUTTON POLICIES
+   ========================================================= */
 
-drop policy if exists "approved owner upload site media" on storage.objects;
-create policy "approved owner upload site media" on storage.objects
-for insert to authenticated
+create policy "buttons public read"
+on public.site_buttons
+for select
+to anon, authenticated
+using (true);
+
+
+create policy "buttons owner insert"
+on public.site_buttons
+for insert
+to authenticated
+with check (
+  public.kohenor_is_owner()
+);
+
+
+create policy "buttons owner update"
+on public.site_buttons
+for update
+to authenticated
+using (
+  public.kohenor_is_owner()
+)
+with check (
+  public.kohenor_is_owner()
+);
+
+
+create policy "buttons owner delete"
+on public.site_buttons
+for delete
+to authenticated
+using (
+  public.kohenor_is_owner()
+);
+
+
+/* =========================================================
+   STORAGE
+   Bucket:
+   site-media
+   ========================================================= */
+
+
+/* Remove only our possible old site-media policies. */
+
+drop policy if exists "site media public read"
+on storage.objects;
+
+drop policy if exists "site media owner upload"
+on storage.objects;
+
+drop policy if exists "site media owner update"
+on storage.objects;
+
+drop policy if exists "site media owner delete"
+on storage.objects;
+
+drop policy if exists "site media owner insert"
+on storage.objects;
+
+
+/* Public can view website images. */
+
+create policy "site media public read"
+on storage.objects
+for select
+to anon, authenticated
+using (
+  bucket_id = 'site-media'
+);
+
+
+/* Owner can upload images. */
+
+create policy "site media owner upload"
+on storage.objects
+for insert
+to authenticated
 with check (
   bucket_id = 'site-media'
-  and name like 'news/%'
-  and exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  and public.kohenor_is_owner()
 );
 
-drop policy if exists "approved owner update site media" on storage.objects;
-create policy "approved owner update site media" on storage.objects
-for update to authenticated
+
+/* Owner can replace/update images. */
+
+create policy "site media owner update"
+on storage.objects
+for update
+to authenticated
 using (
   bucket_id = 'site-media'
-  and name like 'news/%'
-  and exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  and public.kohenor_is_owner()
 )
 with check (
   bucket_id = 'site-media'
-  and name like 'news/%'
-  and exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  and public.kohenor_is_owner()
 );
 
-drop policy if exists "approved owner delete site media" on storage.objects;
-create policy "approved owner delete site media" on storage.objects
-for delete to authenticated
+
+/* Owner can delete images. */
+
+create policy "site media owner delete"
+on storage.objects
+for delete
+to authenticated
 using (
   bucket_id = 'site-media'
-  and name like 'news/%'
-  and exists (
-    select 1
-    from public.owner_access a
-    where lower(a.email) = lower(coalesce(auth.jwt()->>'email', ''))
-      and a.enabled = true
-  )
+  and public.kohenor_is_owner()
 );
 
--- Ensure the intended owner exists and is enabled.
-insert into public.owner_access (email, enabled)
-values
-  ('farrokhzad743@gmail.com', true),
-  ('mrparvareh8@gmail.com', true)
-on conflict (email) do update set enabled = true;
+
+/* =========================================================
+   FINAL
+   ========================================================= */
