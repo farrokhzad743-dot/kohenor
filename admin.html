@@ -1,176 +1,1150 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>مدیریت پایگاه داده | کوه نور</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-:root{--blue:#1645b5;--blue2:#0d3da9;--red:#df2736;--ink:#10244b;--muted:#6f7787;--bg:#f5f8ff;--line:#dfe6f2}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif}
-button,input,textarea{font-family:inherit}
-.hidden{display:none!important}
-.admin-shell{max-width:1120px;margin:auto;padding:20px 16px 45px}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 18px}
-.brand-admin{font-weight:800;font-size:26px;color:var(--blue)}
-.sub-admin{color:var(--muted);font-size:13px;margin-top:4px}
-.btn{border:0;border-radius:15px;padding:12px 18px;font-weight:800;font-size:15px;cursor:pointer}
-.btn-blue{background:var(--blue);color:#fff}.btn-red{background:var(--red);color:#fff}.btn-light{background:#eaf0ff;color:var(--blue)}
-.btn-add{display:flex;align-items:center;gap:8px;justify-content:center;min-height:52px}
-.card{background:#fff;border:1px solid var(--line);border-radius:26px;padding:20px;margin:16px 0;box-shadow:0 12px 34px rgba(18,54,120,.07)}
-.card-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.card-title h2{font-size:23px;margin:0;color:var(--ink)}
-.section-note{color:var(--muted);font-size:13px;margin:-8px 0 15px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}
-.field label{font-weight:800;font-size:14px}
-.field input,.field textarea{width:100%;border:1px solid #d5deed;background:#fff;border-radius:16px;padding:12px 14px;font-size:15px;outline:none}
-.field input:focus,.field textarea:focus{border-color:#7f9fe9;box-shadow:0 0 0 3px #eaf0ff}
-.field textarea{min-height:120px;resize:vertical;line-height:1.9}
-.locked{background:#f0f2f6!important;color:#777!important}
-.item{position:relative;border:1px solid #dfe6f2;border-radius:22px;padding:18px;margin:14px 0;background:#fbfcff}
-.item-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
-.item-head strong{font-size:17px}
-.delete-x{width:38px;height:38px;border:0;border-radius:50%;background:var(--red);color:#fff;font-size:25px;line-height:1;cursor:pointer;box-shadow:0 5px 14px rgba(223,39,54,.2)}
-.item-index{display:inline-flex;min-width:34px;height:28px;padding:0 9px;align-items:center;justify-content:center;border-radius:999px;background:#eaf0ff;color:var(--blue);font-size:12px;font-weight:800}
-.preview-box{border-radius:22px;background:linear-gradient(180deg,#fff,#f7faff);border:1px solid #e1e7f1;padding:16px}
-.preview-header{display:grid;grid-template-columns:120px 1fr 120px;align-items:center;gap:12px}
-.preview-logo{height:90px;display:flex;align-items:center;justify-content:center;border:1px dashed #cbd5e5;border-radius:18px;overflow:hidden}
-.preview-logo img{max-width:100%;max-height:85px;object-fit:contain}
-.preview-title{text-align:center;font-size:25px;font-weight:800;color:#123b93}
-.preview-line{height:3px;background:#1645b5;border-radius:9px;margin:8px auto 0;max-width:460px}
-.news-admin-card{display:grid;grid-template-columns:1fr;gap:12px}
-.news-cover{width:100%;aspect-ratio:16/8;object-fit:cover;border-radius:18px;background:#edf2f8}
-.actions{display:flex;gap:9px;flex-wrap:wrap}
-.add-under{width:100%;margin-top:12px}
-.savebar{position:sticky;bottom:12px;z-index:20;background:rgba(245,248,255,.94);backdrop-filter:blur(10px);padding-top:10px}
-.savebar button{width:100%;min-height:60px;font-size:18px}
-.msg{min-height:22px;text-align:center;font-weight:700;color:#16703c;margin:8px 0}
-.login-card{max-width:480px;margin:70px auto}.login-card h1{text-align:center;color:var(--blue);font-size:27px}
-.login-note{text-align:center;color:var(--muted);line-height:1.9}
-.visit{margin-top:10px}
-@media(max-width:700px){
- .admin-shell{padding:12px 12px 36px}.brand-admin{font-size:21px}.topbar{align-items:flex-start}
- .grid{grid-template-columns:1fr}.field.full{grid-column:auto}
- .preview-header{grid-template-columns:70px 1fr 70px}.preview-logo{height:65px}.preview-logo img{max-height:60px}.preview-title{font-size:17px}
- .card{border-radius:22px;padding:15px}.card-title h2{font-size:20px}.btn{padding:11px 14px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+  <title>مدیریت | شرکت تعاونی عشایری کوه نور</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root{
+      --blue:#123fae;
+      --blue2:#0d3293;
+      --red:#df2939;
+      --green:#16834b;
+      --dark:#14213d;
+      --gray:#687386;
+      --line:#e2e7f0;
+      --bg:#f5f8fc;
+      --white:#fff;
+      --shadow:0 12px 35px rgba(25,55,110,.10);
+      --radius:22px;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+      background:
+        linear-gradient(180deg,#f7faff 0%,#f4f7fc 100%);
+      color:var(--dark);
+      font-family:Vazirmatn,Tahoma,sans-serif;
+    }
+
+    button,
+    input,
+    textarea,
+    select{
+      font-family:inherit;
+    }
+
+    button{
+      cursor:pointer;
+    }
+
+    .hidden{
+      display:none!important;
+    }
+
+    .container{
+      width:min(1080px,calc(100% - 28px));
+      margin:auto;
+    }
+
+    /* LOGIN */
+
+    .login-page{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:25px 14px;
+    }
+
+    .login-card{
+      width:min(470px,100%);
+      background:#fff;
+      border-radius:28px;
+      padding:30px 24px;
+      box-shadow:var(--shadow);
+      border:1px solid var(--line);
+    }
+
+    .login-logo{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .login-logo strong{
+      display:block;
+      color:var(--blue);
+      font-size:25px;
+      font-weight:800;
+    }
+
+    .login-logo span{
+      display:block;
+      color:var(--gray);
+      margin-top:7px;
+      font-size:14px;
+    }
+
+    .login-card h1{
+      margin:0 0 8px;
+      font-size:25px;
+    }
+
+    .login-card p{
+      color:var(--gray);
+      line-height:2;
+      margin:0 0 22px;
+    }
+
+    .field{
+      margin-bottom:16px;
+    }
+
+    .field label{
+      display:block;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .field input,
+    .field textarea,
+    .field select{
+      width:100%;
+      border:1px solid #d8dfeb;
+      border-radius:15px;
+      padding:13px 14px;
+      background:#fff;
+      color:var(--dark);
+      outline:none;
+      font-size:15px;
+      transition:.2s;
+    }
+
+    .field textarea{
+      min-height:135px;
+      resize:vertical;
+      line-height:2;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus{
+      border-color:var(--blue);
+      box-shadow:0 0 0 4px rgba(18,63,174,.08);
+    }
+
+    .btn{
+      border:0;
+      border-radius:15px;
+      padding:13px 18px;
+      font-size:15px;
+      font-weight:800;
+      transition:.2s;
+    }
+
+    .btn:active{
+      transform:scale(.98);
+    }
+
+    .btn-blue{
+      background:var(--blue);
+      color:#fff;
+    }
+
+    .btn-blue:hover{
+      background:var(--blue2);
+    }
+
+    .btn-red{
+      background:var(--red);
+      color:#fff;
+    }
+
+    .btn-light{
+      background:#edf3ff;
+      color:var(--blue);
+    }
+
+    .btn-green{
+      background:var(--green);
+      color:#fff;
+    }
+
+    .full{
+      width:100%;
+    }
+
+    .login-actions{
+      display:flex;
+      gap:9px;
+      flex-wrap:wrap;
+    }
+
+    .login-actions .btn{
+      flex:1;
+      min-width:140px;
+    }
+
+    .status{
+      margin-top:14px;
+      padding:11px 13px;
+      border-radius:12px;
+      font-size:14px;
+      line-height:1.8;
+      min-height:20px;
+    }
+
+    .status.error{
+      color:#a81826;
+      background:#fff0f1;
+    }
+
+    .status.ok{
+      color:#126b3f;
+      background:#eaf9f1;
+    }
+
+    /* ADMIN */
+
+    .admin-page{
+      padding:18px 0 100px;
+    }
+
+    .admin-header{
+      background:#fff;
+      border-bottom:1px solid var(--line);
+      margin-bottom:18px;
+    }
+
+    .admin-header-inner{
+      min-height:86px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+    }
+
+    .admin-brand h1{
+      margin:0;
+      font-size:24px;
+      font-weight:800;
+      color:var(--blue);
+    }
+
+    .admin-brand p{
+      margin:5px 0 0;
+      color:var(--gray);
+      font-size:13px;
+    }
+
+    .header-actions{
+      display:flex;
+      gap:8px;
+    }
+
+    /* SECTIONS */
+
+    .admin-section{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      margin-bottom:18px;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .section-title h2{
+      margin:0;
+      font-size:21px;
+    }
+
+    .section-title p{
+      margin:5px 0 0;
+      color:var(--gray);
+      font-size:13px;
+    }
+
+    .section-title .btn{
+      white-space:nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:15px;
+    }
+
+    .grid-full{
+      grid-column:1/-1;
+    }
+
+    /* HEADER EDITOR */
+
+    .logo-editor{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    .logo-box{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:15px;
+      background:#fbfcff;
+    }
+
+    .logo-preview{
+      height:125px;
+      border-radius:14px;
+      background:#fff;
+      border:1px dashed #ccd5e5;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      margin-bottom:12px;
+    }
+
+    .logo-preview img{
+      max-width:90%;
+      max-height:105px;
+      object-fit:contain;
+    }
+
+    .empty-preview{
+      color:#9aa5b7;
+      font-size:13px;
+    }
+
+    /* ITEM */
+
+    .item{
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      margin-top:13px;
+      background:#fff;
+    }
+
+    .item:first-child{
+      margin-top:0;
+    }
+
+    .item-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .item-title{
+      font-size:17px;
+      font-weight:800;
+    }
+
+    .item-sub{
+      color:var(--gray);
+      font-size:12px;
+      margin-top:4px;
+    }
+
+    .delete-x{
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:50%;
+      background:var(--red);
+      color:#fff;
+      font-size:25px;
+      line-height:1;
+      font-weight:400;
+      flex:none;
+    }
+
+    .image-preview{
+      width:100%;
+      max-height:240px;
+      object-fit:cover;
+      border-radius:16px;
+      margin:4px 0 14px;
+      border:1px solid var(--line);
+    }
+
+    .file-picker{
+      border:2px dashed #cbd5e7;
+      background:#f8faff;
+      border-radius:17px;
+      padding:16px;
+      text-align:center;
+      margin-bottom:15px;
+    }
+
+    .file-picker strong{
+      display:block;
+      color:var(--blue);
+      margin-bottom:5px;
+    }
+
+    .file-picker span{
+      color:var(--gray);
+      font-size:12px;
+    }
+
+    .file-picker input{
+      margin-top:12px;
+      width:100%;
+    }
+
+    .selected-file{
+      margin-top:9px;
+      color:var(--green);
+      font-size:13px;
+      word-break:break-word;
+    }
+
+    /* BUTTONS */
+
+    .site-button-item{
+      background:linear-gradient(135deg,#1648bc,#10399f);
+      color:#fff;
+      border-radius:18px;
+      padding:15px;
+      margin-top:12px;
+    }
+
+    .site-button-item .item-head{
+      margin-bottom:10px;
+    }
+
+    .site-button-item .item-title{
+      color:#fff;
+    }
+
+    .site-button-item .field label{
+      color:#fff;
+    }
+
+    .site-button-item input,
+    .site-button-item select{
+      background:#fff;
+    }
+
+    .site-button-item .delete-x{
+      background:#e3293b;
+    }
+
+    /* CONTENT */
+
+    .content-preview{
+      border-right:5px solid var(--blue);
+      padding:10px 15px;
+      margin-bottom:16px;
+      background:#f7f9fd;
+      border-radius:12px;
+      color:#536075;
+      line-height:2;
+    }
+
+    /* SAVE */
+
+    .save-area{
+      position:sticky;
+      bottom:12px;
+      z-index:20;
+      background:rgba(245,248,252,.92);
+      backdrop-filter:blur(12px);
+      padding:10px 0;
+    }
+
+    .save-all{
+      width:100%;
+      border:0;
+      border-radius:20px;
+      padding:18px;
+      background:var(--blue);
+      color:#fff;
+      font-size:18px;
+      font-weight:800;
+      box-shadow:0 12px 30px rgba(18,63,174,.28);
+    }
+
+    .save-all.saving{
+      opacity:.7;
+      pointer-events:none;
+    }
+
+    /* MOBILE */
+
+    @media(max-width:700px){
+
+      .container{
+        width:calc(100% - 22px);
+      }
+
+      .admin-page{
+        padding-top:8px;
+      }
+
+      .admin-header-inner{
+        min-height:auto;
+        padding:12px 0;
+        align-items:flex-start;
+      }
+
+      .admin-brand h1{
+        font-size:19px;
+      }
+
+      .admin-brand p{
+        font-size:11px;
+      }
+
+      .header-actions .btn{
+        padding:10px 12px;
+        font-size:13px;
+      }
+
+      .admin-section{
+        padding:15px;
+        border-radius:20px;
+      }
+
+      .section-title{
+        align-items:flex-start;
+      }
+
+      .section-title h2{
+        font-size:19px;
+      }
+
+      .section-title .btn{
+        padding:10px 11px;
+        font-size:12px;
+      }
+
+      .grid,
+      .logo-editor{
+        grid-template-columns:1fr;
+      }
+
+      .grid-full{
+        grid-column:auto;
+      }
+
+      .item{
+        padding:13px;
+      }
+
+      .field input,
+      .field textarea,
+      .field select{
+        font-size:14px;
+      }
+
+      .login-card{
+        padding:24px 18px;
+      }
+
+      .login-logo strong{
+        font-size:21px;
+      }
+
+      .save-all{
+        font-size:16px;
+        padding:16px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<section id="loginView" class="admin-shell">
-  <div class="card login-card">
+<!-- LOGIN -->
+
+<section id="loginView" class="login-page">
+
+  <div class="login-card">
+
+    <div class="login-logo">
+      <strong>شرکت تعاونی عشایری کوه نور</strong>
+      <span>پنل مدیریت پایگاه اطلاع‌رسانی</span>
+    </div>
+
     <h1>ورود مالک</h1>
-    <p class="login-note">ورود به مدیریت فقط برای ایمیل مالک مجاز است. کد یک‌بارمصرف به ایمیل مالک ارسال می‌شود.</p>
+
+    <p>
+      ورود فقط برای ایمیل مالک مجاز است.
+      برای ورود، یک کد یک‌بارمصرف به ایمیل مالک ارسال می‌شود.
+    </p>
+
     <div class="field">
-      <label>ایمیل مالک</label>
-      <input id="emailInput" type="email" value="farrokhzad743@gmail.com" autocomplete="email">
+      <label for="emailInput">ایمیل مالک</label>
+      <input
+        id="emailInput"
+        type="email"
+        value="farrokhzad743@gmail.com"
+        autocomplete="email"
+      >
     </div>
-    <div class="actions" style="margin-top:12px">
-      <button id="sendOtp" class="btn btn-blue">ارسال کد ورود</button>
-      <button id="resendOtp" class="btn btn-light hidden">ارسال دوباره کد</button>
+
+    <div class="login-actions">
+
+      <button
+        id="sendOtp"
+        class="btn btn-blue"
+        type="button"
+      >
+        ارسال کد ورود
+      </button>
+
+      <button
+        id="resendOtp"
+        class="btn btn-light hidden"
+        type="button"
+      >
+        ارسال دوباره کد
+      </button>
+
     </div>
-    <div id="otpBox" class="hidden" style="margin-top:14px">
+
+    <div
+      id="otpBox"
+      class="hidden"
+      style="margin-top:15px"
+    >
+
       <div class="field">
-        <label>کد ورود</label>
-        <input id="otpInput" inputmode="numeric" maxlength="8" autocomplete="one-time-code">
+        <label for="otpInput">کد ورود</label>
+
+        <input
+          id="otpInput"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          maxlength="8"
+          placeholder="کد ارسال‌شده به ایمیل"
+        >
       </div>
-      <button id="verifyOtp" class="btn btn-blue" style="width:100%;margin-top:10px">ورود به پنل مدیریت</button>
+
+      <button
+        id="verifyOtp"
+        class="btn btn-blue full"
+        type="button"
+      >
+        ورود به پنل مدیریت
+      </button>
+
     </div>
-    <p id="loginMsg" class="msg"></p>
+
+    <button
+      id="changeEmail"
+      class="btn btn-light full"
+      type="button"
+      style="margin-top:10px"
+    >
+      تغییر ایمیل
+    </button>
+
+    <div id="loginMsg" class="status"></div>
+
   </div>
+
 </section>
 
-<main id="panelView" class="admin-shell hidden">
-  <div class="topbar">
-    <div>
-      <div class="brand-admin">مدیریت پایگاه داده کوه نور</div>
-      <div class="sub-admin">ظاهر پنل بر اساس ساختار خود سایت طراحی شده است.</div>
-    </div>
-    <div class="actions">
-      <button id="viewSite" class="btn btn-light">مشاهده سایت</button>
-      <button id="logout" class="btn btn-red">خروج</button>
-    </div>
-  </div>
 
-  <section class="card">
-    <div class="card-title"><h2>هدر سایت</h2></div>
-    <p class="section-note">عنوان و لوگوها قابل تغییرند؛ تاریخ عمداً قفل است.</p>
-    <div class="preview-box">
-      <div class="preview-header">
-        <div class="preview-logo"><img id="leftPreview" alt=""></div>
-        <div><div id="titlePreview" class="preview-title">شرکت تعاونی عشایری کوه نور کهگیلویه</div><div class="preview-line"></div></div>
-        <div class="preview-logo"><img id="rightPreview" alt=""></div>
+<!-- ADMIN -->
+
+<section id="panelView" class="hidden">
+
+  <header class="admin-header">
+
+    <div class="container admin-header-inner">
+
+      <div class="admin-brand">
+
+        <h1>مدیریت سایت کوه نور</h1>
+
+        <p>
+          تمام تغییرات سایت از همین‌جا مدیریت می‌شود.
+        </p>
+
       </div>
+
+      <div class="header-actions">
+
+        <button
+          id="viewSite"
+          class="btn btn-light"
+          type="button"
+        >
+          مشاهده سایت
+        </button>
+
+        <button
+          id="logout"
+          class="btn btn-red"
+          type="button"
+        >
+          خروج
+        </button>
+
+      </div>
+
     </div>
-    <div class="grid" style="margin-top:16px">
-      <div class="field"><label>عنوان هدر</label><input id="siteTitle"></div>
-      <div class="field"><label>تاریخ سایت</label><input id="siteDate" class="locked" readonly disabled></div>
-      <div class="field"><label>لوگوی سمت راست — URL</label><input id="logoRight" placeholder="https://..."></div>
-      <div class="field"><label>لوگوی سمت چپ — URL</label><input id="logoLeft" placeholder="https://..."></div>
+
+  </header>
+
+
+  <main class="admin-page">
+
+    <div class="container">
+
+
+      <!-- HEADER -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>هدر سایت</h2>
+            <p>ظاهر بالای سایت را از این قسمت کنترل کن.</p>
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="field grid-full">
+
+            <label>عنوان سایت</label>
+
+            <input
+              id="siteTitle"
+              type="text"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>تاریخ سایت</label>
+
+            <input
+              id="siteDate"
+              type="text"
+              readonly
+              disabled
+            >
+
+            <small class="hint">
+              تاریخ توسط سیستم تعیین می‌شود و قابل تغییر نیست.
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="logo-editor">
+
+          <div class="logo-box">
+
+            <label>
+              لوگوی سمت راست
+            </label>
+
+            <div
+              id="rightLogoPreview"
+              class="logo-preview"
+            ></div>
+
+            <input
+              id="rightLogoFile"
+              type="file"
+              accept="image/*"
+            >
+
+            <button
+              id="removeRightLogo"
+              type="button"
+              class="btn btn-red full"
+              style="margin-top:10px"
+            >
+              حذف لوگوی سمت راست
+            </button>
+
+          </div>
+
+
+          <div class="logo-box">
+
+            <label>
+              لوگوی سمت چپ
+            </label>
+
+            <div
+              id="leftLogoPreview"
+              class="logo-preview"
+            ></div>
+
+            <input
+              id="leftLogoFile"
+              type="file"
+              accept="image/*"
+            >
+
+            <button
+              id="removeLeftLogo"
+              type="button"
+              class="btn btn-red full"
+              style="margin-top:10px"
+            >
+              حذف لوگوی سمت چپ
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- NEWS -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>اخبار</h2>
+            <p>
+              خبرهای موجود را ویرایش کن یا خبر جدید اضافه کن.
+            </p>
+          </div>
+
+          <button
+            id="addNews"
+            class="btn btn-blue"
+            type="button"
+          >
+            ＋ اضافه کردن خبر
+          </button>
+
+        </div>
+
+        <div id="newsList"></div>
+
+        <button
+          id="addNewsBottom"
+          class="btn btn-blue full"
+          type="button"
+          style="margin-top:15px"
+        >
+          ＋ اضافه کردن خبر جدید
+        </button>
+
+      </section>
+
+
+      <!-- BUTTONS -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>باتن‌های صفحه اصلی</h2>
+            <p>
+              همان دکمه‌های آبی صفحه اصلی را مدیریت کن.
+            </p>
+          </div>
+
+          <button
+            id="addButton"
+            class="btn btn-blue"
+            type="button"
+          >
+            ＋ افزودن باتن
+          </button>
+
+        </div>
+
+        <div id="buttonsList"></div>
+
+        <button
+          id="addButtonBottom"
+          class="btn btn-blue full"
+          type="button"
+          style="margin-top:15px"
+        >
+          ＋ اضافه کردن باتن دیگر
+        </button>
+
+      </section>
+
+
+      <!-- ASHAYER -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>عشایر؛ سرمایه ملّی</h2>
+            <p>متن این بخش مستقیماً از سایت قابل ویرایش است.</p>
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="field grid-full">
+            <label>عنوان</label>
+            <input id="ashayerTitle">
+          </div>
+
+          <div class="field grid-full">
+            <label>خلاصه</label>
+            <textarea id="ashayerExcerpt"></textarea>
+          </div>
+
+          <div class="field grid-full">
+            <label>متن کامل</label>
+            <textarea id="ashayerBody"></textarea>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- COOPERATIVE -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>چگونگی تعاونی</h2>
+            <p>عنوان، خلاصه و متن کامل قابل تغییر است.</p>
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="field grid-full">
+            <label>عنوان</label>
+            <input id="coopTitle">
+          </div>
+
+          <div class="field grid-full">
+            <label>خلاصه</label>
+            <textarea id="coopExcerpt"></textarea>
+          </div>
+
+          <div class="field grid-full">
+            <label>متن کامل</label>
+            <textarea id="coopBody"></textarea>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- DOCUMENTS -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>اسناد و مدارک</h2>
+            <p>
+              فایل را مستقیماً از گوشی یا کامپیوتر انتخاب کن.
+            </p>
+          </div>
+
+          <button
+            id="addDoc"
+            class="btn btn-blue"
+            type="button"
+          >
+            ＋ افزودن سند
+          </button>
+
+        </div>
+
+        <div id="docsList"></div>
+
+        <button
+          id="addDocBottom"
+          class="btn btn-blue full"
+          type="button"
+          style="margin-top:15px"
+        >
+          ＋ اضافه کردن سند دیگر
+        </button>
+
+      </section>
+
+
+      <!-- ABOUT -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>درباره ما</h2>
+            <p>محتوای بخش درباره ما را تغییر بده.</p>
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="field grid-full">
+
+            <label>عنوان</label>
+
+            <input id="aboutTitle">
+
+          </div>
+
+          <div class="field grid-full">
+
+            <label>متن</label>
+
+            <textarea id="aboutBody"></textarea>
+
+          </div>
+
+          <div class="field">
+
+            <label>متن «تحت نظارت»</label>
+
+            <input id="supervisionLabel">
+
+          </div>
+
+          <div class="field">
+
+            <label>نام سازمان</label>
+
+            <input id="supervisionName">
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- FOOTER -->
+
+      <section class="admin-section">
+
+        <div class="section-title">
+
+          <div>
+            <h2>پاورقی سایت</h2>
+            <p>متن پایین سایت را نیز می‌توانی تغییر بدهی.</p>
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="field">
+
+            <label>عنوان پاورقی</label>
+
+            <input id="footerTitle">
+
+          </div>
+
+          <div class="field">
+
+            <label>زیرعنوان پاورقی</label>
+
+            <input id="footerSubtitle">
+
+          </div>
+
+          <div class="field grid-full">
+
+            <label>متن حقوق</label>
+
+            <input id="footerNote">
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- SAVE -->
+
+      <div class="save-area">
+
+        <button
+          id="saveAll"
+          class="save-all"
+          type="button"
+        >
+          ✓ تأیید و ذخیره همه تغییرات
+        </button>
+
+        <div
+          id="saveMsg"
+          class="status"
+        ></div>
+
+      </div>
+
     </div>
-  </section>
 
-  <section class="card">
-    <div class="card-title"><h2>اخبار</h2><button id="addNews" class="btn btn-blue btn-add">＋ اضافه کردن خبر</button></div>
-    <p class="section-note">هر خبر یک کارت مستقل دارد. با × همان خبر حذف می‌شود و با دکمه پایین خبر جدید اضافه می‌کنی.</p>
-    <div id="newsList"></div>
-    <button id="addNewsBottom" class="btn btn-light add-under">＋ اضافه کردن خبر دیگر</button>
-  </section>
+  </main>
 
-  <section class="card">
-    <div class="card-title"><h2>دکمه‌های صفحه اصلی</h2><button id="addButton" class="btn btn-blue btn-add">＋ افزودن باتن</button></div>
-    <p class="section-note">دکمه‌های آبی صفحه اصلی از اینجا مدیریت می‌شوند؛ ترتیب آن‌ها همان ترتیب نمایش در سایت است.</p>
-    <div id="buttonsList"></div>
-    <button id="addButtonBottom" class="btn btn-light add-under">＋ افزودن باتن دیگر</button>
-  </section>
+</section>
 
-  <section class="card">
-    <div class="card-title"><h2>عشایر؛ سرمایه ملّی</h2></div>
-    <div class="grid">
-      <div class="field"><label>عنوان</label><input id="ashayerTitle"></div>
-      <div class="field"><label>خلاصه</label><textarea id="ashayerExcerpt"></textarea></div>
-      <div class="field full"><label>متن کامل</label><textarea id="ashayerBody"></textarea></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="card-title"><h2>چگونگی تعاونی</h2></div>
-    <div class="grid">
-      <div class="field"><label>عنوان</label><input id="coopTitle"></div>
-      <div class="field"><label>خلاصه</label><textarea id="coopExcerpt"></textarea></div>
-      <div class="field full"><label>متن کامل</label><textarea id="coopBody"></textarea></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="card-title"><h2>اسناد و مدارک</h2><button id="addDoc" class="btn btn-blue btn-add">＋ افزودن سند</button></div>
-    <p class="section-note">عنوان و لینک هر سند قابل تغییر است. × سند را حذف می‌کند.</p>
-    <div id="docsList"></div>
-    <button id="addDocBottom" class="btn btn-light add-under">＋ افزودن سند دیگر</button>
-  </section>
-
-  <section class="card">
-    <div class="card-title"><h2>درباره ما</h2></div>
-    <div class="grid">
-      <div class="field"><label>عنوان</label><input id="aboutTitle"></div>
-      <div class="field"><label>متن</label><textarea id="aboutBody"></textarea></div>
-    </div>
-  </section>
-
-  <div class="savebar">
-    <button id="saveAll" class="btn btn-blue">✓ تأیید و ذخیره تمام تنظیمات</button>
-    <p id="saveMsg" class="msg"></p>
-  </div>
-</main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="config.js"></script>
+
 <script src="admin.js"></script>
+
 </body>
 </html>
