@@ -1,526 +1,76 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-  <meta name="description" content="شرکت تعاونی عشایری کوه نور کهگیلویه - اخبار، رویدادها، اسناد و معرفی تعاونی">
-
-  <title>شرکت تعاونی عشایری کوه نور کهگیلویه</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap"
-    rel="stylesheet"
-  >
-
-  <link rel="stylesheet" href="style.css">
-
-  <style>
-    /* =========================
-       DOCUMENT VIEWER
-       ========================= */
-
-    .document-viewer {
-      width: 100%;
-      margin-top: 24px;
-      min-height: 200px;
-    }
-
-    .document-frame {
-      width: 100%;
-      background: #fff;
-      border: 1px solid rgba(20,55,140,.12);
-      border-radius: 24px;
-      padding: 14px;
-      box-sizing: border-box;
-      box-shadow: 0 15px 40px rgba(10,40,120,.08);
-    }
-
-    .document-image-wrap {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #f7f9ff;
-      border-radius: 18px;
-      overflow: hidden;
-    }
-
-    .document-image {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      object-fit: contain;
-      border-radius: 14px;
-    }
-
-    .document-pdf {
-      width: 100%;
-      height: 75vh;
-      min-height: 650px;
-      border: 0;
-      border-radius: 16px;
-      background: #fff;
-    }
-
-    .document-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .document-download {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 0 22px;
-      border-radius: 14px;
-      background: #123ba8;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 700;
-      box-sizing: border-box;
-    }
-
-    .document-open-source {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 0 22px;
-      border-radius: 14px;
-      background: #eef2ff;
-      color: #123ba8;
-      text-decoration: none;
-      font-weight: 700;
-      box-sizing: border-box;
-    }
-
-    .document-loading {
-      padding: 35px 20px;
-      text-align: center;
-      color: #18346f;
-      font-weight: 600;
-    }
-
-    .document-error {
-      padding: 30px 20px;
-      text-align: center;
-      color: #9b1c1c;
-      background: #fff5f5;
-      border-radius: 16px;
-      line-height: 2;
-    }
-
-    /* =========================
-       NEWS IMAGE FIX
-       ========================= */
-
-    .news-card img,
-    .news-item img,
-    .news-image,
-    .article-image,
-    .news-cover {
-      max-width: 100%;
-      height: auto;
-      object-fit: cover;
-    }
-
-    .news-image-loading {
-      width: 100%;
-      min-height: 220px;
-      border-radius: 20px;
-      background: #f1f4ff;
-    }
-
-    /* =========================
-       ADMIN LINK
-       ========================= */
-
-    .database-admin-link {
-      position: absolute;
-      left: 22px;
-      bottom: 22px;
-
-      width: 28px;
-      height: 28px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      color: rgba(255,255,255,.28);
-
-      text-decoration: none;
-
-      font-size: 15px;
-
-      border-radius: 50%;
-
-      transition:
-        opacity .2s ease,
-        color .2s ease,
-        background .2s ease;
-    }
-
-    .database-admin-link:hover {
-      color: rgba(255,255,255,.75);
-      background: rgba(255,255,255,.08);
-    }
-
-    @media (max-width:700px) {
-
-      .database-admin-link {
-        left: 16px;
-        bottom: 16px;
-      }
-
-      .document-pdf {
-        min-height: 550px;
-        height: 70vh;
-      }
-
-      .document-frame {
-        padding: 8px;
-        border-radius: 18px;
-      }
-
-      .document-actions {
-        flex-direction: column;
-      }
-
-      .document-download,
-      .document-open-source {
-        width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="شرکت تعاونی عشایری کوه نور کهگیلویه - اخبار، رویدادها، اسناد و معرفی تعاونی">
+<title>شرکت تعاونی عشایری کوه نور کهگیلویه</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
 <header class="site-header">
   <div class="brand-row container">
-
     <div class="brand-side">
-      <a
-        href="https://ashayer.ir"
-        target="_blank"
-        rel="noopener"
-        aria-label="پورتال رسمی سازمان امور عشایر ایران"
-      >
-        <img
-          src="https://s6.uupload.ir/files/picsart_26-08-12_20-56-50-770_ahhz.png"
-          alt="لوگوی سازمان امور عشایر ایران"
-        >
+      <a href="https://ashayer.ir" target="_blank" rel="noopener" aria-label="پورتال رسمی سازمان امور عشایر ایران">
+        <img src="https://s6.uupload.ir/files/picsart_26-08-12_20-56-50-770_ahhz.png" alt="لوگوی سازمان امور عشایر ایران">
       </a>
     </div>
-
-    <div class="brand-title">
-      <div class="persian-title">
-        شرکت تعاونی عشایری کوه نور کهگیلویه
-      </div>
-
-      <div class="title-line"></div>
-    </div>
-
-    <div class="brand-side">
-      <img
-        src="https://s6.uupload.ir/files/1786554350546_9ait.png"
-        alt="لوگوی شرکت تعاونی عشایری کوه نور"
-      >
-    </div>
-
+    <div class="brand-title"><div class="persian-title">شرکت تعاونی عشایری کوه نور کهگیلویه</div><div class="title-line"></div></div>
+    <div class="brand-side"><img src="https://s6.uupload.ir/files/1786554350546_9ait.png" alt="لوگوی شرکت تعاونی عشایری کوه نور"></div>
   </div>
 </header>
-
-
 <main>
-
-  <!-- =========================
-       NEWS
-       ========================= -->
-
-  <section
-    class="news-section container"
-    aria-label="آخرین اخبار"
-  >
-
-    <div class="section-top">
-
-      <div>
-        <h1>آخرین اخبار</h1>
-      </div>
-
-      <div class="news-actions">
-
-        <div
-          class="iran-date"
-          id="iranDate"
-          aria-label="تاریخ"
-        ></div>
-
-        <button
-          class="icon-news"
-          id="openNews"
-          aria-label="نمایش همه اخبار"
-          title="همه اخبار"
-        >
-          <span class="news-icon-lines">
-            <i></i>
-            <i></i>
-            <i></i>
-          </span>
-        </button>
-
-      </div>
-
+<section class="news-section container" aria-label="آخرین اخبار">
+  <div class="section-top">
+    <div><h1>آخرین اخبار</h1></div>
+    <div class="news-actions">
+      <div class="iran-date" id="iranDate" aria-label="تاریخ"></div>
+      <button class="icon-news" id="openNews" aria-label="نمایش همه اخبار" title="همه اخبار"><span class="news-icon-lines"><i></i><i></i><i></i></span></button>
     </div>
-
-
-    <div class="news-carousel-wrap">
-
-      <button
-        class="carousel-arrow next"
-        id="nextNews"
-        aria-label="خبر بعدی"
-      >
-        ‹
-      </button>
-
-      <div
-        class="news-track"
-        id="newsTrack"
-      ></div>
-
-      <button
-        class="carousel-arrow prev"
-        id="prevNews"
-        aria-label="خبر قبلی"
-      >
-        ›
-      </button>
-
-    </div>
-
-    <div
-      class="dots"
-      id="newsDots"
-    ></div>
-
-  </section>
-
-
-  <!-- =========================
-       QUICK MENU
-       ========================= -->
-
-  <section
-    class="quick-menu container"
-    aria-label="دسترسی سریع"
-  >
-
-    <button
-      class="menu-card"
-      data-target="ashayer"
-    >
-      <span>عشایر؛ سرمایه ملّی</span>
-      <b>←</b>
-    </button>
-
-    <button
-      class="menu-card"
-      data-target="cooperative"
-    >
-      <span>چگونگی تعاونی</span>
-      <b>←</b>
-    </button>
-
-    <button
-      class="menu-card"
-      data-target="documents"
-    >
-      <span>اسناد و مدارک</span>
-      <b>←</b>
-    </button>
-
-    <button
-      class="menu-card"
-      data-target="about"
-    >
-      <span>درباره ما</span>
-      <b>←</b>
-    </button>
-
-  </section>
-
-
-  <!-- =========================
-       ASHAYER
-       ========================= -->
-
-  <section
-    class="content-section container"
-    id="ashayer"
-  >
-
-    <div class="section-heading">
-      <h2>عشایر؛ سرمایه ملّی</h2>
-    </div>
-
-    <div class="info-card">
-
-      <div class="info-accent"></div>
-
-      <p id="ashayerExcerpt">
-        جامعه عشایری ایران یکی از ارزشمندترین بخش‌های اجتماعی، فرهنگی و اقتصادی کشور است؛ جامعه‌ای که در تولید، حفظ میراث فرهنگی و ارتباط پایدار با سرزمین نقش مهمی دارد.
-      </p>
-
-      <button
-        class="read-more"
-        data-content="ashayer"
-      >
-        ادامه متن...
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       COOPERATIVE
-       ========================= -->
-
-  <section
-    class="content-section container"
-    id="cooperative"
-  >
-
-    <div class="section-heading">
-      <h2>چگونگی تعاونی</h2>
-    </div>
-
-    <div class="info-card">
-
-      <div class="info-accent"></div>
-
-      <p id="cooperativeExcerpt">
-        تعاونی، سازوکاری برای مشارکت افراد دارای نیازها و اهداف مشترک است؛ تعاونی عشایری نیز با سازمان‌دهی ظرفیت اعضا، تأمین نیازها، ارائه خدمات و تقویت تولید و بازار به جامعه عشایری کمک می‌کند.
-      </p>
-
-      <button
-        class="read-more"
-        data-content="cooperative"
-      >
-        ادامه متن...
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       DOCUMENTS
-       ========================= -->
-
-  <section
-    class="content-section container"
-    id="documents"
-  >
-
-    <div class="section-heading">
-      <h2>اسناد و مدارک</h2>
-    </div>
-
-    <div class="document-buttons">
-
-      <button
-        class="document-tab active"
-        data-doc="0"
-        type="button"
-      >
-        استعلام شناسه ملی
-      </button>
-
-      <button
-        class="document-tab"
-        data-doc="1"
-        type="button"
-      >
-        ثبت شرکت در دهدشت
-      </button>
-
-      <button
-        class="document-tab"
-        data-doc="2"
-        type="button"
-      >
-        آگهی تأسیس
-      </button>
-
-      <button
-        class="document-tab"
-        data-doc="3"
-        type="button"
-      >
-        اساسنامه
-      </button>
-
-    </div>
-
-    <div
-      class="document-viewer"
-      id="documentViewer"
-    ></div>
-
-  </section>
-
-
-  <!-- =========================
-       ABOUT
-       ========================= -->
-
-  <section
-    class="content-section container"
-    id="about"
-  >
-
-    <div class="section-heading">
-      <h2>درباره ما</h2>
-    </div>
-
-    <div class="about-card">
-
-      <h3>
-        شرکت تعاونی عشایری کوه نور کهگیلویه
-      </h3>
-
-      <p>
-        این وب‌سایت با هدف اطلاع‌رسانی، انتشار اخبار و رویدادها، معرفی فعالیت‌های شرکت و دسترسی آسان به اسناد و اطلاعات عمومی راه‌اندازی شده است.
-      </p>
-
-      <div class="supervision">
-        <span>تحت نظارت</span>
-        <b>سازمان امور عشایر ایران</b>
-      </div>
-
-    </div>
-
-  </section>
-
+  </div>
+  <div class="news-carousel-wrap">
+    <button class="carousel-arrow next" id="nextNews" aria-label="خبر بعدی">‹</button>
+    <div class="news-track" id="newsTrack"></div>
+    <button class="carousel-arrow prev" id="prevNews" aria-label="خبر قبلی">›</button>
+  </div>
+  <div class="dots" id="newsDots"></div>
+</section>
+<section class="quick-menu container" aria-label="دسترسی سریع">
+  <button class="menu-card" data-target="ashayer"><span>عشایر؛ سرمایه ملّی</span><b>←</b></button>
+  <button class="menu-card" data-target="cooperative"><span>چگونگی تعاونی</span><b>←</b></button>
+  <button class="menu-card" data-target="documents"><span>اسناد و مدارک</span><b>←</b></button>
+  <button class="menu-card" data-target="about"><span>درباره ما</span><b>←</b></button>
+</section>
+<section class="content-section container" id="ashayer">
+  <div class="section-heading"><h2>عشایر؛ سرمایه ملّی</h2></div>
+  <div class="info-card"><div class="info-accent"></div><p id="ashayerExcerpt"></p><button class="read-more" data-content="ashayer">ادامه متن...</button></div>
+</section>
+<section class="content-section container" id="cooperative">
+  <div class="section-heading"><h2>چگونگی تعاونی</h2></div>
+  <div class="info-card"><div class="info-accent"></div><p id="cooperativeExcerpt"></p><button class="read-more" data-content="cooperative">ادامه متن...</button></div>
+</section>
+<section class="content-section container" id="documents">
+  <div class="section-heading"><h2>اسناد و مدارک</h2></div>
+  <div class="document-buttons" id="documentButtons"></div>
+  <div class="document-viewer" id="documentViewer"></div>
+</section>
+<section class="content-section container" id="about">
+  <div class="section-heading"><h2>درباره ما</h2></div>
+  <div class="about-card"><h3>شرکت تعاونی عشایری کوه نور کهگیلویه</h3><p>این وب‌سایت با هدف اطلاع‌رسانی، انتشار اخبار و رویدادها، معرفی فعالیت‌های شرکت و دسترسی آسان به اسناد و اطلاعات عمومی راه‌اندازی شده است.</p><div class="supervision"><span>تحت نظارت</span><b>سازمان امور عشایر ایران</b></div></div>
+</section>
 </main>
-
-
-<!-- =========================
-     FOOTER
-     ========================= -->
-
-<footer
+<footer class="footer" style="position:relative"><div class="container footer-inner"><div><strong>شرکت تعاونی عشایری کوه نور کهگیلویه</strong><span>پایگاه اطلاع‌رسانی و معرفی شرکت</span></div><div class="footer-note">© تمامی حقوق این وب‌سایت محفوظ است.</div></div><a href="admin.html" class="database-admin-link" aria-label="مدیریت پایگاه داده" title="مدیریت پایگاه داده">◉</a></footer>
+<div class="modal" id="newsModal" aria-hidden="true"><div class="modal-backdrop" data-close="newsModal"></div><div class="modal-panel news-list-panel" role="dialog" aria-modal="true"><button class="modal-close" data-close="newsModal" aria-label="بستن">×</button><span class="eyebrow">آرشیو اطلاع‌رسانی</span><h2>همه اخبار</h2><div class="all-news-list" id="allNewsList"></div></div></div>
+<div class="modal" id="articleModal" aria-hidden="true"><div class="modal-backdrop" data-close="articleModal"></div><article class="modal-panel article-panel" role="dialog" aria-modal="true"><button class="modal-close" data-close="articleModal" aria-label="بستن">×</button><div id="articleContent"></div></article></div>
+<div class="modal" id="contentModal" aria-hidden="true"><div class="modal-backdrop" data-close="contentModal"></div><article class="modal-panel article-panel" role="dialog" aria-modal="true"><button class="modal-close" data-close="contentModal" aria-label="بستن">×</button><div id="contentModalBody"></div></article></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="script.js"></script>
+<style>
+.database-admin-link{position:absolute;left:22px;bottom:22px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.28);text-decoration:none;font-size:15px;border-radius:50%;transition:opacity .2s ease,color .2s ease,background .2s ease}.database-admin-link:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.08)}
+</style>
+</body>
+</html>
