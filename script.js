@@ -1,89 +1,1284 @@
 (() => {
-'use strict';
+  'use strict';
 
-const FALLBACK_CONTENT={
- ashayer:{title:'عشایر؛ سرمایه ملّی',excerpt:'جامعه عشایری ایران یکی از ارزشمندترین بخش‌های اجتماعی، فرهنگی و اقتصادی کشور است؛ جامعه‌ای که در تولید، حفظ میراث فرهنگی و ارتباط پایدار با سرزمین نقش مهمی دارد.',body:'جامعه عشایری ایران یکی از ارزشمندترین بخش‌های اجتماعی، فرهنگی و اقتصادی کشور است؛ جامعه‌ای که در طول تاریخ، پیوندی عمیق و ناگسستنی با سرزمین، طبیعت، تولید و فرهنگ ایرانی داشته و بخش مهمی از هویت تاریخی و اجتماعی ایران را شکل داده است. عشایر تنها یک شیوه زندگی یا یک جامعه کوچ‌رو نیستند، بلکه مجموعه‌ای از ظرفیت‌های انسانی، اقتصادی، فرهنگی و زیست‌محیطی را در خود جای داده‌اند که حفظ، تقویت و حمایت از آن‌ها، بخشی از صیانت از سرمایه‌های ملی کشور به شمار می‌رود.'},
- cooperative:{title:'چگونگی تعاونی',excerpt:'تعاونی، سازوکاری برای مشارکت افراد دارای نیازها و اهداف مشترک است؛ تعاونی عشایری نیز با سازمان‌دهی ظرفیت اعضا، تأمین نیازها، ارائه خدمات و تقویت تولید و بازار به جامعه عشایری کمک می‌کند.',body:'تعاونی یکی از مهم‌ترین شیوه‌های سازمان‌دهی اقتصادی و اجتماعی بر پایه مشارکت افراد است. در ساختار تعاونی، اشخاصی که دارای نیازها، منافع یا اهداف مشترک هستند، با گردهم آمدن و مشارکت در سرمایه و تصمیم‌گیری، تلاش می‌کنند بخشی از نیازهای اقتصادی و اجتماعی خود را به صورت جمعی تأمین کنند. تعاونی عشایری نیز با توجه به شرایط زندگی عشایری، پراکندگی جغرافیایی و نیاز به نهاده‌ها و خدمات، نقش مهمی در سامان‌دهی خدمات و تقویت توان اقتصادی اعضا دارد.'},
- about:{title:'درباره ما',body:'این وب‌سایت با هدف اطلاع‌رسانی، انتشار اخبار و رویدادها، معرفی فعالیت‌های شرکت و دسترسی آسان به اسناد و اطلاعات عمومی راه‌اندازی شده است.'}
-};
+  const SUPABASE_URL =
+    window.SUPABASE_URL ||
+    window.supabaseUrl ||
+    window.CONFIG?.SUPABASE_URL;
 
-const FALLBACK_NEWS=[
- {date:'۱۴۰۴/۱۰/۲۱',title:'تصویب اساسنامه جدید شرکت تعاونی عشایری کوه نور دهدشت',text:'جلسه مجمع عمومی فوق‌العاده شرکت با حضور اکثریت اعضا برگزار و اساسنامه جدید به تصویب رسید.',body:'جلسه مجمع عمومی بطور فوق العاده شرکت تعاونی عشایری کوه نور دهدشت در تاریخ 1400/10/21 رأس ساعت 16 در محل شرکت واقع در دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه اساسنامه جدید شرکت با 70 ماده و 51 تبصره و 135 بند به تصویب اعضاء مجمع رسیده است.',images:['https://ibb.co/CshY940f','https://ibb.co/0jY0Tb1w','https://ibb.co/mwP9bFG','https://ibb.co/ym0yVZRP','https://ibb.co/7xMBt8Qk','https://ibb.co/gLQ3PjL5','https://ibb.co/TDjQS272','https://ibb.co/0yqTRHvK','https://ibb.co/24yPXMN','https://ibb.co/Kct64y74','https://ibb.co/TDh9XPyV']},
- {date:'۲۱/۹/۱۴۰۴',title:'توزیع نفت سفید به عشایر حوزه',text:'توزیع نفت سفید به عشایر محترم حوزه در محوطه شرکت انجام شد.',body:'توزیع نفت سفید به عشایر محترم حوزه در محوطهٔ شرکت انجام شد.',images:['https://ibb.co/S7r9KY64','https://ibb.co/KcRShWN5']},
- {date:'۲۹/۱۲/۱۴۰۳',title:'برگزاری مجمع عمومی عادی سالیانه شرکت',text:'جلسه مجمع عمومی عادی سالیانه شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید.',body:'جلسه مجمع عمومی عادی سالیانه سال مالی منتهی به 1403/12/29 شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه صورتهای مالی سال 1403 به تصویب اعضاء مجمع رسید.',images:['https://ibb.co/XrpwsJ9b','https://ibb.co/jZ11bjH6','https://ibb.co/WvZ3zLCH','https://ibb.co/kVxXv4ZL','https://ibb.co/Zpz2hFkS','https://ibb.co/Q7NrB892']},
- {date:'۱۴۰۴',title:'تداوم خدمات آبرسانی و پشتیبانی از عشایر شهرستان کهگیلویه',text:'خدمات آبرسانی سیار و توزیع اقلام مورد نیاز عشایر شهرستان کهگیلویه به صورت مستمر انجام می‌شود.',body:'خدمات آبرسانی سیار با تانکر به عشایر شهرستان کهگیلویه توسط شرکت تعاونی عشایری کوه نور دهدشت به صورت مستمر صورت می پذیرد. آقای پروره مدیرعامل تعاونی عشایری کوه نور دهدشت در همین راستا بیان کردند که طی سال 1404 قریب به 1500 سرویس 12000 لیتری آب شرب با تانکر سیار تحویل عشایر شهرستان کهگیلویه گردیده است. وی افزود سال 1404 خدماتی اعم از توزیع آرد، علوفه دامی، توزیع نفت سفید، توزیع سیلندر گاز مایع و...... به صورت مستمر در اختیار عشایر تحت پوشش و سهامدار شرکت تعاونی قرار گرفته است.',images:['https://ibb.co/xKWHYsJr','https://ibb.co/QFVJcQVQ','https://ibb.co/Rp2sWYQK','https://ibb.co/ycZD71PH','https://ibb.co/fV3Kdp6c','https://ibb.co/Zz5hgxk6','https://ibb.co/Y7rBLBWM']}
-];
+  const SUPABASE_ANON_KEY =
+    window.SUPABASE_ANON_KEY ||
+    window.supabaseAnonKey ||
+    window.CONFIG?.SUPABASE_ANON_KEY;
 
-const FALLBACK_DOCS=[
- {title:'استعلام شناسه ملی',url:'https://ibb.co/W4nDjgT1'},
- {title:'ثبت شرکت در دهدشت',url:'https://ibb.co/Z6NZyJcy'},
- {title:'آگهی تأسیس',url:'https://ibb.co/d0t1nDCd'},
- {title:'اساسنامه',url:'asname.pdf',kind:'pdf'}
-];
+  const client =
+    window.supabaseClient ||
+    (
+      SUPABASE_URL &&
+      SUPABASE_ANON_KEY &&
+      window.supabase?.createClient
+        ? window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+          )
+        : null
+    );
 
-const $=id=>document.getElementById(id);
-const esc=v=>String(v??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[m]));
-const parseList=v=>{if(Array.isArray(v))return v.filter(Boolean);if(!v)return[];try{const x=JSON.parse(v);if(Array.isArray(x))return x.filter(Boolean)}catch{}return String(v).split(/\r?\n|,/).map(x=>x.trim()).filter(Boolean)};
-const cfg=window.SITE_CONFIG||{};
-const sb=(window.supabase&&cfg.supabaseUrl&&cfg.supabaseAnonKey)?window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey):null;
-let news=[...FALLBACK_NEWS],docs=[...FALLBACK_DOCS],content=JSON.parse(JSON.stringify(FALLBACK_CONTENT)),activeNews=0,timer=null;
+  if (!client) {
+    console.error('Supabase client not found.');
+    return;
+  }
 
-function normalizeNews(n){
- const images=parseList(n.images||n.image_urls||n.image_url||n.photo_url);
- return {id:n.id,date:n.date||n.publish_date||dateFa(n.created_at)||'',title:n.title||'خبر شرکت تعاونی',text:n.excerpt||n.text||n.summary||'',body:n.body||n.content||n.text||n.excerpt||'',images};
-}
-function dateFa(v){if(!v)return'';try{return new Intl.DateTimeFormat('fa-IR-u-ca-persian',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'Asia/Tehran'}).format(new Date(v))}catch{return''}}
-function mediaUrl(u){u=String(u||'').trim();if(!u)return'';if(/^https?:\/\/ibb\.co\//i.test(u)){return 'https://image.thum.io/get/width/1200/crop/1000/noanimate/'+u}return u}
-function isImage(u){return /\.(jpe?g|png|gif|webp|avif)(\?.*)?$/i.test(u)||/^https:\/\/i\.ibb\.co\//i.test(u)}
-function isPdf(u){return /\.pdf(\?.*)?$/i.test(u)}
-function openModal(id){const m=$(id);if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
-function closeModal(id){const m=$(id);if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+  /* =========================================================
+     تنظیمات
+  ========================================================= */
 
-function renderNews(){
- const track=$('newsTrack'),dots=$('newsDots'),all=$('allNewsList');if(!track)return;
- track.innerHTML=news.map((n,i)=>{const first=n.images?.[0];return `<article class="news-card" data-index="${i}"><div class="news-cover">${first?`<img src="${esc(mediaUrl(first))}" alt="${esc(n.title)}" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<span aria-hidden=\"true\">✦</span>'">`:'<span aria-hidden="true">✦</span>'}</div><div class="news-body"><time class="news-date">${esc(n.date)}</time><h3>${esc(n.title)}</h3><p>${esc(n.text)}</p></div></article>`}).join('');
- dots.innerHTML=news.map((_,i)=>`<button aria-label="نمایش خبر ${i+1}" data-dot="${i}" class="${i===0?'active':''}"></button>`).join('');
- all.innerHTML=news.map((n,i)=>`<button class="all-news-item" data-index="${i}"><div><time>${esc(n.date)}</time><h3>${esc(n.title)}</h3><p>${esc(n.text)}</p></div><span>←</span></button>`).join('');
- track.querySelectorAll('.news-card').forEach(c=>c.addEventListener('click',()=>showArticle(Number(c.dataset.index))));
- dots.querySelectorAll('[data-dot]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();goToNews(Number(b.dataset.dot))}));
- showNews(0);restartTimer();
-}
-function showArticle(i){const n=news[i];if(!n)return;const gallery=(n.images||[]).map((src,j)=>`<div class="article-media"><img src="${esc(mediaUrl(src))}" alt="${esc(n.title)} - تصویر ${j+1}" loading="lazy" onerror="this.parentElement.innerHTML='<a href="${esc(src)}" target="_blank" rel="noopener">مشاهده تصویر ${j+1}</a>'"></div>`).join('');$('articleContent').innerHTML=`<span class="eyebrow">خبر</span><h2>${esc(n.title)}</h2><div class="article-meta">${esc(n.date)}</div>${gallery?`<div class="article-gallery">${gallery}</div>`:''}<div class="article-text">${esc(n.body).replace(/\n/g,'<br>')}</div>`;openModal('articleModal')}
-function showContent(slug){const c=content[slug];if(!c)return;$('contentModalBody').innerHTML=`<span class="eyebrow">معرفی</span><h2>${esc(c.title)}</h2><div class="article-text">${esc(c.body).replace(/\n/g,'<br>')}</div>`;openModal('contentModal')}
-function showNews(i){if(!news.length)return;activeNews=(i+news.length)%news.length;const track=$('newsTrack');const card=track?.querySelector(`[data-index="${activeNews}"]`);if(card)track.scrollTo({left:card.offsetLeft-(track.clientWidth-card.offsetWidth)/2,behavior:'smooth'});$('newsDots')?.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===activeNews))}
-function goToNews(i){showNews(i);restartTimer()}
-function restartTimer(){clearInterval(timer);if(news.length>1)timer=setInterval(()=>showNews(activeNews+1),6000)}
+  const POST_INTERVAL = 5300;
 
-function renderDocs(){
- const tabs=$('documentButtons'),viewer=$('documentViewer');if(!tabs||!viewer)return;
- tabs.innerHTML=docs.map((d,i)=>`<button class="document-tab ${i===0?'active':''}" data-doc="${i}">${esc(d.title)}</button>`).join('');
- const show=i=>{const d=docs[i];if(!d)return;const u=d.url||d.file_url||'';let html='';if(isPdf(u)){html=`<iframe src="${esc(u)}" title="${esc(d.title)}" style="width:100%;min-height:760px;border:0;border-radius:18px;background:#fff"></iframe><p style="text-align:center"><a href="${esc(u)}" target="_blank" rel="noopener">باز کردن فایل PDF</a></p>`}else if(isImage(u)){html=`<img src="${esc(mediaUrl(u))}" alt="${esc(d.title)}" style="width:100%;height:auto;display:block;border-radius:18px" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><p style="display:none;text-align:center"><a href="${esc(u)}" target="_blank" rel="noopener">مشاهده سند</a></p>`}else if(/^https?:\/\/ibb\.co\//i.test(u)){html=`<iframe src="${esc(u)}" title="${esc(d.title)}" style="width:100%;min-height:760px;border:0;border-radius:18px;background:#fff"></iframe>`}else{html=`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(d.title)}</a>`}viewer.innerHTML=html;tabs.querySelectorAll('.document-tab').forEach((b,j)=>b.classList.toggle('active',j===i))};
- tabs.querySelectorAll('.document-tab').forEach((b,i)=>b.addEventListener('click',()=>show(i)));show(0);
-}
+  let news = [];
+  let currentNews = 0;
+  let newsTimer = null;
 
-function renderIranDate(){const el=$('iranDate');if(!el)return;try{el.textContent=new Intl.DateTimeFormat('fa-IR-u-ca-persian',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Tehran'}).format(new Date())}catch{el.textContent=new Date().toLocaleDateString('fa-IR')}}
-function bind(){
- $('openNews')?.addEventListener('click',()=>openModal('newsModal'));
- $('nextNews')?.addEventListener('click',()=>goToNews(activeNews+1));$('prevNews')?.addEventListener('click',()=>goToNews(activeNews-1));
- $('allNewsList')?.addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(b){closeModal('newsModal');showArticle(Number(b.dataset.index))}});
- document.querySelectorAll('.menu-card').forEach(b=>b.addEventListener('click',()=>$(b.dataset.target)?.scrollIntoView({behavior:'smooth',block:'start'})));
- document.querySelectorAll('.read-more').forEach(b=>b.addEventListener('click',()=>showContent(b.dataset.content)));
- document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)closeModal(c.dataset.close)});
- document.addEventListener('keydown',e=>{if(e.key==='Escape')['newsModal','articleModal','contentModal'].forEach(closeModal);if(e.key==='ArrowLeft')goToNews(activeNews+1);if(e.key==='ArrowRight')goToNews(activeNews-1)});
- renderIranDate();setInterval(renderIranDate,60000);
-}
-async function loadRemote(){
- if(!sb)return;
- try{
-  const cRes=await sb.from('site_content').select('*');
-  if(!cRes.error){for(const r of cRes.data||[]){const key=r.slug||r.key;if(!key)continue;if(key==='ashayer'||key==='cooperative'||key==='about')content[key]={...content[key],...r}}}
-  const nRes=await sb.from('news').select('*').order('created_at',{ascending:false});
-  if(!nRes.error&&Array.isArray(nRes.data)&&nRes.data.length){const remote=nRes.data.map(normalizeNews);news=remote.map(r=>{const f=FALLBACK_NEWS.find(x=>x.title===r.title||x.date===r.date);return {...(f||{}),...r,images:r.images.length?r.images:(f?.images||[]),text:r.text||f?.text||'',body:r.body||f?.body||''}})}
-  const dRes=await sb.from('site_documents').select('*').order('sort_order',{ascending:true});
-  if(!dRes.error&&Array.isArray(dRes.data)&&dRes.data.length)docs=dRes.data.map(d=>({id:d.id,title:d.title,url:d.url||d.file_url||d.document_url||''}));
- }catch(e){console.warn('Supabase unavailable; fallback content kept.',e)}
- document.querySelector('#ashayerExcerpt').textContent=content.ashayer.excerpt||'';document.querySelector('#cooperativeExcerpt').textContent=content.cooperative.excerpt||'';renderNews();renderDocs();
-}
+  let documents = [];
 
-renderNews();renderDocs();bind();loadRemote();
+  const $ = (id) => document.getElementById(id);
+
+  /* =========================================================
+     ابزارها
+  ========================================================= */
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+
+      return map[char];
+    });
+  }
+
+  function safeUrl(url) {
+    if (!url) return '';
+
+    try {
+      const u = new URL(url, window.location.href);
+
+      if (
+        u.protocol === 'http:' ||
+        u.protocol === 'https:'
+      ) {
+        return u.href;
+      }
+    } catch (_) {}
+
+    return '';
+  }
+
+  /*
+   * لینک‌های ibb.co صفحه‌ی پست هستند، نه خود تصویر.
+   *
+   * این تابع تلاش می‌کند URL مستقیم تصویر را از URLهای
+   * رایج ImgBB استخراج کند.
+   *
+   * اگر در دیتابیس URL مستقیم تصویر وجود داشته باشد،
+   * همان URL استفاده می‌شود.
+   */
+
+  function normalizeImageUrl(url) {
+    if (!url) return '';
+
+    const value = String(url).trim();
+
+    /*
+     * اگر قبلاً لینک مستقیم تصویر است
+     */
+    if (
+      /\.(jpg|jpeg|png|gif|webp|avif)(\?.*)?$/i.test(value)
+    ) {
+      return value;
+    }
+
+    /*
+     * اگر URL از قبل مستقیم باشد
+     */
+    if (
+      value.includes('i.ibb.co/') ||
+      value.includes('i.ibb.co\\/')
+    ) {
+      return value.replace(/\\\//g, '/');
+    }
+
+    /*
+     * ibb.co/XXXX صفحه‌ی تصویر است.
+     * مرورگر نمی‌تواند مستقیماً آن را به <img> بدهد.
+     *
+     * در این حالت خود URL را برمی‌گردانیم تا fallback
+     * بتواند آن را به صفحه‌ی تصویر منتقل کند.
+     */
+    return value;
+  }
+
+  function getNewsImages(item) {
+    let images = [];
+
+    /*
+     * چندعکسی
+     */
+    if (Array.isArray(item.images)) {
+      images = item.images;
+    }
+
+    /*
+     * رشته JSON
+     */
+    if (
+      images.length === 0 &&
+      typeof item.images === 'string'
+    ) {
+      try {
+        const parsed = JSON.parse(item.images);
+
+        if (Array.isArray(parsed)) {
+          images = parsed;
+        }
+      } catch (_) {}
+    }
+
+    /*
+     * image_urls
+     */
+    if (
+      images.length === 0 &&
+      Array.isArray(item.image_urls)
+    ) {
+      images = item.image_urls;
+    }
+
+    /*
+     * image_url
+     */
+    if (
+      images.length === 0 &&
+      item.image_url
+    ) {
+      images = [item.image_url];
+    }
+
+    /*
+     * image
+     */
+    if (
+      images.length === 0 &&
+      item.image
+    ) {
+      images = [item.image];
+    }
+
+    /*
+     * images ممکن است رشته comma separated باشد
+     */
+    if (
+      images.length === 1 &&
+      typeof images[0] === 'string' &&
+      images[0].includes(',')
+    ) {
+      images = images[0]
+        .split(',')
+        .map(x => x.trim())
+        .filter(Boolean);
+    }
+
+    return images
+      .map(normalizeImageUrl)
+      .filter(Boolean);
+  }
+
+  /* =========================================================
+     تاریخ
+     ========================================================= */
+
+  function setupIranDate() {
+    const el = $('iranDate');
+
+    if (!el) return;
+
+    try {
+      const now = new Date();
+
+      el.textContent = new Intl.DateTimeFormat(
+        'fa-IR-u-ca-persian',
+        {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }
+      ).format(now);
+    } catch (_) {
+      el.textContent = '';
+    }
+  }
+
+  /* =========================================================
+     متن‌ها
+  ========================================================= */
+
+  async function loadContent() {
+    const { data, error } = await client
+      .from('site_content')
+      .select('*');
+
+    if (error) {
+      console.error('site_content:', error);
+      return;
+    }
+
+    const content = {};
+
+    (data || []).forEach(row => {
+      content[row.key] = row.value;
+    });
+
+    const setText = (id, value) => {
+      const el = $(id);
+
+      if (el && value !== undefined && value !== null) {
+        el.textContent = value;
+      }
+    };
+
+    setText(
+      'ashayerExcerpt',
+      content.ashayer_excerpt
+    );
+
+    setText(
+      'cooperativeExcerpt',
+      content.cooperative_excerpt
+    );
+
+    const titleElements = {
+      ashayerTitle: content.ashayer_title,
+      coopTitle: content.cooperative_title,
+      aboutTitle: content.about_title
+    };
+
+    Object.entries(titleElements).forEach(([id, value]) => {
+      setText(id, value);
+    });
+
+    /*
+     * اگر عنوان سایت در HTML عنصر مخصوص داشت
+     */
+    document.querySelectorAll('[data-site-title]')
+      .forEach(el => {
+        if (content.site_title) {
+          el.textContent = content.site_title;
+        }
+      });
+
+    /*
+     * لوگوها
+     */
+    const rightLogo = document.querySelector(
+      '[data-logo-right]'
+    );
+
+    const leftLogo = document.querySelector(
+      '[data-logo-left]'
+    );
+
+    if (rightLogo && content.logo_right) {
+      rightLogo.src = content.logo_right;
+    }
+
+    if (leftLogo && content.logo_left) {
+      leftLogo.src = content.logo_left;
+    }
+  }
+
+  /* =========================================================
+     اخبار
+  ========================================================= */
+
+  async function loadNews() {
+    const result = await client
+      .from('news')
+      .select('*')
+      .order('created_at', {
+        ascending: false
+      });
+
+    if (result.error) {
+      console.error('news:', result.error);
+
+      const track = $('newsTrack');
+
+      if (track) {
+        track.innerHTML =
+          '<div class="news-error">خطا در دریافت اخبار</div>';
+      }
+
+      return;
+    }
+
+    news = result.data || [];
+
+    /*
+     * تاریخ مورد نظر کاربر:
+     * جدیدترین خبر سمت راست باشد.
+     *
+     * چون direction سایت RTL است،
+     * اولین آیتم DOM در سمت راست قرار می‌گیرد.
+     */
+
+    currentNews = 0;
+
+    renderNews();
+    startNewsTimer();
+  }
+
+  function renderNews() {
+    const track = $('newsTrack');
+    const dots = $('newsDots');
+
+    if (!track) return;
+
+    if (!news.length) {
+      track.innerHTML =
+        '<div class="news-empty">خبری ثبت نشده است.</div>';
+
+      if (dots) dots.innerHTML = '';
+
+      return;
+    }
+
+    track.innerHTML = news.map((item, index) => {
+      const images = getNewsImages(item);
+      const firstImage = images[0] || '';
+
+      const title =
+        item.title ||
+        'خبر شرکت تعاونی عشایری کوه نور';
+
+      const excerpt =
+        item.excerpt ||
+        '';
+
+      /*
+       * تاریخ انتشار:
+       * فقط تاریخ نشان داده می‌شود.
+       * عبارت «تاریخ انتشار» حذف شده.
+       */
+
+      const date =
+        item.date ||
+        item.publish_date ||
+        item.published_at ||
+        item.created_at ||
+        '';
+
+      const formattedDate =
+        formatNewsDate(date);
+
+      return `
+        <article
+          class="news-card"
+          data-news-index="${index}"
+        >
+
+          <div class="news-card-image">
+
+            ${
+              firstImage
+                ? `
+                  <img
+                    src="${escapeHtml(firstImage)}"
+                    alt="${escapeHtml(title)}"
+                    loading="${index === 0 ? 'eager' : 'lazy'}"
+                    onerror="this.parentElement.classList.add('image-error')"
+                  >
+                `
+                : `
+                  <div class="news-no-image">
+                    بدون تصویر
+                  </div>
+                `
+            }
+
+          </div>
+
+          <div class="news-card-body">
+
+            ${
+              formattedDate
+                ? `
+                  <div class="news-date">
+                    ${escapeHtml(formattedDate)}
+                  </div>
+                `
+                : ''
+            }
+
+            <h3>
+              ${escapeHtml(title)}
+            </h3>
+
+            ${
+              excerpt
+                ? `
+                  <p>
+                    ${escapeHtml(excerpt)}
+                  </p>
+                `
+                : ''
+            }
+
+            <button
+              type="button"
+              class="read-news"
+              data-open-news="${index}"
+            >
+              ادامه خبر
+            </button>
+
+          </div>
+
+        </article>
+      `;
+    }).join('');
+
+    /*
+     * dots
+     */
+    if (dots) {
+      dots.innerHTML = news.map((_, index) => `
+        <button
+          type="button"
+          class="news-dot ${index === currentNews ? 'active' : ''}"
+          data-news-dot="${index}"
+          aria-label="خبر ${index + 1}"
+        ></button>
+      `).join('');
+    }
+
+    updateNewsPosition();
+  }
+
+  function formatNewsDate(value) {
+    if (!value) return '';
+
+    /*
+     * اگر تاریخ شمسی دستی است
+     */
+    if (
+      typeof value === 'string' &&
+      /^(13|14)\d{2}[\/\-]\d{1,2}[\/\-]\d{1,2}$/.test(
+        value.trim()
+      )
+    ) {
+      return value.trim();
+    }
+
+    /*
+     * اگر فقط سال وارد شده
+     */
+    if (
+      typeof value === 'string' &&
+      /^14\d{2}$/.test(value.trim())
+    ) {
+      return value.trim();
+    }
+
+    /*
+     * تبدیل تاریخ ISO
+     */
+    try {
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return String(value);
+      }
+
+      return new Intl.DateTimeFormat(
+        'fa-IR-u-ca-persian',
+        {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric'
+        }
+      ).format(date);
+    } catch (_) {
+      return String(value);
+    }
+  }
+
+  /* =========================================================
+     حرکت اسلایدر اخبار
+  ========================================================= */
+
+  function updateNewsPosition() {
+    const track = $('newsTrack');
+
+    if (!track) return;
+
+    const cards = track.querySelectorAll(
+      '.news-card'
+    );
+
+    cards.forEach((card, index) => {
+      card.classList.toggle(
+        'active',
+        index === currentNews
+      );
+    });
+
+    const dots = document.querySelectorAll(
+      '[data-news-dot]'
+    );
+
+    dots.forEach((dot, index) => {
+      dot.classList.toggle(
+        'active',
+        index === currentNews
+      );
+    });
+
+    /*
+     * تلاش می‌کنیم از ساختار موجود CSS استفاده کنیم.
+     */
+    if (cards[currentNews]) {
+      cards[currentNews].scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }
+
+  function nextNews() {
+    if (!news.length) return;
+
+    currentNews =
+      (currentNews + 1) % news.length;
+
+    updateNewsPosition();
+  }
+
+  function prevNews() {
+    if (!news.length) return;
+
+    currentNews =
+      (currentNews - 1 + news.length) %
+      news.length;
+
+    updateNewsPosition();
+  }
+
+  function startNewsTimer() {
+    stopNewsTimer();
+
+    if (news.length <= 1) return;
+
+    /*
+     * دقیقاً ۵.۳۰ ثانیه
+     */
+    newsTimer = setInterval(
+      nextNews,
+      POST_INTERVAL
+    );
+  }
+
+  function stopNewsTimer() {
+    if (newsTimer) {
+      clearInterval(newsTimer);
+      newsTimer = null;
+    }
+  }
+
+  /* =========================================================
+     باز کردن خبر
+  ========================================================= */
+
+  function openNewsArticle(index) {
+    const item = news[index];
+
+    if (!item) return;
+
+    const modal = $('articleModal');
+    const content = $('articleContent');
+
+    if (!modal || !content) return;
+
+    const images = getNewsImages(item);
+
+    const title =
+      item.title ||
+      'خبر شرکت تعاونی عشایری کوه نور';
+
+    const body =
+      item.content ||
+      item.body ||
+      item.excerpt ||
+      '';
+
+    const date =
+      item.date ||
+      item.publish_date ||
+      item.published_at ||
+      item.created_at ||
+      '';
+
+    content.innerHTML = `
+      <div class="article">
+
+        <div class="article-header">
+
+          ${
+            date
+              ? `
+                <div class="news-date">
+                  ${escapeHtml(formatNewsDate(date))}
+                </div>
+              `
+              : ''
+          }
+
+          <h2>
+            ${escapeHtml(title)}
+          </h2>
+
+        </div>
+
+        ${
+          images.length
+            ? `
+              <div class="article-gallery">
+                ${images.map((url, i) => `
+                  <figure class="article-image">
+
+                    <img
+                      src="${escapeHtml(url)}"
+                      alt="${escapeHtml(title)} - تصویر ${i + 1}"
+                      loading="lazy"
+                      onerror="this.parentElement.classList.add('image-error')"
+                    >
+
+                  </figure>
+                `).join('')}
+              </div>
+            `
+            : ''
+        }
+
+        <div class="article-text">
+          ${formatText(body)}
+        </div>
+
+      </div>
+    `;
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+
+    document.body.classList.add('modal-open');
+
+    stopNewsTimer();
+  }
+
+  function formatText(text) {
+    return escapeHtml(text)
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{2,}/g, '</p><p>')
+      .replace(/\n/g, '<br>') ?
+      `<p>${escapeHtml(text)
+        .replace(/\r\n/g, '\n')
+        .replace(/\n{2,}/g, '</p><p>')
+        .replace(/\n/g, '<br>')}</p>` :
+      '';
+  }
+
+  /* =========================================================
+     آرشیو همه اخبار
+  ========================================================= */
+
+  function openAllNews() {
+    const modal = $('newsModal');
+    const list = $('allNewsList');
+
+    if (!modal || !list) return;
+
+    list.innerHTML = news.map((item, index) => {
+      const date =
+        item.date ||
+        item.publish_date ||
+        item.published_at ||
+        item.created_at ||
+        '';
+
+      return `
+        <button
+          type="button"
+          class="all-news-item"
+          data-open-news="${index}"
+        >
+
+          <span class="all-news-date">
+            ${escapeHtml(formatNewsDate(date))}
+          </span>
+
+          <strong>
+            ${escapeHtml(
+              item.title ||
+              'خبر شرکت تعاونی عشایری کوه نور'
+            )}
+          </strong>
+
+        </button>
+      `;
+    }).join('');
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+
+    document.body.classList.add('modal-open');
+
+    stopNewsTimer();
+  }
+
+  /* =========================================================
+     اسناد
+  ========================================================= */
+
+  async function loadDocuments() {
+    const result = await client
+      .from('documents')
+      .select('*')
+      .order('created_at', {
+        ascending: true
+      });
+
+    if (result.error) {
+      console.error('documents:', result.error);
+      return;
+    }
+
+    documents = result.data || [];
+
+    renderDocuments();
+  }
+
+  function renderDocuments() {
+    const buttons = document.querySelector(
+      '.document-buttons'
+    );
+
+    const viewer = $('documentViewer');
+
+    if (!buttons || !viewer) return;
+
+    /*
+     * اگر دیتابیس سند دارد، دکمه‌ها از دیتابیس ساخته می‌شوند.
+     */
+    if (documents.length) {
+      buttons.innerHTML = documents.map((doc, index) => `
+        <button
+          class="document-tab ${index === 0 ? 'active' : ''}"
+          data-doc="${index}"
+          type="button"
+        >
+          ${escapeHtml(doc.title || `سند ${index + 1}`)}
+        </button>
+      `).join('');
+
+      showDocument(0);
+      return;
+    }
+
+    /*
+     * اگر دیتابیس خالی بود، HTML فعلی دست‌کاری نمی‌شود.
+     */
+    const existing =
+      buttons.querySelectorAll('.document-tab');
+
+    if (existing.length) {
+      showStaticDocument(0);
+    }
+  }
+
+  function showDocument(index) {
+    const doc = documents[index];
+
+    if (!doc) return;
+
+    const viewer = $('documentViewer');
+
+    if (!viewer) return;
+
+    document
+      .querySelectorAll('.document-tab')
+      .forEach((button, i) => {
+        button.classList.toggle(
+          'active',
+          i === index
+        );
+      });
+
+    const url =
+      safeUrl(
+        doc.file_url ||
+        doc.url ||
+        doc.file ||
+        doc.link
+      );
+
+    if (!url) {
+      viewer.innerHTML =
+        '<p>فایل این سند ثبت نشده است.</p>';
+
+      return;
+    }
+
+    const title =
+      doc.title ||
+      'سند';
+
+    /*
+     * اگر فایل واقعی PDF باشد:
+     * داخل قالب سایت نمایش داده می‌شود.
+     *
+     * اگر تصویر مستقیم باشد:
+     * خود تصویر نمایش داده می‌شود.
+     */
+    const isPdf =
+      /\.pdf(\?.*)?$/i.test(url);
+
+    const isImage =
+      /\.(jpg|jpeg|png|gif|webp|avif)(\?.*)?$/i.test(url);
+
+    if (isPdf) {
+      viewer.innerHTML = `
+        <div class="document-frame">
+          <iframe
+            src="${escapeHtml(url)}"
+            title="${escapeHtml(title)}"
+            loading="lazy"
+          ></iframe>
+
+          <a
+            class="document-download"
+            href="${escapeHtml(url)}"
+            target="_blank"
+            rel="noopener"
+          >
+            مشاهده / دانلود ${escapeHtml(title)}
+          </a>
+        </div>
+      `;
+
+      return;
+    }
+
+    if (isImage) {
+      viewer.innerHTML = `
+        <div class="document-frame document-image-frame">
+
+          <img
+            src="${escapeHtml(url)}"
+            alt="${escapeHtml(title)}"
+          >
+
+          <a
+            class="document-download"
+            href="${escapeHtml(url)}"
+            target="_blank"
+            rel="noopener"
+          >
+            مشاهده ${escapeHtml(title)}
+          </a>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    /*
+     * برای لینک‌های ibb.co:
+     * به عنوان تصویر مستقیم قابل استفاده نیستند.
+     *
+     * لینک را داخل قالب قرار می‌دهیم تا صفحه‌ی تصویر
+     * در تب جدید باز شود.
+     */
+    viewer.innerHTML = `
+      <div class="document-frame">
+
+        <div class="document-placeholder">
+          <h3>
+            ${escapeHtml(title)}
+          </h3>
+
+          <a
+            class="document-download"
+            href="${escapeHtml(url)}"
+            target="_blank"
+            rel="noopener"
+          >
+            مشاهده سند
+          </a>
+
+        </div>
+
+      </div>
+    `;
+  }
+
+  function showStaticDocument(index) {
+    const viewer = $('documentViewer');
+
+    if (!viewer) return;
+
+    const tabs =
+      document.querySelectorAll(
+        '.document-tab'
+      );
+
+    const tab = tabs[index];
+
+    if (!tab) return;
+
+    tabs.forEach((x, i) => {
+      x.classList.toggle(
+        'active',
+        i === index
+      );
+    });
+
+    /*
+     * این قسمت intentionally خالی است؛
+     * چون سندهای قبلی ممکن است در HTML یا script قبلی
+     * تعریف شده باشند.
+     */
+  }
+
+  /* =========================================================
+     اسکرول منو
+  ========================================================= */
+
+  function setupQuickMenu() {
+    document
+      .querySelectorAll('[data-target]')
+      .forEach(button => {
+
+        button.addEventListener(
+          'click',
+          () => {
+
+            const target =
+              $(button.dataset.target);
+
+            if (!target) return;
+
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+
+          }
+        );
+
+      });
+  }
+
+  /* =========================================================
+     بستن Modal
+  ========================================================= */
+
+  function closeModal(id) {
+    const modal = $(id);
+
+    if (!modal) return;
+
+    modal.classList.remove('open');
+    modal.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+
+    document.body.classList.remove(
+      'modal-open'
+    );
+
+    if (
+      !document.querySelector(
+        '.modal.open'
+      )
+    ) {
+      startNewsTimer();
+    }
+  }
+
+  /* =========================================================
+     رویدادها
+  ========================================================= */
+
+  function setupEvents() {
+
+    const next =
+      $('nextNews');
+
+    const prev =
+      $('prevNews');
+
+    const openNewsButton =
+      $('openNews');
+
+    if (next) {
+      /*
+       * راست = خبر بعدی
+       */
+      next.addEventListener(
+        'click',
+        nextNews
+      );
+    }
+
+    if (prev) {
+      /*
+       * چپ = خبر قبلی
+       */
+      prev.addEventListener(
+        'click',
+        prevNews
+      );
+    }
+
+    if (openNewsButton) {
+      openNewsButton.addEventListener(
+        'click',
+        openAllNews
+      );
+    }
+
+    document.addEventListener(
+      'click',
+      event => {
+
+        const openIndex =
+          event.target.closest(
+            '[data-open-news]'
+          );
+
+        if (openIndex) {
+          const index =
+            Number(
+              openIndex.dataset.openNews
+            );
+
+          /*
+           * اگر آرشیو باز است ابتدا ببند.
+           */
+          const archive =
+            $('newsModal');
+
+          if (
+            archive &&
+            archive.classList.contains('open')
+          ) {
+            closeModal('newsModal');
+          }
+
+          openNewsArticle(index);
+          return;
+        }
+
+        const dot =
+          event.target.closest(
+            '[data-news-dot]'
+          );
+
+        if (dot) {
+          currentNews =
+            Number(dot.dataset.newsDot);
+
+          updateNewsPosition();
+          startNewsTimer();
+          return;
+        }
+
+        const close =
+          event.target.closest(
+            '[data-close]'
+          );
+
+        if (close) {
+          closeModal(
+            close.dataset.close
+          );
+
+          return;
+        }
+
+        const closeButton =
+          event.target.closest(
+            '.modal-close'
+          );
+
+        if (closeButton) {
+          const modal =
+            closeButton.closest(
+              '.modal'
+            );
+
+          if (modal) {
+            closeModal(modal.id);
+          }
+
+          return;
+        }
+
+        const documentTab =
+          event.target.closest(
+            '.document-tab'
+          );
+
+        if (documentTab) {
+          const index =
+            Number(
+              documentTab.dataset.doc
+            );
+
+          if (documents.length) {
+            showDocument(index);
+          } else {
+            showStaticDocument(index);
+          }
+
+          return;
+        }
+      }
+    );
+
+    /*
+     * بستن با Escape
+     */
+    document.addEventListener(
+      'keydown',
+      event => {
+
+        if (event.key !== 'Escape') {
+          return;
+        }
+
+        document
+          .querySelectorAll(
+            '.modal.open'
+          )
+          .forEach(modal => {
+            closeModal(modal.id);
+          });
+
+      }
+    );
+
+    /*
+     * وقتی موس روی اخبار است تایمر متوقف شود.
+     */
+    const newsArea =
+      document.querySelector(
+        '.news-section'
+      );
+
+    if (newsArea) {
+
+      newsArea.addEventListener(
+        'mouseenter',
+        stopNewsTimer
+      );
+
+      newsArea.addEventListener(
+        'mouseleave',
+        startNewsTimer
+      );
+    }
+  }
+
+  /* =========================================================
+     لینک لوگوی سازمان
+  ========================================================= */
+
+  function setupOrganizationLogo() {
+
+    const logos =
+      document.querySelectorAll(
+        'img[alt*="سازمان امور عشایر"]'
+      );
+
+    logos.forEach(img => {
+
+      const parent =
+        img.closest('a');
+
+      if (parent) {
+        parent.href =
+          'https://ashayer.ir/';
+
+        parent.target =
+          '_blank';
+
+        parent.rel =
+          'noopener noreferrer';
+
+        return;
+      }
+
+      const wrapper =
+        document.createElement('a');
+
+      wrapper.href =
+        'https://ashayer.ir/';
+
+      wrapper.target =
+        '_blank';
+
+      wrapper.rel =
+        'noopener noreferrer';
+
+      img.parentNode.insertBefore(
+        wrapper,
+        img
+      );
+
+      wrapper.appendChild(img);
+
+    });
+  }
+
+  /* =========================================================
+     شروع
+  ========================================================= */
+
+  async function init() {
+
+    setupIranDate();
+
+    setupEvents();
+
+    setupQuickMenu();
+
+    setupOrganizationLogo();
+
+    await Promise.all([
+      loadContent(),
+      loadNews(),
+      loadDocuments()
+    ]);
+
+  }
+
+  init();
+
 })();
