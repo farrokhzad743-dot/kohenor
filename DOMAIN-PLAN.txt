@@ -1,0 +1,9 @@
+دامنه اصلی:
+tavonikohenor.ir
+
+دامنه دوم:
+taavonikohnoor.ir
+
+هر دو دامنه باید در نهایت همین پورتال واحد را باز کنند.
+
+CNAME گیت‌هاب فقط دامنه اصلی را نگه می‌دارد؛ بعد از خرید taavonikohnoor.ir باید آن دامنه در DNS/Cloudflare به همین سایت متصل و برای آن Redirect/Custom Domain تنظیم شود.
