@@ -199,30 +199,78 @@ async function showArticle(index) {
   if (!item) return;
 
   articleContent.innerHTML = `
-    <span class="eyebrow">خبر شرکت تعاونی</span>
     <h2>${esc(item.title)}</h2>
-    <div class="article-meta">تاریخ انتشار: ${esc(item.date)}</div>
+    <div class="article-meta">${esc(item.date)}</div>
     <div class="article-gallery" id="articleGallery"></div>
-    <p>${esc(item.body).replace(/\n/g, '<br><br>')}</p>
+    <div class="article-text">${articleParagraphs(item.body)}</div>
   `;
 
   openModal('articleModal');
 
   const gallery = document.getElementById('articleGallery');
-  for (let i = 0; i < item.images.length; i++) {
-    const box = document.createElement('div');
-    box.className = 'article-image-link';
-    box.innerHTML = `<img alt="${esc(item.title)} - تصویر ${i + 1}" loading="lazy"><span>تصویر ${i + 1}</span>`;
-    gallery.appendChild(box);
-    const img = box.querySelector('img');
-    const direct = await resolveMediaUrl(item.images[i]);
-    if (direct) {
-      img.src = direct;
-      box.classList.add('resolved');
-    } else {
-      box.innerHTML = `<a href="${esc(item.images[i])}" target="_blank" rel="noopener">تصویر ${i + 1}<span>مشاهده تصویر</span></a>`;
-    }
+  const resolvedImages = await Promise.all(item.images.map(resolveMediaUrl));
+
+  resolvedImages.forEach((direct, i) => {
+    if (!direct) return;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'gallery-thumb';
+    button.dataset.imageIndex = String(i);
+    button.innerHTML = `<img src="${esc(direct)}" alt="${esc(item.title)} - تصویر ${i + 1}" loading="lazy">`;
+    gallery.appendChild(button);
+    button.addEventListener('click', () => openLightbox(item, i));
+  });
+
+  if (!gallery.children.length) {
+    gallery.innerHTML = '<div class="image-failed-box">تصاویر خبر در دسترس نیستند.</div>';
   }
+}
+
+function articleParagraphs(text) {
+  return String(text || '')
+    .split(/\n+/)
+    .map(x => x.trim())
+    .filter(Boolean)
+    .map(x => `<p>${esc(x)}</p>`)
+    .join('');
+}
+
+function openLightbox(item, index = 0) {
+  const modal = document.getElementById('lightboxModal');
+  const lightboxTrack = document.getElementById('lightboxTrack');
+  if (!modal || !lightboxTrack) return;
+
+  lightboxTrack.innerHTML = item.images.map((url, i) => `
+    <div class="lightbox-slide" data-index="${i}">
+      <img data-page-url="${esc(url)}" alt="${esc(item.title)} - تصویر ${i + 1}" loading="lazy">
+    </div>
+  `).join('');
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  lightboxTrack.querySelectorAll('img').forEach(img => hydrateImage(img, img.dataset.pageUrl));
+
+  requestAnimationFrame(() => {
+    const slide = lightboxTrack.querySelector(`[data-index="${index}"]`);
+    if (slide) lightboxTrack.scrollLeft = slide.offsetLeft;
+  });
+}
+
+function closeLightbox() {
+  const modal = document.getElementById('lightboxModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+function moveLightbox(direction) {
+  const lightboxTrack = document.getElementById('lightboxTrack');
+  if (!lightboxTrack) return;
+  const width = lightboxTrack.clientWidth || 1;
+  lightboxTrack.scrollBy({ left: direction * width, behavior: 'smooth' });
 }
 
 function showContent(slug) {
@@ -249,17 +297,24 @@ function setActiveDot(index) {
 }
 
 function goToNews(index) {
-  if (!news.length) return;
+  if (!news.length || !track) return;
+
   activeNews = (index + news.length) % news.length;
   const card = track.querySelector(`[data-index="${activeNews}"]`);
   if (!card) return;
+
+  const pageY = window.scrollY;
   card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   setActiveDot(activeNews);
+
+  requestAnimationFrame(() => {
+    if (Math.abs(window.scrollY - pageY) > 2) window.scrollTo(0, pageY);
+  });
 }
 
 function restartTimer() {
   clearInterval(timer);
-  if (news.length > 1) {
+  if (news.length > 1 && newsSectionVisible) {
     timer = setInterval(() => goToNews(activeNews + 1), 5300);
   }
 }
@@ -278,7 +333,7 @@ function renderIranDate() {
 
 async function renderDoc(index = 0) {
   const doc = docs[index];
-  if (!doc) return;
+  if (!doc || !viewer) return;
 
   document.querySelectorAll('.document-tab').forEach((button, i) => {
     button.classList.toggle('active', i === index);
@@ -286,29 +341,21 @@ async function renderDoc(index = 0) {
 
   if (doc.download) {
     viewer.innerHTML = `
-      <div class="document-caption">
-        <strong>اساسنامه</strong><br>
-        فایل PDF اساسنامه رسمی شرکت
-      </div>
       <a href="./asasname.pdf" download="اساسنامه.pdf" class="document-open-link">دانلود اساسنامه</a>
     `;
     return;
   }
 
-  viewer.innerHTML = `
-    <div class="document-caption"><strong>${esc(doc.title)}</strong><br>در حال بارگذاری تصویر سند...</div>
-    <img id="documentImage" alt="${esc(doc.title)}" loading="lazy" style="display:none">
-  `;
+  viewer.innerHTML = `<img id="documentImage" alt="${esc(doc.title)}" loading="lazy">`;
 
   const img = document.getElementById('documentImage');
   const direct = await resolveMediaUrl(doc.url);
+
   if (direct) {
     img.src = direct;
-    img.style.display = 'block';
-    viewer.querySelector('.document-caption').innerHTML = `<strong>${esc(doc.title)}</strong><br>تصویر سند رسمی`;
+    img.addEventListener('click', () => openLightbox({ title: doc.title, images: [doc.url] }, 0));
   } else {
     viewer.innerHTML = `
-      <div class="document-caption"><strong>${esc(doc.title)}</strong></div>
       <a href="${esc(doc.url)}" target="_blank" rel="noopener" class="document-open-link">مشاهده سند</a>
     `;
   }
@@ -327,23 +374,25 @@ setInterval(renderIranDate, 60000);
 
 /* دسترسی سریع */
 document.querySelectorAll('.menu-card').forEach(button => {
-  button.onclick = () => document.getElementById(button.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  button.addEventListener('click', () => {
+    document.getElementById(button.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 });
 
 document.querySelectorAll('.read-more').forEach(button => {
-  button.onclick = () => showContent(button.dataset.content);
+  button.addEventListener('click', () => showContent(button.dataset.content));
 });
 
 document.getElementById('openNews')?.addEventListener('click', () => openModal('newsModal'));
 
-/* فلش راست = حرکت به سمت راست؛ فلش چپ = حرکت به سمت چپ */
+/* فلش راست = حرکت راست / فلش چپ = حرکت چپ */
 document.getElementById('nextNews')?.addEventListener('click', () => {
-  goToNews(activeNews - 1);
+  goToNews(activeNews + 1);
   restartTimer();
 });
 
 document.getElementById('prevNews')?.addEventListener('click', () => {
-  goToNews(activeNews + 1);
+  goToNews(activeNews - 1);
   restartTimer();
 });
 
@@ -355,7 +404,6 @@ dots.addEventListener('click', event => {
 });
 
 track.addEventListener('click', event => {
-  if (event.target.closest('a')) return;
   const card = event.target.closest('.news-card');
   if (card) showArticle(Number(card.dataset.index));
 });
@@ -372,18 +420,39 @@ document.querySelectorAll('.document-tab').forEach(button => {
 document.addEventListener('click', event => {
   const close = event.target.closest('[data-close]');
   if (close) closeModal(close.dataset.close);
+
+  if (event.target.closest('[data-lightbox-close]')) closeLightbox();
 });
 
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
     ['newsModal', 'articleModal', 'contentModal'].forEach(closeModal);
+    closeLightbox();
+    return;
   }
-  if (event.key === 'ArrowRight') goToNews(activeNews - 1);
-  if (event.key === 'ArrowLeft') goToNews(activeNews + 1);
+
+  if (document.getElementById('lightboxModal')?.classList.contains('open')) {
+    if (event.key === 'ArrowRight') moveLightbox(-1);
+    if (event.key === 'ArrowLeft') moveLightbox(1);
+  }
 });
+
+document.getElementById('lightboxPrev')?.addEventListener('click', () => moveLightbox(-1));
+document.getElementById('lightboxNext')?.addEventListener('click', () => moveLightbox(1));
 
 track.addEventListener('pointerdown', () => clearInterval(timer));
 track.addEventListener('pointerup', restartTimer);
 track.addEventListener('touchend', restartTimer, { passive: true });
+
+let newsSectionVisible = true;
+const newsSection = document.querySelector('.news-section');
+if ('IntersectionObserver' in window && newsSection) {
+  const observer = new IntersectionObserver(entries => {
+    newsSectionVisible = entries[0]?.isIntersecting ?? true;
+    if (newsSectionVisible) restartTimer();
+    else clearInterval(timer);
+  }, { threshold: 0.05 });
+  observer.observe(newsSection);
+}
 
 restartTimer();
