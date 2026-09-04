@@ -143,3 +143,81 @@ body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 }
 
 
+
+
+/* اصلاح نهایی بدون تغییر طراحی اصلی */
+.news-track {
+  overscroll-behavior-x: contain;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.news-cover {
+  min-height: 175px;
+}
+
+.article-gallery {
+  display: flex !important;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 2px 2px 12px;
+  margin: 22px 0;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.article-gallery::-webkit-scrollbar { display:none; }
+.gallery-thumb {
+  flex: 0 0 min(72%, 560px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  scroll-snap-align: center;
+  cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.gallery-thumb img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #f5f7fc;
+  display: block;
+}
+
+.article-text p {
+  margin: 0 0 12px;
+  line-height: 2.1;
+}
+.article-text p:last-child { margin-bottom:0; }
+
+.document-viewer {
+  min-height: 120px;
+}
+.document-viewer img {
+  cursor: zoom-in;
+}
+.document-caption { display:none !important; }
+.document-open-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 12px 24px;
+  border-radius: 16px;
+  background: var(--blue);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  box-shadow: 0 12px 30px rgba(8,45,156,.18);
+}
+@media (max-width:520px) {
+  .gallery-thumb { flex-basis: 88%; }
+  .news-cover { min-height:145px; }
+}
