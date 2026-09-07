@@ -1,6 +1,6 @@
 دامنه اصلی: tavonikohenor.ir
 
 CNAME باید فقط شامل همین مقدار باشد:
-tavonikohnoor.ir
+tavonikohenor.ir
 
 دامنه دوم taavonikohnoor.ir باید در سرویس DNS/رجیسترار به‌صورت 301 Redirect به https://tavonikohnoor.ir/ تنظیم شود؛ GitHub Pages برای یک مخزن فقط یک Custom Domain اصلی را از طریق CNAME می‌گیرد.
