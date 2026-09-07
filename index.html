@@ -2,118 +2,183 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#082d9c">
-  <meta name="description" content="پایگاه اطلاع‌رسانی شرکت تعاونی عشایری کوه نور کهگیلویه؛ اخبار، رویدادها، اسناد و معرفی فعالیت‌های شرکت.">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="robots" content="index,follow,max-image-preview:large">
-  <link rel="canonical" href="https://tavonikohenor.ir/">
-  <meta property="og:title" content="شرکت تعاونی عشایری کوه نور کهگیلویه">
-  <meta property="og:description" content="پایگاه اطلاع‌رسانی، اخبار، اسناد و معرفی شرکت تعاونی عشایری کوه نور کهگیلویه">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://tavonikohenor.ir/">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; style-src 'self' https://fonts.googleapis.com; script-src 'self'; connect-src 'self' https://*.supabase.co https://api.allorigins.win https://api.codetabs.com https://corsproxy.io https://r.jina.ai https://api.microlink.io; upgrade-insecure-requests">
-  <title>شرکت تعاونی عشایری کوه نور کهگیلویه</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="وبسایت شرکت تعاونی عشایری کوه نور به آدرس جدید منتقل شده است.">
+  <title>شرکت تعاونی عشایری کوه نور</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --blue: #082d9c;
+      --blue-dark: #061d63;
+      --ink: #102044;
+      --white: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(8,45,156,.055), transparent 34%),
+        #fff;
+      color: var(--ink);
+      font-family: "Vazirmatn", Tahoma, sans-serif;
+    }
+
+    .page {
+      width: min(720px, calc(100% - 36px));
+      text-align: center;
+      animation: pageIn .9s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .mark {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 34px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid rgba(8,45,156,.22);
+      border-radius: 50%;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .mark::before,
+    .mark::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid var(--blue);
+    }
+
+    .mark::before {
+      width: 20px;
+      height: 20px;
+      border-left-color: transparent;
+      transform: rotate(-45deg);
+    }
+
+    .mark::after {
+      width: 8px;
+      height: 8px;
+      background: var(--blue);
+      border: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 5vw, 40px);
+      font-weight: 600;
+      letter-spacing: -1px;
+      line-height: 1.7;
+    }
+
+    .message {
+      margin: 16px auto 30px;
+      font-size: clamp(15px, 2.7vw, 18px);
+      line-height: 2.2;
+      color: #66708a;
+    }
+
+    .new-address {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 0 24px;
+      border-radius: 15px;
+      background: var(--blue);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(8,45,156,.18);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .new-address:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 17px 38px rgba(8,45,156,.24);
+    }
+
+    .arrow {
+      display: inline-block;
+      transition: transform .25s ease;
+    }
+
+    .new-address:hover .arrow {
+      transform: translateX(-4px);
+    }
+
+    .url {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #8994ac;
+      direction: ltr;
+      letter-spacing: .2px;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-5px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .page { width: min(100% - 28px, 720px); }
+      .mark { margin-bottom: 26px; }
+      .message { margin-top: 12px; margin-bottom: 24px; }
+      .new-address { width: 100%; justify-content: center; }
+    }
+  </style>
 </head>
+
 <body>
-  <header class="site-header">
-    <a class="site-header-link" href="https://ashayer.ir" target="_blank" rel="noopener" aria-label="ورود به پورتال سازمان امور عشایر کشور">
-      <img class="site-header-image" src="site-header.jpg" alt="شرکت تعاونی عشایری کوه نور کهگیلویه" draggable="false">
+  <main class="page">
+    <div class="mark" aria-hidden="true"></div>
+
+    <h1>وبسایت شرکت به آدرس زیر تغییر پیدا کرد.</h1>
+
+    <p class="message">
+      برای ورود به وبسایت جدید شرکت، روی دکمه زیر کلیک کنید.
+    </p>
+
+    <a
+      class="new-address"
+      href="https://taavonikohnoor.ir/"
+      aria-label="ورود به وبسایت جدید شرکت"
+    >
+      کلیک کنید!
+      <span class="arrow" aria-hidden="true">←</span>
     </a>
-  </header>
 
-  <main>
-    <section class="news-section container" id="news" aria-labelledby="newsTitle">
-      <div class="section-top">
-        <div><h2 id="newsTitle">اطلاع‌رسانی شرکت</h2></div>
-        <div class="news-actions">
-          <time class="iran-date" id="iranDate" aria-label="تاریخ امروز"></time>
-          <button class="icon-news" id="openNews" type="button" aria-label="نمایش همه اخبار" title="همه اخبار"><span class="news-icon-lines"><i></i><i></i><i></i></span></button>
-        </div>
-      </div>
-      <div class="news-carousel-wrap">
-        <button class="carousel-arrow prev" id="prevNews" type="button" aria-label="خبر قبلی"><span aria-hidden="true">→</span></button>
-        <div class="news-track" id="newsTrack" tabindex="0" aria-label="فهرست آخرین اخبار"></div>
-        <button class="carousel-arrow next" id="nextNews" type="button" aria-label="خبر بعدی"><span aria-hidden="true">←</span></button>
-      </div>
-      <div class="news-timer" aria-label="زمان باقی‌مانده تا خبر بعدی"><span id="newsTimerFill"></span></div>
-      <div class="dots" id="newsDots" aria-label="انتخاب خبر"></div>
-    </section>
-
-    <nav class="quick-menu container" aria-label="دسترسی سریع">
-      <a class="menu-card" href="#ashayer"><span>عشایر؛ سرمایه ملّی</span><b>←</b></a>
-      <a class="menu-card" href="#cooperative"><span>چگونگی تعاونی</span><b>←</b></a>
-      <a class="menu-card" href="#documents"><span>اسناد و مدارک</span><b>←</b></a>
-      <a class="menu-card" href="#about"><span>درباره ما</span><b>←</b></a>
-    </nav>
-
-    <section class="content-section container" id="ashayer">
-      <div class="section-heading"><h2>عشایر؛ سرمایه ملّی</h2></div>
-      <div class="info-card"><div class="info-accent"></div><p id="ashayerExcerpt">جامعه عشایری ایران یکی از ارزشمندترین بخش‌های اجتماعی، فرهنگی و اقتصادی کشور است؛ جامعه‌ای که در تولید، حفظ میراث فرهنگی و ارتباط پایدار با سرزمین نقش مهمی دارد.</p><button class="read-more" type="button" data-content="ashayer">ادامه متن</button></div>
-    </section>
-
-    <section class="content-section container" id="cooperative">
-      <div class="section-heading"><h2>چگونگی تعاونی</h2></div>
-      <div class="info-card"><div class="info-accent"></div><p id="cooperativeExcerpt">تعاونی، سازوکاری برای مشارکت افراد دارای نیازها و اهداف مشترک است؛ تعاونی عشایری نیز با سازمان‌دهی ظرفیت اعضا، تأمین نیازها، ارائه خدمات و تقویت تولید و بازار به جامعه عشایری کمک می‌کند.</p><button class="read-more" type="button" data-content="cooperative">ادامه متن</button></div>
-    </section>
-
-    <section class="content-section container" id="documents">
-      <div class="section-heading"><h2>اسناد و مدارک</h2></div>
-      <div class="document-buttons">
-        <button class="document-tab active" type="button" data-doc="0">استعلام شناسه ملی</button>
-        <button class="document-tab" type="button" data-doc="1">ثبت شرکت در دهدشت</button>
-        <button class="document-tab" type="button" data-doc="2">آگهی تأسیس</button>
-        <button class="document-tab" type="button" data-doc="3">اساسنامه</button>
-      </div>
-      <div class="document-viewer" id="documentViewer" aria-live="polite"></div>
-    </section>
-
-    <section class="content-section container" id="about">
-      <div class="section-heading"><h2>درباره ما</h2></div>
-      <div class="about-grid">
-        <div class="about-card company-profile-card">
-          <span class="eyebrow">کوه نور کهگیلویه</span>
-          <h3>مشخصات ثبتی شرکت</h3>
-          <div class="company-facts">
-            <div class="fact-row"><span>تاریخ تأسیس</span><strong>۱۳۷۳/۰۲/۲۸</strong></div>
-            <div class="fact-row"><span>شناسه ملی</span><strong>۱۰۸۶۱۹۱۴۸۳۹</strong></div>
-            <div class="fact-row"><span>کد اقتصادی</span><strong>۱۰۸۶۱۹۱۴۸۳۹</strong></div>
-            <div class="fact-row"><span>سرمایه ثبتی</span><strong>۱۷٬۰۰۰٬۰۰۰٬۰۰۰ ریال</strong></div>
-            <div class="fact-row"><span>کد پستی</span><strong>۷۵۷۱۸۳۴۳۸۵</strong></div>
-            <div class="fact-row"><span>تلفن</span><strong>۰۷۴۳۲۲۶۲۳۲۰</strong></div>
-            <div class="fact-row"><span>فکس</span><strong>۰۷۴۳۲۲۶۰۱۵۸</strong></div>
-          </div>
-        </div>
-        <div class="contact-card company-management-card">
-          <span class="eyebrow">مدیریت شرکت</span>
-          <h3>هیئت مدیره و مدیرعامل</h3>
-          <div class="contact-row"><span>مدیرعامل</span><strong>محمدرحیم پروره</strong></div>
-          <div class="contact-row"><span>رئیس هیئت مدیره</span><strong>محمدطلا فرهمندیان</strong></div>
-          <a class="rasmio-link" href="https://rasmio.com/company/10861914839/direct/" target="_blank" rel="noopener noreferrer">مشاهده اطلاعات شرکت در رسمیو <span>←</span></a>
-          <p class="contact-note">اطلاعات این بخش بر اساس مشخصاتی است که برای معرفی شرکت در سایت ثبت شده است.</p>
-        </div>
-      </div>
-    </section>
+    <div class="url">taavonikohnoor.ir</div>
   </main>
-
-  <footer class="footer">
-    <div class="container footer-inner">
-      <div><strong>شرکت تعاونی عشایری کوه نور کهگیلویه</strong><span>پایگاه اطلاع‌رسانی و معرفی شرکت</span></div>
-      <div class="footer-links"><a href="#news">اخبار</a><a href="#documents">اسناد</a><a href="#about">درباره ما</a><a class="eitaa-link" href="https://eitaa.com/taavonikohnoor" target="_blank" rel="noopener noreferrer" aria-label="صفحه ایتای شرکت تعاونی عشایری کوه نور کهگیلویه"><img src="eitaa-logo.png" alt="" aria-hidden="true"><span>ایتا</span></a></div>
-      <div class="footer-note">© تمامی حقوق این وب‌سایت محفوظ است.</div>
-    </div>
-  </footer>
-
-  <div class="modal" id="newsModal" aria-hidden="true"><div class="modal-backdrop" data-close="newsModal"></div><div class="modal-panel news-list-panel" role="dialog" aria-modal="true" aria-labelledby="newsModalTitle"><button class="modal-close" type="button" data-close="newsModal" aria-label="بستن">×</button><span class="eyebrow">آرشیو اطلاع‌رسانی</span><h2 id="newsModalTitle">همه اخبار</h2><div class="all-news-list" id="allNewsList"></div></div></div>
-  <div class="modal" id="articleModal" aria-hidden="true"><div class="modal-backdrop" data-close="articleModal"></div><article class="modal-panel article-panel" role="dialog" aria-modal="true" aria-labelledby="articleTitle"><button class="modal-close" type="button" data-close="articleModal" aria-label="بستن">×</button><div id="articleContent"></div></article></div>
-  <div class="modal" id="contentModal" aria-hidden="true"><div class="modal-backdrop" data-close="contentModal"></div><article class="modal-panel article-panel" role="dialog" aria-modal="true" aria-labelledby="contentTitle"><button class="modal-close" type="button" data-close="contentModal" aria-label="بستن">×</button><div id="contentModalBody"></div></article></div>
-  <div class="modal lightbox-modal" id="lightboxModal" aria-hidden="true"><div class="modal-backdrop" data-lightbox-close></div><div class="lightbox-panel" role="dialog" aria-modal="true" aria-label="نمایش تصویر"><button class="modal-close" type="button" data-lightbox-close aria-label="بستن">×</button><button class="lightbox-arrow prev" id="lightboxPrev" type="button" aria-label="تصویر قبلی"><span aria-hidden="true"></span></button><div class="lightbox-track" id="lightboxTrack"></div><button class="lightbox-arrow next" id="lightboxNext" type="button" aria-label="تصویر بعدی"><span aria-hidden="true"></span></button></div></div>
-
-  <script src="script.js"></script>
-  <script src="kohenor-news-fixes.js"></script>
 </body>
 </html>
