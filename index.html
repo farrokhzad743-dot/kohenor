@@ -2,183 +2,861 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+
   <meta name="theme-color" content="#082d9c">
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="وبسایت شرکت تعاونی عشایری کوه نور به آدرس جدید منتقل شده است.">
+
   <title>شرکت تعاونی عشایری کوه نور</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
 
   <style>
     :root {
       --blue: #082d9c;
       --blue-dark: #061d63;
+      --blue-light: #4f78df;
       --ink: #102044;
-      --white: #fff;
+      --muted: #66708a;
+      --soft: #eef3ff;
+      --white: #ffffff;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    html, body {
+    html,
+    body {
       width: 100%;
       min-height: 100%;
       margin: 0;
     }
 
     body {
-      min-height: 100vh;
+      min-height: 100svh;
+      overflow: hidden;
+      position: relative;
       display: grid;
       place-items: center;
-      overflow: hidden;
+
       background:
-        radial-gradient(circle at 50% 45%, rgba(8,45,156,.055), transparent 34%),
-        #fff;
+        radial-gradient(
+          circle at 50% 42%,
+          rgba(8, 45, 156, .075),
+          transparent 28%
+        ),
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #fbfcff 100%
+        );
+
       color: var(--ink);
       font-family: "Vazirmatn", Tahoma, sans-serif;
     }
 
-    .page {
-      width: min(720px, calc(100% - 36px));
-      text-align: center;
-      animation: pageIn .9s cubic-bezier(.22,1,.36,1) both;
+
+    /* --------------------------------
+       Background light
+    -------------------------------- */
+
+    .ambient {
+      position: fixed;
+      width: 65vw;
+      height: 65vw;
+      max-width: 520px;
+      max-height: 520px;
+      border-radius: 50%;
+      background: rgba(8, 45, 156, .035);
+      filter: blur(45px);
+      pointer-events: none;
+      animation: ambientMove 7s ease-in-out infinite;
     }
 
-    .mark {
-      width: 68px;
-      height: 68px;
-      margin: 0 auto 34px;
+    .ambient.one {
+      top: -30%;
+      right: -20%;
+    }
+
+    .ambient.two {
+      bottom: -35%;
+      left: -25%;
+      animation-delay: -3s;
+    }
+
+
+    /* --------------------------------
+       Floating particles
+    -------------------------------- */
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--blue);
+      opacity: 0;
+      animation: particleFloat linear infinite;
+    }
+
+    .p1 {
+      top: 18%;
+      left: 14%;
+      animation-duration: 6s;
+    }
+
+    .p2 {
+      top: 29%;
+      right: 13%;
+      animation-duration: 7s;
+      animation-delay: -2s;
+    }
+
+    .p3 {
+      top: 70%;
+      left: 19%;
+      animation-duration: 8s;
+      animation-delay: -4s;
+    }
+
+    .p4 {
+      top: 76%;
+      right: 17%;
+      animation-duration: 6.5s;
+      animation-delay: -1s;
+    }
+
+    .p5 {
+      top: 48%;
+      left: 7%;
+      width: 3px;
+      height: 3px;
+      animation-duration: 9s;
+      animation-delay: -5s;
+    }
+
+    .p6 {
+      top: 57%;
+      right: 7%;
+      width: 3px;
+      height: 3px;
+      animation-duration: 8s;
+      animation-delay: -3s;
+    }
+
+
+    /* --------------------------------
+       Main
+    -------------------------------- */
+
+    .page {
+      position: relative;
+      z-index: 5;
+
+      width: min(720px, calc(100% - 34px));
+      padding: 25px 0;
+
+      text-align: center;
+
+      animation:
+        pageIn 1s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+
+    /* --------------------------------
+       Animated mark
+    -------------------------------- */
+
+    .logo-wrap {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 30px;
+
       position: relative;
       display: grid;
       place-items: center;
-      border: 1.5px solid rgba(8,45,156,.22);
-      border-radius: 50%;
-      animation: float 4s ease-in-out infinite;
+
+      animation: logoEntrance 1.2s cubic-bezier(.22, 1, .36, 1) both;
     }
 
-    .mark::before,
-    .mark::after {
-      content: "";
+    .logo-glow {
       position: absolute;
+      inset: 18px;
+
       border-radius: 50%;
-      border: 1.5px solid var(--blue);
+      background: rgba(8, 45, 156, .08);
+
+      filter: blur(10px);
+
+      animation: glowPulse 3s ease-in-out infinite;
     }
 
-    .mark::before {
-      width: 20px;
-      height: 20px;
+    .logo {
+      position: relative;
+
+      width: 70px;
+      height: 70px;
+
+      border: 1.5px solid rgba(8, 45, 156, .22);
+      border-radius: 50%;
+
+      display: grid;
+      place-items: center;
+
+      background: rgba(255,255,255,.65);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+
+      box-shadow:
+        0 10px 35px rgba(8,45,156,.08);
+
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+
+    /* Outer rotating ring */
+
+    .logo::before {
+      content: "";
+
+      position: absolute;
+      inset: -9px;
+
+      border-radius: 50%;
+
+      border:
+        1.5px solid transparent;
+
+      border-top-color: rgba(8,45,156,.55);
+      border-right-color: rgba(8,45,156,.16);
+
+      animation: rotate 4s linear infinite;
+    }
+
+    /* Second rotating ring */
+
+    .logo::after {
+      content: "";
+
+      position: absolute;
+      inset: -17px;
+
+      border-radius: 50%;
+
+      border: 1px solid rgba(8,45,156,.08);
+
+      border-left-color: rgba(8,45,156,.28);
+
+      animation: rotateReverse 7s linear infinite;
+    }
+
+    .logo-core {
+      width: 22px;
+      height: 22px;
+
+      position: relative;
+
+      border: 2px solid var(--blue);
       border-left-color: transparent;
+
+      border-radius: 50%;
+
       transform: rotate(-45deg);
     }
 
-    .mark::after {
+    .logo-core::after {
+      content: "";
+
+      position: absolute;
+
       width: 8px;
       height: 8px;
+
+      top: 5px;
+      left: 5px;
+
       background: var(--blue);
-      border: 0;
+      border-radius: 50%;
+
+      transform: rotate(45deg);
+
+      box-shadow:
+        0 0 12px rgba(8,45,156,.3);
     }
+
+
+    /* --------------------------------
+       Text
+    -------------------------------- */
 
     h1 {
       margin: 0;
-      font-size: clamp(25px, 5vw, 40px);
-      font-weight: 600;
-      letter-spacing: -1px;
+
+      font-size: clamp(25px, 7vw, 40px);
       line-height: 1.7;
+      font-weight: 600;
+
+      letter-spacing: -1px;
+
+      opacity: 0;
+      animation:
+        textIn .8s .35s cubic-bezier(.22,1,.36,1) forwards;
     }
 
     .message {
-      margin: 16px auto 30px;
-      font-size: clamp(15px, 2.7vw, 18px);
-      line-height: 2.2;
-      color: #66708a;
+      margin: 13px auto 27px;
+
+      max-width: 560px;
+
+      color: var(--muted);
+
+      font-size: clamp(14px, 4vw, 18px);
+      line-height: 2.1;
+      font-weight: 400;
+
+      opacity: 0;
+
+      animation:
+        textIn .8s .52s cubic-bezier(.22,1,.36,1) forwards;
+    }
+
+
+    /* --------------------------------
+       Button
+    -------------------------------- */
+
+    .button-area {
+      opacity: 0;
+
+      animation:
+        buttonIn .9s .7s cubic-bezier(.22,1,.36,1) forwards;
     }
 
     .new-address {
+      position: relative;
+
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      min-height: 54px;
-      padding: 0 24px;
-      border-radius: 15px;
-      background: var(--blue);
+      justify-content: center;
+      gap: 11px;
+
+      min-height: 56px;
+
+      padding: 0 27px;
+
+      border-radius: 17px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #082d9c,
+          #123fb9
+        );
+
       color: var(--white);
+
       text-decoration: none;
+
       font-size: 15px;
       font-weight: 600;
-      box-shadow: 0 12px 30px rgba(8,45,156,.18);
-      transition: transform .25s ease, box-shadow .25s ease;
+
+      box-shadow:
+        0 12px 32px rgba(8,45,156,.19);
+
+      overflow: hidden;
+
+      transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+    }
+
+    /* moving shine */
+
+    .new-address::before {
+      content: "";
+
+      position: absolute;
+      top: 0;
+      left: -80%;
+
+      width: 55%;
+      height: 100%;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.25),
+          transparent
+        );
+
+      transform: skewX(-20deg);
+
+      animation: shine 3.5s ease-in-out infinite;
+    }
+
+    /* button pulse */
+
+    .new-address::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      border-radius: inherit;
+
+      box-shadow:
+        0 0 0 0 rgba(8,45,156,.25);
+
+      animation: buttonPulse 2.8s ease-out infinite;
+    }
+
+    .button-text,
+    .arrow {
+      position: relative;
+      z-index: 2;
+    }
+
+    .arrow {
+      font-size: 19px;
+
+      transition:
+        transform .25s ease;
+    }
+
+    .new-address:active {
+      transform: scale(.97);
     }
 
     .new-address:hover {
       transform: translateY(-3px);
-      box-shadow: 0 17px 38px rgba(8,45,156,.24);
-    }
 
-    .arrow {
-      display: inline-block;
-      transition: transform .25s ease;
+      box-shadow:
+        0 17px 42px rgba(8,45,156,.26);
     }
 
     .new-address:hover .arrow {
-      transform: translateX(-4px);
+      transform: translateX(-5px);
     }
+
+
+    /* --------------------------------
+       Address
+    -------------------------------- */
 
     .url {
-      margin-top: 18px;
-      font-size: 12px;
-      color: #8994ac;
+      margin-top: 17px;
+
       direction: ltr;
-      letter-spacing: .2px;
+
+      color: #8994ac;
+
+      font-size: 12px;
+      letter-spacing: .3px;
+
+      opacity: 0;
+
+      animation:
+        fadeIn .8s 1s ease forwards;
     }
+
+
+    /* --------------------------------
+       Date
+    -------------------------------- */
+
+    .date {
+      margin-top: 35px;
+
+      color: #a0a9bc;
+
+      font-size: 11px;
+      font-weight: 400;
+
+      opacity: 0;
+
+      animation:
+        fadeIn .8s 1.15s ease forwards;
+    }
+
+    .date span {
+      display: inline-block;
+      margin-right: 5px;
+
+      color: #7d88a1;
+      font-weight: 500;
+    }
+
+
+    /* --------------------------------
+       Animations
+    -------------------------------- */
 
     @keyframes pageIn {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(.985);
+      }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-5px); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
       }
     }
 
-    @media (max-width: 520px) {
-      .page { width: min(100% - 28px, 720px); }
-      .mark { margin-bottom: 26px; }
-      .message { margin-top: 12px; margin-bottom: 24px; }
-      .new-address { width: 100%; justify-content: center; }
+    @keyframes logoEntrance {
+      from {
+        opacity: 0;
+        transform: scale(.55) rotate(-25deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+      }
     }
+
+    @keyframes logoFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @keyframes rotate {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes rotateReverse {
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        opacity: .55;
+        transform: scale(.9);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.12);
+      }
+    }
+
+    @keyframes textIn {
+      from {
+        opacity: 0;
+        transform: translateY(13px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes buttonIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes shine {
+      0% {
+        left: -80%;
+      }
+
+      35%, 100% {
+        left: 140%;
+      }
+    }
+
+    @keyframes buttonPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(8,45,156,.24);
+      }
+
+      65% {
+        box-shadow: 0 0 0 12px rgba(8,45,156,0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(8,45,156,0);
+      }
+    }
+
+    @keyframes particleFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(.5);
+      }
+
+      20% {
+        opacity: .22;
+      }
+
+      50% {
+        opacity: .12;
+        transform: translateY(-20px) scale(1);
+      }
+
+      80% {
+        opacity: .18;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-55px) scale(.5);
+      }
+    }
+
+    @keyframes ambientMove {
+      0%, 100% {
+        transform: translate(0,0) scale(1);
+      }
+
+      50% {
+        transform: translate(15px,-15px) scale(1.08);
+      }
+    }
+
+
+    /* --------------------------------
+       Android / Mobile
+    -------------------------------- */
+
+    @media (max-width: 520px) {
+
+      body {
+        min-height: 100svh;
+      }
+
+      .page {
+        width: calc(100% - 30px);
+        padding:
+          20px
+          0
+          calc(20px + env(safe-area-inset-bottom));
+      }
+
+      .logo-wrap {
+        width: 88px;
+        height: 88px;
+        margin-bottom: 25px;
+      }
+
+      .logo {
+        width: 64px;
+        height: 64px;
+      }
+
+      .logo::before {
+        inset: -8px;
+      }
+
+      .logo::after {
+        inset: -14px;
+      }
+
+      h1 {
+        font-size: 25px;
+        line-height: 1.75;
+        letter-spacing: -.7px;
+      }
+
+      .message {
+        margin-top: 10px;
+        margin-bottom: 24px;
+
+        font-size: 14px;
+        line-height: 2.05;
+      }
+
+      .new-address {
+        width: min(100%, 330px);
+        min-height: 55px;
+
+        border-radius: 16px;
+
+        font-size: 15px;
+      }
+
+      .url {
+        margin-top: 15px;
+      }
+
+      .date {
+        margin-top: 29px;
+      }
+
+      .particle:nth-child(n+5) {
+        display: none;
+      }
+    }
+
+
+    /* --------------------------------
+       Very small Android screens
+    -------------------------------- */
+
+    @media (max-height: 650px) {
+
+      .logo-wrap {
+        margin-bottom: 18px;
+        transform: scale(.86);
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .message {
+        margin-bottom: 17px;
+      }
+
+      .date {
+        margin-top: 20px;
+      }
+    }
+
+
+    /* --------------------------------
+       Reduced motion
+    -------------------------------- */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      h1,
+      .message,
+      .button-area,
+      .url,
+      .date {
+        opacity: 1;
+      }
+    }
+
   </style>
 </head>
 
-<body>
-  <main class="page">
-    <div class="mark" aria-hidden="true"></div>
 
-    <h1>وبسایت شرکت به آدرس زیر تغییر پیدا کرد.</h1>
+<body>
+
+  <!-- Background -->
+  <div class="ambient one"></div>
+  <div class="ambient two"></div>
+
+  <!-- Floating particles -->
+  <div class="particles">
+    <span class="particle p1"></span>
+    <span class="particle p2"></span>
+    <span class="particle p3"></span>
+    <span class="particle p4"></span>
+    <span class="particle p5"></span>
+    <span class="particle p6"></span>
+  </div>
+
+
+  <main class="page">
+
+    <!-- Animated Logo -->
+    <div class="logo-wrap">
+      <div class="logo-glow"></div>
+
+      <div class="logo">
+        <div class="logo-core"></div>
+      </div>
+    </div>
+
+
+    <!-- Main Text -->
+    <h1>
+      وبسایت شرکت به آدرس زیر تغییر پیدا کرد.
+    </h1>
+
 
     <p class="message">
       برای ورود به وبسایت جدید شرکت، روی دکمه زیر کلیک کنید.
     </p>
 
-    <a
-      class="new-address"
-      href="https://taavonikohnoor.ir/"
-      aria-label="ورود به وبسایت جدید شرکت"
-    >
-      کلیک کنید!
-      <span class="arrow" aria-hidden="true">←</span>
-    </a>
 
-    <div class="url">taavonikohnoor.ir</div>
+    <!-- Button -->
+    <div class="button-area">
+
+      <a
+        class="new-address"
+        href="https://taavonikohnoor.ir/"
+        aria-label="ورود به وبسایت جدید شرکت"
+      >
+
+        <span class="button-text">
+          کلیک کنید!
+        </span>
+
+        <span class="arrow" aria-hidden="true">
+          ←
+        </span>
+
+      </a>
+
+    </div>
+
+
+    <!-- New Address -->
+    <div class="url">
+      taavonikohnoor.ir
+    </div>
+
+
+    <!-- Persian Date -->
+    <div class="date">
+      امروز
+      <span>۱۶ شهریور ۱۴۰۵</span>
+    </div>
+
   </main>
+
 </body>
 </html>
