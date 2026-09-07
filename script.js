@@ -37,28 +37,28 @@ const news = [
     title: 'تداوم خدمات آبرسانی و پشتیبانی از عشایر شهرستان کهگیلویه',
     excerpt: 'خدمات آبرسانی سیار و توزیع اقلام مورد نیاز عشایر شهرستان کهگیلویه در سال ۱۴۰۴ به صورت مستمر توسط شرکت تعاونی عشایری کوه نور دهدشت انجام شده است.',
     body: 'خدمات آبرسانی سیار با تانکر به عشایر شهرستان کهگیلویه توسط شرکت تعاونی عشایری کوه نور دهدشت به صورت مستمر صورت می پذیرد. آقای پروره مدیرعامل تعاونی عشایری کوه نور دهدشت در همین راستا بیان کردند که طی سال 1404 قریب به 1500 سرویس 12000 لیتری آب شرب با تانکر سیار تحویل عشایر شهرستان کهگیلویه گردیده است. وی افزود سال 1404 خدماتی اعم از توزیع آرد، علوفه دامی، توزیع نفت سفید، توزیع سیلندر گاز مایع و...... به صورت مستمر در اختیار عشایر تحت پوشش و سهامدار شرکت تعاونی قرار گرفته است.',
-    images: ['https://ibb.co/xKWHYsJr','https://ibb.co/QFVJcQVQ','https://ibb.co/Rp2sWYQK','https://ibb.co/ycZD71PH','https://ibb.co/fV3Kdp6c','https://ibb.co/Zz5hgxk6','https://ibb.co/Y7rBLBWM']
-  },
-  {
-    date: '۱۴۰۳/۱۲/۲۹',
-    title: 'برگزاری مجمع عمومی عادی سالیانه شرکت',
-    excerpt: 'جلسه مجمع عمومی عادی سالیانه شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار و صورت‌های مالی سال ۱۴۰۳ تصویب شد.',
-    body: 'جلسه مجمع عمومی عادی سالیانه سال مالی منتهی به 1403/12/29 شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه صورتهای مالی سال 1403 به تصویب اعضاء مجمع رسید.',
-    images: ['https://ibb.co/XrpwsJ9b','https://ibb.co/jZ11bjH6','https://ibb.co/WvZ3zLCH','https://ibb.co/kVxXv4ZL','https://ibb.co/Zpz2hFkS','https://ibb.co/Q7NrB892']
+    images: ['./Abresani1.jpg','./Abresani2.jpg','./Abresani3.jpg','./Abresani4.jpg','./Abresani5.jpg','./Abresani6.jpg','./Abresani7.jpg','./Abresani8.jpg']
   },
   {
     date: '۱۴۰۴/۰۹/۲۱',
     title: 'توزیع نفت سفید به عشایر محترم حوزه',
     excerpt: 'توزیع نفت سفید به عشایر محترم حوزه در محوطه شرکت تعاونی عشایری کوه نور دهدشت انجام شد.',
     body: 'توزیع نفت سفید به عشایر محترم حوزه در محوطهٔ شرکت.',
-    images: ['https://ibb.co/S7r9KY64','https://ibb.co/KcRShWN5']
+    images: ['./NafteSefid1.jpg','./NafteSefid2.jpg']
+  },
+  {
+    date: '۱۴۰۳/۱۲/۲۹',
+    title: 'برگزاری مجمع عمومی عادی سالیانه شرکت',
+    excerpt: 'جلسه مجمع عمومی عادی سالیانه شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار و صورت‌های مالی سال ۱۴۰۳ تصویب شد.',
+    body: 'جلسه مجمع عمومی عادی سالیانه سال مالی منتهی به 1403/12/29 شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه صورتهای مالی سال 1403 به تصویب اعضاء مجمع رسید.',
+    images: ['./MajmaeMali1.jpg','./MajmaeMali2.jpg','./MajmaeMali3.jpg','./MajmaeMali4.jpg','./MajmaeMali5.jpg','./MajmaeMali6.jpg','./MajmaeMali7.jpg']
   },
   {
     date: '۱۴۰۰/۱۰/۲۱',
-    title: 'برگزاری مجمع عمومی فوق‌العاده شرکت',
+    title: 'برگزاری مجمع عمومی فوق‌ العاده شرکت',
     excerpt: 'جلسه مجمع عمومی بطور فوق العاده شرکت تعاونی عشایری کوه نور دهدشت برگزار و اساسنامه جدید شرکت به تصویب اعضاء رسید.',
     body: 'جلسه مجمع عمومی بطور فوق العاده شرکت تعاونی عشایری کوه نور دهدشت در تاریخ 1400/10/21 رأس ساعت 16 در محل شرکت واقع در دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه اساسنامه جدید شرکت با 70 ماده و 51 تبصره و 135 بند به تصویب اعضاء مجمع رسیده است.',
-    images: ['https://ibb.co/CshY940f','https://ibb.co/0jY0Tb1w','https://ibb.co/mwP9bFG','https://ibb.co/ym0yVZRP','https://ibb.co/7xMBt8Qk','https://ibb.co/gLQ3PjL5','https://ibb.co/TDjQS272','https://ibb.co/0yqTRHvK','https://ibb.co/24yPXMN','https://ibb.co/Kct64y74','https://ibb.co/TDh9XPyV']
+    images: ['./Omomi1.jpg','./Omomi2.jpg','./Omomi3.jpg','./Omomi4.jpg']
   }
 ];
 
@@ -72,7 +72,7 @@ const docs = [
 let activeNews = 0;
 let timer = null;
 let timerStartedAt = 0;
-const TIMER_MS = 5200;
+const TIMER_MS = 5300;
 let newsSectionVisible = true;
 let previousBodyOverflow = '';
 let currentLightboxImages = [];
@@ -155,7 +155,7 @@ async function resolveMediaUrl(pageUrl, attempts = 3) {
 function setImageFallback(img, label='تصویر در دسترس نیست') { img.removeAttribute('src'); img.alt=label; img.classList.add('image-failed'); img.parentElement?.classList.add('image-failed'); }
 async function hydrateImage(img, pageUrl) {
   if (!img || !pageUrl) { setImageFallback(img); return false; }
-  const direct = await resolveMediaUrl(pageUrl, 3);
+  const direct = /^(?:https?:|data:|blob:)/i.test(pageUrl) ? await resolveMediaUrl(pageUrl, 3) : pageUrl;
   if (!direct) { setImageFallback(img); return false; }
   img.dataset.pageUrl = pageUrl;
   img.dataset.resolved = '1';
@@ -265,17 +265,7 @@ function showContent(slug) {
   openModal('contentModal');
 }
 function setActiveDot(index) { activeNews=(index+news.length)%news.length; $$('.dots button').forEach((button,i)=>button.classList.toggle('active',i===activeNews)); }
-function goToNews(index,{animate=true}={}) {
-  if(!news.length||!track) return;
-  activeNews=(index+news.length)%news.length;
-  const card=track.querySelector(`[data-index="${activeNews}"]`);
-  if(card){
-    const target=Math.max(0,Math.min(card.offsetLeft-(track.clientWidth-card.offsetWidth)/2,track.scrollWidth-track.clientWidth));
-    track.scrollTo({left:target,behavior:animate?'smooth':'auto'});
-  }
-  setActiveDot(activeNews);
-  resetTimerProgress();
-}
+function goToNews(index,{animate=true}={}) { if(!news.length||!track) return; activeNews=(index+news.length)%news.length; const card=track.querySelector(`[data-index="${activeNews}"]`); card?.scrollIntoView({behavior:animate?'smooth':'auto',block:'nearest',inline:'center'}); setActiveDot(activeNews); resetTimerProgress(); }
 function resetTimerProgress(){ timerStartedAt=performance.now(); const fill=$('#newsTimerFill'); if(fill) fill.style.width='0%'; }
 function stopTimer(){ clearInterval(timer); timer=null; }
 function restartTimer(){ stopTimer(); resetTimerProgress(); if(news.length<2||!newsSectionVisible||$('.modal.open')) return; timer=setInterval(()=>{ const elapsed=performance.now()-timerStartedAt; const fill=$('#newsTimerFill'); if(fill) fill.style.width=Math.min(100,(elapsed/TIMER_MS)*100)+'%'; if(elapsed>=TIMER_MS) goToNews(activeNews+1); },80); }
