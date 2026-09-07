@@ -1,4 +1,4 @@
-دامنه اصلی: tavonikohnoor.ir
+دامنه اصلی: tavonikohenor.ir
 
 CNAME باید فقط شامل همین مقدار باشد:
 tavonikohnoor.ir
