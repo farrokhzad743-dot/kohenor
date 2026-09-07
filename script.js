@@ -31,49 +31,48 @@ const fallbackContent = {
 
 const content = fallbackContent;
 
-// تمام تصاویر اخبار به‌صورت محلی در پروژه نگهداری می‌شوند؛ هیچ وابستگی به ImgBB، Proxy یا API خارجی وجود ندارد.
 const news = [
   {
     date: '۱۴۰۴',
     title: 'تداوم خدمات آبرسانی و پشتیبانی از عشایر شهرستان کهگیلویه',
     excerpt: 'خدمات آبرسانی سیار و توزیع اقلام مورد نیاز عشایر شهرستان کهگیلویه در سال ۱۴۰۴ به صورت مستمر توسط شرکت تعاونی عشایری کوه نور دهدشت انجام شده است.',
     body: 'خدمات آبرسانی سیار با تانکر به عشایر شهرستان کهگیلویه توسط شرکت تعاونی عشایری کوه نور دهدشت به صورت مستمر صورت می پذیرد. آقای پروره مدیرعامل تعاونی عشایری کوه نور دهدشت در همین راستا بیان کردند که طی سال 1404 قریب به 1500 سرویس 12000 لیتری آب شرب با تانکر سیار تحویل عشایر شهرستان کهگیلویه گردیده است. وی افزود سال 1404 خدماتی اعم از توزیع آرد، علوفه دامی، توزیع نفت سفید، توزیع سیلندر گاز مایع و...... به صورت مستمر در اختیار عشایر تحت پوشش و سهامدار شرکت تعاونی قرار گرفته است.',
-    images: Array.from({length:8}, (_,i) => `Abresani${i+1}.jpg`)
-  },
-  {
-    date: '۱۴۰۴/۰۹/۲۱',
-    title: 'توزیع نفت سفید به عشایر محترم حوزه',
-    excerpt: 'توزیع نفت سفید به عشایر محترم حوزه در محوطه شرکت تعاونی عشایری کوه نور دهدشت انجام شد.',
-    body: 'توزیع نفت سفید به عشایر محترم حوزه در محوطهٔ شرکت.',
-    images: ['NafteSefid1.jpg','NafteSefid2.jpg']
+    images: ['https://ibb.co/xKWHYsJr','https://ibb.co/QFVJcQVQ','https://ibb.co/Rp2sWYQK','https://ibb.co/ycZD71PH','https://ibb.co/fV3Kdp6c','https://ibb.co/Zz5hgxk6','https://ibb.co/Y7rBLBWM']
   },
   {
     date: '۱۴۰۳/۱۲/۲۹',
     title: 'برگزاری مجمع عمومی عادی سالیانه شرکت',
     excerpt: 'جلسه مجمع عمومی عادی سالیانه شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار و صورت‌های مالی سال ۱۴۰۳ تصویب شد.',
     body: 'جلسه مجمع عمومی عادی سالیانه سال مالی منتهی به 1403/12/29 شرکت تعاونی عشایری کوه نور دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه صورتهای مالی سال 1403 به تصویب اعضاء مجمع رسید.',
-    images: Array.from({length:7}, (_,i) => `MajmaeMali${i+1}.jpg`)
+    images: ['https://ibb.co/XrpwsJ9b','https://ibb.co/jZ11bjH6','https://ibb.co/WvZ3zLCH','https://ibb.co/kVxXv4ZL','https://ibb.co/Zpz2hFkS','https://ibb.co/Q7NrB892']
+  },
+  {
+    date: '۱۴۰۴/۰۹/۲۱',
+    title: 'توزیع نفت سفید به عشایر محترم حوزه',
+    excerpt: 'توزیع نفت سفید به عشایر محترم حوزه در محوطه شرکت تعاونی عشایری کوه نور دهدشت انجام شد.',
+    body: 'توزیع نفت سفید به عشایر محترم حوزه در محوطهٔ شرکت.',
+    images: ['https://ibb.co/S7r9KY64','https://ibb.co/KcRShWN5']
   },
   {
     date: '۱۴۰۰/۱۰/۲۱',
-    title: 'برگزاری مجمع عمومی فوق العاده شرکت',
+    title: 'برگزاری مجمع عمومی فوق‌العاده شرکت',
     excerpt: 'جلسه مجمع عمومی بطور فوق العاده شرکت تعاونی عشایری کوه نور دهدشت برگزار و اساسنامه جدید شرکت به تصویب اعضاء رسید.',
     body: 'جلسه مجمع عمومی بطور فوق العاده شرکت تعاونی عشایری کوه نور دهدشت در تاریخ 1400/10/21 رأس ساعت 16 در محل شرکت واقع در دهدشت با حضور اکثریت اعضاء برگزار گردید. در این جلسه اساسنامه جدید شرکت با 70 ماده و 51 تبصره و 135 بند به تصویب اعضاء مجمع رسیده است.',
-    images: ['Omomi1.jpg','Omomi2.jpg','Omomi3.jpg','Omomi4.jpg']
+    images: ['https://ibb.co/CshY940f','https://ibb.co/0jY0Tb1w','https://ibb.co/mwP9bFG','https://ibb.co/ym0yVZRP','https://ibb.co/7xMBt8Qk','https://ibb.co/gLQ3PjL5','https://ibb.co/TDjQS272','https://ibb.co/0yqTRHvK','https://ibb.co/24yPXMN','https://ibb.co/Kct64y74','https://ibb.co/TDh9XPyV']
   }
 ];
 
 const docs = [
-  { title: 'استعلام شناسه ملی', url: 'https://ibb.co/W4nDjgT1', embed: true },
-  { title: 'ثبت شرکت در دهدشت', url: 'https://ibb.co/Z6NZyJcy', embed: true },
-  { title: 'آگهی تأسیس', url: 'https://ibb.co/d0t1nDCd', embed: true },
+  { title: 'استعلام شناسه ملی', url: 'https://ibb.co/W4nDjgT1' },
+  { title: 'ثبت شرکت در دهدشت', url: 'https://ibb.co/Z6NZyJcy' },
+  { title: 'آگهی تأسیس', url: 'https://ibb.co/d0t1nDCd' },
   { title: 'اساسنامه', url: './asasname.pdf', download: true }
 ];
 
 let activeNews = 0;
 let timer = null;
 let timerStartedAt = 0;
-const TIMER_MS = 6000;
+const TIMER_MS = 5200;
 let newsSectionVisible = true;
 let previousBodyOverflow = '';
 let currentLightboxImages = [];
@@ -90,105 +89,271 @@ const viewer = $('#documentViewer');
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[char]));
 }
-function normalizeDate(value) {
-  const raw = String(value||'').trim();
-  const match = raw.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
-  if (!match) return raw;
-  const fa = s => String(s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-  return [fa(match[1]), fa(match[2].padStart(2,'0')), fa(match[3].padStart(2,'0'))].join('/');
+
+function imageCacheKey(pageUrl) { return 'kohenor-img:' + pageUrl; }
+function cachedImageUrl(pageUrl) { try { return localStorage.getItem(imageCacheKey(pageUrl)) || ''; } catch (_) { return ''; } }
+function saveImageUrl(pageUrl, imageUrl) { try { localStorage.setItem(imageCacheKey(pageUrl), imageUrl); } catch (_) {} }
+function directImageFromText(text) {
+  const raw = String(text || '');
+  try {
+    const json = JSON.parse(raw);
+    const candidate = json?.data?.image?.url || json?.image?.url || '';
+    if (candidate) return candidate;
+  } catch (_) {}
+  const patterns = [
+    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+    /!\[[^\]]*\]\((https:\/\/i\.ibb\.co\/[^)]+)\)/i,
+    /(https:\/\/i\.ibb\.co\/[A-Za-z0-9._\/-]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?)/i
+  ];
+  for (const pattern of patterns) {
+    const match = raw.match(pattern);
+    if (match) return (match[1] || match[0]).replace(/&amp;/g, '&').replace(/[),.;]+$/g, '');
+  }
+  return '';
 }
-function setImageFallback(img, label='تصویر در دسترس نیست') {
-  img.removeAttribute('src'); img.alt=label; img.classList.add('image-failed'); img.parentElement?.classList.add('image-failed');
+async function fetchText(url, timeoutMs = 9000) {
+  const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try { const response = await fetch(url, { cache:'force-cache', signal:controller.signal }); if (!response.ok) throw new Error('HTTP '+response.status); return await response.text(); }
+  finally { clearTimeout(timeout); }
 }
-function hydrateImage(img, src) {
-  if (!img || !src) { setImageFallback(img); return; }
-  img.src = src;
-  img.addEventListener('error', () => setImageFallback(img, 'تصویر خبر در دسترس نیست'), {once:true});
+async function resolveMediaUrl(pageUrl, attempts = 3) {
+  if (!pageUrl) return '';
+  if (/^(?:data:|blob:)/i.test(pageUrl)) return pageUrl;
+  if (/^https:\/\/i\.ibb\.co\//i.test(pageUrl) || /\.(?:jpg|jpeg|png|webp|gif|svg)(?:[?#].*)?$/i.test(pageUrl)) return pageUrl;
+
+  const cached = cachedImageUrl(pageUrl);
+  if (cached && !/api\.microlink\.io/i.test(cached)) return cached;
+  if (!/^https:\/\/ibb\.co\//i.test(pageUrl)) return pageUrl;
+
+  const encoded = encodeURIComponent(pageUrl);
+  const resolvers = [
+    `https://api.allorigins.win/raw?url=${encoded}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encoded}`,
+    `https://corsproxy.io/?url=${encoded}`,
+    `https://r.jina.ai/http://ibb.co/${pageUrl.split('/').pop()}`,
+    `https://r.jina.ai/${pageUrl}`
+  ];
+
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    for (const endpoint of resolvers) {
+      try {
+        const text = await fetchText(endpoint, 10000);
+        const imageUrl = directImageFromText(text);
+        if (imageUrl) {
+          saveImageUrl(pageUrl, imageUrl);
+          return imageUrl;
+        }
+      } catch (error) {
+        console.warn('Image resolver failed:', endpoint, error);
+      }
+    }
+  }
+
+  return '';
 }
+function setImageFallback(img, label='تصویر در دسترس نیست') { img.removeAttribute('src'); img.alt=label; img.classList.add('image-failed'); img.parentElement?.classList.add('image-failed'); }
+async function hydrateImage(img, pageUrl) {
+  if (!img || !pageUrl) { setImageFallback(img); return false; }
+  const direct = await resolveMediaUrl(pageUrl, 3);
+  if (!direct) { setImageFallback(img); return false; }
+  img.dataset.pageUrl = pageUrl;
+  img.dataset.resolved = '1';
+  img.dataset.retry = '0';
+  img.onload = () => {
+    img.classList.remove('image-failed');
+    img.parentElement?.classList.remove('image-failed');
+  };
+  img.onerror = async () => {
+    const retry = Number(img.dataset.retry || '0');
+    if (retry >= 1) { setImageFallback(img); return; }
+    img.dataset.retry = String(retry + 1);
+    try { localStorage.removeItem(imageCacheKey(pageUrl)); } catch (_) {}
+    const retryUrl = await resolveMediaUrl(pageUrl, 3);
+    if (retryUrl) img.src = retryUrl;
+    else setImageFallback(img);
+  };
+  img.src = direct;
+  return true;
+}
+function normalizeDate(value) { const raw=String(value||'').trim(); const match=raw.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/); if (!match) return raw; return [match[1],match[2].padStart(2,'0'),match[3].padStart(2,'0')].join('/'); }
 
 function renderNews() {
   if (!track || !dots || !allNews) return;
   track.innerHTML = news.map((item, index) => `
     <article class="news-card" data-index="${index}" tabindex="0" role="button" aria-label="مشاهده ${esc(item.title)}">
-      <div class="news-cover"><img class="news-media" src="${esc(item.images[0] || '')}" alt="${esc(item.title)}" loading="lazy"></div>
+      <div class="news-cover"><img class="news-media" data-page-url="${esc(item.images[0] || '')}" alt="${esc(item.title)}" loading="lazy"></div>
       <div class="news-body"><time class="news-date" datetime="${esc(normalizeDate(item.date))}">${esc(normalizeDate(item.date))}</time><h3>${esc(item.title)}</h3><p>${esc(item.excerpt)}</p></div>
     </article>`).join('');
   dots.innerHTML = news.map((_, index) => `<button type="button" aria-label="نمایش خبر ${index + 1}" data-dot="${index}" class="${index === 0 ? 'active' : ''}"></button>`).join('');
   allNews.innerHTML = news.map((item, index) => `
     <button class="all-news-item" type="button" data-index="${index}"><div><time datetime="${esc(normalizeDate(item.date))}">${esc(normalizeDate(item.date))}</time><h3>${esc(item.title)}</h3><p>${esc(item.excerpt)}</p></div><span aria-hidden="true">←</span></button>`).join('');
+  $$('.news-media', track).forEach(img => hydrateImage(img, img.dataset.pageUrl));
 }
 
 function openModal(id) {
-  const modal = document.getElementById(id); if (!modal) return;
-  modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); lockBody(); $('.modal-close', modal)?.focus();
+  const modal = document.getElementById(id);
+  if (!modal) return;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  lockBody();
+  const focusTarget = $('.modal-close', modal);
+  focusTarget?.focus();
 }
 function closeModal(id) {
-  const modal = document.getElementById(id); if (!modal) return;
-  modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); unlockBodyIfNoModal();
+  const modal = document.getElementById(id);
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  unlockBodyIfNoModal();
 }
-function lockBody() { if (!document.body.classList.contains('modal-locked')) { previousBodyOverflow=document.body.style.overflow; document.body.style.overflow='hidden'; document.body.classList.add('modal-locked'); } }
-function unlockBodyIfNoModal() { if (!$('.modal.open')) { document.body.style.overflow=previousBodyOverflow; document.body.classList.remove('modal-locked'); } }
-function articleParagraphs(text) { return String(text || '').split(/\n+/).map(x => x.trim()).filter(Boolean).map(x => `<p>${esc(x)}</p>`).join(''); }
 
-function showArticle(index) {
-  const item = news[index]; if (!item || !articleContent) return;
+function articleParagraphs(text) {
+  return String(text || '').split(/\n+/).map(x => x.trim()).filter(Boolean).map(x => `<p>${esc(x)}</p>`).join('');
+}
+
+async function showArticle(index) {
+  const item = news[index];
+  if (!item || !articleContent) return;
   articleContent.innerHTML = `
     <h2 id="articleTitle">${esc(item.title)}</h2>
     <time class="article-meta">${esc(normalizeDate(item.date))}</time>
     <div class="article-gallery" id="articleGallery" aria-label="تصاویر خبر"></div>
     <div class="article-text">${articleParagraphs(item.body)}</div>`;
+  // Do not write the selected article into the URL hash. Refreshing the page must never reopen a news modal.
   openModal('articleModal');
   const gallery = $('#articleGallery');
-  item.images.forEach((src, i) => {
-    const button=document.createElement('button'); button.type='button'; button.className='gallery-thumb';
-    const img=document.createElement('img'); img.src=src; img.alt=`${item.title} - تصویر ${i+1}`; img.loading='lazy';
-    img.addEventListener('error',()=>button.remove(),{once:true});
-    button.appendChild(img); gallery.appendChild(button);
-    button.addEventListener('click',()=>openLightbox(item.images,i,item.title));
-  });
-  if (!gallery.children.length) gallery.innerHTML='<div class="image-failed-box">تصاویر خبر در دسترس نیستند.</div>';
-}
-function openLightbox(images, index=0, title='تصویر') {
-  const modal=$('#lightboxModal'), lightboxTrack=$('#lightboxTrack'); if(!modal||!lightboxTrack||!images.length)return;
-  currentLightboxImages=images.filter(Boolean); currentLightboxIndex=Math.max(0,Math.min(index,currentLightboxImages.length-1));
-  lightboxTrack.innerHTML=currentLightboxImages.map((url,i)=>`<div class="lightbox-slide" data-index="${i}"><img src="${esc(url)}" alt="${esc(title)} - تصویر ${i+1}"></div>`).join('');
-  openModal('lightboxModal'); requestAnimationFrame(()=>scrollLightboxTo(currentLightboxIndex));
-}
-function scrollLightboxTo(index){const t=$('#lightboxTrack');if(!t||!currentLightboxImages.length)return;currentLightboxIndex=(index+currentLightboxImages.length)%currentLightboxImages.length;t.querySelector(`[data-index="${currentLightboxIndex}"]`)?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
-function moveLightbox(direction){scrollLightboxTo(currentLightboxIndex+direction);}
-function closeLightbox(){closeModal('lightboxModal');currentLightboxImages=[];}
-function showContent(slug){const item=content[slug];if(!item)return;$('#contentModalBody').innerHTML=`<div class="content-modal-body"><span class="eyebrow">معرفی</span><h2 id="contentTitle">${esc(item.title)}</h2><div class="article-meta">متن کامل</div><div class="article-text">${articleParagraphs(item.body)}</div></div>`;openModal('contentModal');}
-function setActiveDot(index){activeNews=(index+news.length)%news.length;$$('.dots button').forEach((b,i)=>b.classList.toggle('active',i===activeNews));}
-function goToNews(index,{animate=true}={}){if(!news.length||!track)return;activeNews=(index+news.length)%news.length;const card=track.querySelector(`[data-index="${activeNews}"]`);if(card){const tr=track.getBoundingClientRect();const cr=card.getBoundingClientRect();const delta=(cr.left+cr.width/2)-(tr.left+tr.width/2);track.scrollTo({left:track.scrollLeft+delta,behavior:animate?'smooth':'auto'});}setActiveDot(activeNews);resetTimerProgress();}
-function resetTimerProgress(){timerStartedAt=performance.now();const fill=$('#newsTimerFill');if(fill)fill.style.width='0%';}
-function stopTimer(){clearInterval(timer);timer=null;}
-function restartTimer(){stopTimer();resetTimerProgress();if(news.length<2||!newsSectionVisible||$('.modal.open'))return;timer=setInterval(()=>{const elapsed=performance.now()-timerStartedAt;const fill=$('#newsTimerFill');if(fill)fill.style.width=Math.min(100,(elapsed/TIMER_MS)*100)+'%';if(elapsed>=TIMER_MS)goToNews(activeNews+1);},80);}
-function renderIranDate(){const element=$('#iranDate');if(!element)return;try{element.textContent=new Intl.DateTimeFormat('fa-IR-u-ca-persian',{timeZone:'Asia/Tehran',day:'numeric',month:'long',year:'numeric'}).format(new Date());}catch(_){element.textContent='';}}
-
-function renderDoc(index=0){
-  const doc=docs[index]; if(!doc||!viewer)return;
-  if(doc.download){viewer.innerHTML=`<div class="document-state"><strong>${esc(doc.title)}</strong><p>نسخه PDF اساسنامه شرکت</p><a class="document-open-link" href="${esc(doc.url)}" target="_blank" rel="noopener">مشاهده / دریافت اساسنامه</a></div>`;return;}
-  if(doc.embed){viewer.innerHTML=`<div class="document-state"><strong>${esc(doc.title)}</strong><iframe class="document-embed" src="${esc(doc.url)}" title="${esc(doc.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;return;}
-  viewer.innerHTML=`<button class="document-image-button" type="button"><img src="${esc(doc.url)}" alt="${esc(doc.title)}" loading="lazy"></button>`;
-  const button=$('.document-image-button',viewer);button?.addEventListener('click',()=>openLightbox([doc.url],0,doc.title));
+  if (!gallery) return;
+  gallery.innerHTML = '<div class="image-loading-box">در حال بارگذاری تصاویر خبر…</div>';
+  const resolvedImages = [];
+  for (let i = 0; i < item.images.length; i++) {
+    const direct = await resolveMediaUrl(item.images[i], 3);
+    if (!direct) continue;
+    resolvedImages.push(direct);
+    if (gallery.querySelector('.image-loading-box')) gallery.innerHTML = '';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'gallery-thumb';
+    button.innerHTML = `<img src="${esc(direct)}" alt="${esc(item.title)} - تصویر ${i + 1}" loading="lazy" onerror="this.closest('button')?.remove()">`;
+    gallery.appendChild(button);
+    const imageIndex = resolvedImages.length - 1;
+    button.addEventListener('click', () => openLightbox(resolvedImages, imageIndex, item.title));
+  }
+  if (!gallery.children.length) gallery.innerHTML = '<div class="image-failed-box">تصاویر خبر در دسترس نیستند.</div>';
 }
 
-function bindEvents(){
-  $$('.news-card',track).forEach(card=>{card.addEventListener('click',()=>showArticle(Number(card.dataset.index)));card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showArticle(Number(card.dataset.index));}});});
-  $$('.all-news-item').forEach(b=>b.addEventListener('click',()=>{const i=Number(b.dataset.index);closeModal('newsModal');showArticle(i);}));
-  $$('.dots button').forEach(b=>b.addEventListener('click',()=>goToNews(Number(b.dataset.dot))));
-  $('#prevNews')?.addEventListener('click',()=>goToNews(activeNews-1));
-  $('#nextNews')?.addEventListener('click',()=>goToNews(activeNews+1));
-  $('#openNews')?.addEventListener('click',()=>{openModal('newsModal');stopTimer();});
-  $$('.read-more').forEach(b=>b.addEventListener('click',()=>showContent(b.dataset.content)));
-  $$('.document-tab').forEach(b=>b.addEventListener('click',()=>{$$('.document-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderDoc(Number(b.dataset.doc));}));
-  $$('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
-  $$('[data-lightbox-close]').forEach(b=>b.addEventListener('click',closeLightbox));
-  $('#lightboxPrev')?.addEventListener('click',()=>moveLightbox(-1));
-  $('#lightboxNext')?.addEventListener('click',()=>moveLightbox(1));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#lightboxModal')?.classList.contains('open'))closeLightbox();else $$('.modal.open').forEach(m=>closeModal(m.id));}if($('#lightboxModal')?.classList.contains('open')){if(e.key==='ArrowLeft')moveLightbox(1);if(e.key==='ArrowRight')moveLightbox(-1);}});
-  track?.addEventListener('scroll',()=>{const cards=$$('.news-card',track);if(!cards.length)return;const center=track.getBoundingClientRect().left+track.getBoundingClientRect().width/2;let best=0,dist=Infinity;cards.forEach((c,i)=>{const r=c.getBoundingClientRect();const d=Math.abs((r.left+r.width/2)-center);if(d<dist){dist=d;best=i;}});if(best!==activeNews){activeNews=best;setActiveDot(best);resetTimerProgress();}});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopTimer();else restartTimer();});
+function openLightbox(images, index = 0, title = 'تصویر') {
+  const modal = $('#lightboxModal'); const lightboxTrack = $('#lightboxTrack');
+  if (!modal || !lightboxTrack || !images.length) return;
+  currentLightboxImages = images.filter(Boolean);
+  currentLightboxIndex = Math.max(0, Math.min(index, currentLightboxImages.length - 1));
+  lightboxTrack.innerHTML = currentLightboxImages.map((url, i) => `<div class="lightbox-slide" data-index="${i}"><img src="${esc(url)}" alt="${esc(title)} - تصویر ${i + 1}"></div>`).join('');
+  openModal('lightboxModal');
+  requestAnimationFrame(() => scrollLightboxTo(currentLightboxIndex));
+}
+function scrollLightboxTo(index) {
+  const lightboxTrack = $('#lightboxTrack'); if (!lightboxTrack) return;
+  currentLightboxIndex = (index + currentLightboxImages.length) % currentLightboxImages.length;
+  lightboxTrack.querySelector(`[data-index="${currentLightboxIndex}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+function moveLightbox(direction) { if (currentLightboxImages.length) scrollLightboxTo(currentLightboxIndex + direction); }
+function closeLightbox() { closeModal('lightboxModal'); currentLightboxImages = []; }
+
+function showContent(slug) {
+  const item = content[slug]; if (!item) return;
+  $('#contentModalBody').innerHTML = `<div class="content-modal-body"><span class="eyebrow">معرفی</span><h2 id="contentTitle">${esc(item.title)}</h2><div class="article-meta">متن کامل</div><div class="article-text">${articleParagraphs(item.body)}</div></div>`;
+  openModal('contentModal');
+}
+function setActiveDot(index) { activeNews=(index+news.length)%news.length; $$('.dots button').forEach((button,i)=>button.classList.toggle('active',i===activeNews)); }
+function goToNews(index,{animate=true}={}) {
+  if(!news.length||!track) return;
+  activeNews=(index+news.length)%news.length;
+  const card=track.querySelector(`[data-index="${activeNews}"]`);
+  if(card){
+    const target=Math.max(0,Math.min(card.offsetLeft-(track.clientWidth-card.offsetWidth)/2,track.scrollWidth-track.clientWidth));
+    track.scrollTo({left:target,behavior:animate?'smooth':'auto'});
+  }
+  setActiveDot(activeNews);
+  resetTimerProgress();
+}
+function resetTimerProgress(){ timerStartedAt=performance.now(); const fill=$('#newsTimerFill'); if(fill) fill.style.width='0%'; }
+function stopTimer(){ clearInterval(timer); timer=null; }
+function restartTimer(){ stopTimer(); resetTimerProgress(); if(news.length<2||!newsSectionVisible||$('.modal.open')) return; timer=setInterval(()=>{ const elapsed=performance.now()-timerStartedAt; const fill=$('#newsTimerFill'); if(fill) fill.style.width=Math.min(100,(elapsed/TIMER_MS)*100)+'%'; if(elapsed>=TIMER_MS) goToNews(activeNews+1); },80); }
+
+async function prefetchNewsImages() {
+  // Warm the cache in the background so the article gallery opens with images already resolved.
+  for (const item of news) {
+    for (const url of item.images) {
+      if (!cachedImageUrl(url)) await resolveMediaUrl(url, 1);
+    }
+  }
 }
 
-document.addEventListener('DOMContentLoaded',()=>{renderNews();bindEvents();renderDoc(0);renderIranDate();requestAnimationFrame(()=>goToNews(0,{animate:false}));restartTimer();});
+function renderIranDate() {
+  const element = $('#iranDate'); if (!element) return;
+  try { element.textContent = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { timeZone:'Asia/Tehran', day:'numeric', month:'long', year:'numeric' }).format(new Date()); } catch (_) { element.textContent = ''; }
+}
+
+async function renderDoc(index = 0) {
+  const doc = docs[index]; if (!doc || !viewer) return;
+  $$('.document-tab').forEach((button, i) => button.classList.toggle('active', i === index));
+  if (doc.download) {
+    viewer.innerHTML = `<div class="document-state"><span>PDF</span><strong>${esc(doc.title)}</strong><p>نسخه کامل اساسنامه برای مشاهده یا دریافت آماده است.</p><a href="./asasname.pdf" download="اساسنامه.pdf" class="document-open-link">دانلود اساسنامه</a></div>`;
+    return;
+  }
+  viewer.innerHTML = `<div class="document-loading" aria-live="polite">در حال بارگذاری سند…</div>`;
+  const direct = await resolveMediaUrl(doc.url);
+  if (!direct) {
+    viewer.innerHTML = `<div class="document-state"><strong>${esc(doc.title)}</strong><p>تصویر سند در حال حاضر از منبع تصویری قابل دریافت نیست.</p></div>`;
+    return;
+  }
+  viewer.innerHTML = `<button class="document-image-button" type="button" aria-label="بزرگ‌نمایی ${esc(doc.title)}"><img id="documentImage" src="${esc(direct)}" alt="${esc(doc.title)}"></button>`;
+  $('.document-image-button', viewer)?.addEventListener('click', () => openLightbox([direct], 0, doc.title));
+}
+
+['logoLeft'].forEach(id => { const img = document.getElementById(id); if (img) hydrateImage(img, img.dataset.pageUrl); });
+const logoRight = document.getElementById('logoRight');
+logoRight?.addEventListener('error', () => { if (!logoRight.dataset.resolved) hydrateImage(logoRight, logoRight.dataset.pageUrl); }, { once: true });
+renderNews(); renderIranDate(); renderDoc(0); prefetchNewsImages();
+setInterval(renderIranDate, 60000);
+
+$('#openNews')?.addEventListener('click', () => openModal('newsModal'));
+$('#nextNews')?.addEventListener('click', () => goToNews(activeNews + 1));
+$('#prevNews')?.addEventListener('click', () => goToNews(activeNews - 1));
+
+dots?.addEventListener('click', event => { const dot = event.target.closest('[data-dot]'); if (dot) goToNews(Number(dot.dataset.dot)); });
+track?.addEventListener('click', event => { const card = event.target.closest('.news-card'); if (card) showArticle(Number(card.dataset.index)); });
+track?.addEventListener('keydown', event => { const card = event.target.closest('.news-card'); if (card && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); showArticle(Number(card.dataset.index)); } });
+allNews?.addEventListener('click', event => { const item = event.target.closest('.all-news-item'); if (item) { closeModal('newsModal'); showArticle(Number(item.dataset.index)); } });
+$$('.document-tab').forEach(button => button.addEventListener('click', () => renderDoc(Number(button.dataset.doc))));
+$$('.read-more').forEach(button => button.addEventListener('click', () => showContent(button.dataset.content)));
+
+document.addEventListener('click', event => {
+  const close = event.target.closest('[data-close]'); if (close) closeModal(close.dataset.close);
+  if (event.target.closest('[data-lightbox-close]')) closeLightbox();
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') { ['newsModal','articleModal','contentModal'].forEach(closeModal); closeLightbox(); return; }
+  if ($('#lightboxModal')?.classList.contains('open')) {
+    if (event.key === 'ArrowRight') moveLightbox(-1);
+    if (event.key === 'ArrowLeft') moveLightbox(1);
+  }
+});
+$('#lightboxPrev')?.addEventListener('click', () => moveLightbox(-1));
+$('#lightboxNext')?.addEventListener('click', () => moveLightbox(1));
+
+track?.addEventListener('pointerdown', stopTimer);
+track?.addEventListener('pointerup', restartTimer);
+track?.addEventListener('pointercancel', restartTimer);
+track?.addEventListener('mouseenter', stopTimer);
+track?.addEventListener('mouseleave', restartTimer);
+const newsSection = $('.news-section');
+if ('IntersectionObserver' in window && newsSection) {
+  const observer = new IntersectionObserver(entries => { newsSectionVisible = entries[0]?.isIntersecting ?? true; if (newsSectionVisible) restartTimer(); else stopTimer(); }, { threshold:0.05 });
+  observer.observe(newsSection);
+}
+// Hash-based article auto-open is intentionally disabled: refresh must always start on the normal homepage.
+if (location.hash.match(/^#news-\d+$/)) history.replaceState(null, '', location.pathname + location.search);
+
+restartTimer();
