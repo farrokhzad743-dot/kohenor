@@ -2,282 +2,417 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  >
 
   <meta name="theme-color" content="#082d9c">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="وبسایت شرکت تعاونی عشایری کوه نور به آدرس جدید منتقل شده است.">
+
+  <meta
+    name="description"
+    content="وبسایت شرکت تعاونی عشایری کوه نور به آدرس جدید منتقل شده است."
+  >
 
   <title>شرکت تعاونی عشایری کوه نور</title>
 
+  <!-- Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link
     href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   >
 
   <style>
+
+    /* =========================================================
+       ROOT
+    ========================================================= */
+
     :root {
       --blue: #082d9c;
+      --blue-2: #123fbd;
       --blue-dark: #061d63;
-      --blue-light: #4f78df;
+
       --ink: #102044;
-      --muted: #66708a;
+      --muted: #6d7891;
       --soft: #eef3ff;
+
       --white: #ffffff;
     }
 
+
+    /* =========================================================
+       RESET
+    ========================================================= */
+
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+
       -webkit-tap-highlight-color: transparent;
     }
 
-    html,
-    body {
+
+    html {
       width: 100%;
       min-height: 100%;
-      margin: 0;
+      background: #fff;
     }
 
+
     body {
+      width: 100%;
       min-height: 100svh;
+
       overflow: hidden;
-      position: relative;
-      display: grid;
-      place-items: center;
+
+      font-family:
+        "Vazirmatn",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+      color: var(--ink);
 
       background:
         radial-gradient(
-          circle at 50% 42%,
+          circle at 50% 45%,
           rgba(8, 45, 156, .075),
-          transparent 28%
+          transparent 30%
         ),
         linear-gradient(
           180deg,
           #ffffff 0%,
           #fbfcff 100%
         );
-
-      color: var(--ink);
-      font-family: "Vazirmatn", Tahoma, sans-serif;
     }
 
 
-    /* --------------------------------
-       Background light
-    -------------------------------- */
+    /* =========================================================
+       AMBIENT LIGHT
+    ========================================================= */
 
     .ambient {
       position: fixed;
-      width: 65vw;
-      height: 65vw;
-      max-width: 520px;
-      max-height: 520px;
+
+      width: 420px;
+      height: 420px;
+
       border-radius: 50%;
-      background: rgba(8, 45, 156, .035);
-      filter: blur(45px);
+
       pointer-events: none;
-      animation: ambientMove 7s ease-in-out infinite;
+
+      filter: blur(70px);
+
+      opacity: .55;
+
+      animation:
+        ambientMove 10s ease-in-out infinite;
     }
+
 
     .ambient.one {
-      top: -30%;
-      right: -20%;
+      top: -230px;
+      right: -170px;
+
+      background:
+        rgba(8, 45, 156, .055);
     }
+
 
     .ambient.two {
-      bottom: -35%;
-      left: -25%;
-      animation-delay: -3s;
+      bottom: -260px;
+      left: -190px;
+
+      background:
+        rgba(40, 90, 210, .045);
+
+      animation-delay: -5s;
     }
 
 
-    /* --------------------------------
-       Floating particles
-    -------------------------------- */
+    /* =========================================================
+       PARTICLES
+    ========================================================= */
 
     .particles {
       position: fixed;
       inset: 0;
+
       pointer-events: none;
     }
 
+
     .particle {
       position: absolute;
-      width: 4px;
-      height: 4px;
+
+      width: 3px;
+      height: 3px;
+
       border-radius: 50%;
+
       background: var(--blue);
+
       opacity: 0;
-      animation: particleFloat linear infinite;
+
+      animation:
+        particleFloat 8s ease-in-out infinite;
     }
 
+
     .p1 {
-      top: 18%;
-      left: 14%;
-      animation-duration: 6s;
+      top: 17%;
+      left: 13%;
     }
 
     .p2 {
-      top: 29%;
-      right: 13%;
-      animation-duration: 7s;
+      top: 25%;
+      right: 15%;
+
       animation-delay: -2s;
+      animation-duration: 7s;
     }
 
     .p3 {
-      top: 70%;
-      left: 19%;
-      animation-duration: 8s;
+      top: 71%;
+      left: 18%;
+
       animation-delay: -4s;
+      animation-duration: 9s;
     }
 
     .p4 {
-      top: 76%;
-      right: 17%;
-      animation-duration: 6.5s;
+      top: 77%;
+      right: 18%;
+
       animation-delay: -1s;
+      animation-duration: 7s;
     }
 
     .p5 {
-      top: 48%;
+      top: 43%;
       left: 7%;
-      width: 3px;
-      height: 3px;
-      animation-duration: 9s;
-      animation-delay: -5s;
+
+      width: 2px;
+      height: 2px;
+
+      animation-delay: -3s;
+      animation-duration: 10s;
     }
 
     .p6 {
       top: 57%;
       right: 7%;
-      width: 3px;
-      height: 3px;
-      animation-duration: 8s;
-      animation-delay: -3s;
+
+      width: 2px;
+      height: 2px;
+
+      animation-delay: -6s;
+      animation-duration: 9s;
     }
 
 
-    /* --------------------------------
-       Main
-    -------------------------------- */
+    /* =========================================================
+       MAIN PAGE
+    ========================================================= */
 
     .page {
       position: relative;
-      z-index: 5;
+      z-index: 10;
 
-      width: min(720px, calc(100% - 34px));
-      padding: 25px 0;
+      width: min(
+        720px,
+        calc(100% - 34px)
+      );
+
+      min-height: 100svh;
+
+      margin: 0 auto;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
 
       text-align: center;
 
+      padding:
+        30px
+        0
+        calc(30px + env(safe-area-inset-bottom));
+
       animation:
-        pageIn 1s cubic-bezier(.22, 1, .36, 1) both;
+        pageEnter 1.15s cubic-bezier(.22, 1, .36, 1) both;
     }
 
 
-    /* --------------------------------
-       Animated mark
-    -------------------------------- */
+    /* =========================================================
+       LOGO / MARK
+    ========================================================= */
 
-    .logo-wrap {
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 30px;
-
-      position: relative;
-      display: grid;
-      place-items: center;
-
-      animation: logoEntrance 1.2s cubic-bezier(.22, 1, .36, 1) both;
-    }
-
-    .logo-glow {
-      position: absolute;
-      inset: 18px;
-
-      border-radius: 50%;
-      background: rgba(8, 45, 156, .08);
-
-      filter: blur(10px);
-
-      animation: glowPulse 3s ease-in-out infinite;
-    }
-
-    .logo {
+    .mark-wrap {
       position: relative;
 
-      width: 70px;
-      height: 70px;
-
-      border: 1.5px solid rgba(8, 45, 156, .22);
-      border-radius: 50%;
+      width: 112px;
+      height: 112px;
 
       display: grid;
       place-items: center;
 
-      background: rgba(255,255,255,.65);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      margin-bottom: 32px;
 
-      box-shadow:
-        0 10px 35px rgba(8,45,156,.08);
-
-      animation: logoFloat 4s ease-in-out infinite;
+      animation:
+        markEnter 1.3s cubic-bezier(.22, 1, .36, 1) both;
     }
 
-    /* Outer rotating ring */
 
-    .logo::before {
-      content: "";
+    /* soft glow */
 
+    .mark-glow {
       position: absolute;
-      inset: -9px;
+
+      width: 64px;
+      height: 64px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(8, 45, 156, .09);
+
+      filter: blur(17px);
+
+      animation:
+        glowPulse 4s ease-in-out infinite;
+    }
+
+
+    /* large faint circle */
+
+    .mark-halo {
+      position: absolute;
+
+      width: 94px;
+      height: 94px;
+
+      border-radius: 50%;
+
+      border:
+        1px solid rgba(8, 45, 156, .08);
+
+      animation:
+        haloPulse 4s ease-in-out infinite;
+    }
+
+
+    /* rotating outer ring */
+
+    .mark-ring {
+      position: absolute;
+
+      width: 82px;
+      height: 82px;
 
       border-radius: 50%;
 
       border:
         1.5px solid transparent;
 
-      border-top-color: rgba(8,45,156,.55);
-      border-right-color: rgba(8,45,156,.16);
+      border-top-color:
+        rgba(8, 45, 156, .65);
 
-      animation: rotate 4s linear infinite;
+      border-right-color:
+        rgba(8, 45, 156, .13);
+
+      animation:
+        rotate 5s linear infinite;
     }
 
-    /* Second rotating ring */
 
-    .logo::after {
+    /* reverse ring */
+
+    .mark-ring::after {
       content: "";
 
       position: absolute;
-      inset: -17px;
+
+      inset: -8px;
 
       border-radius: 50%;
 
-      border: 1px solid rgba(8,45,156,.08);
+      border:
+        1px solid transparent;
 
-      border-left-color: rgba(8,45,156,.28);
+      border-left-color:
+        rgba(8, 45, 156, .16);
 
-      animation: rotateReverse 7s linear infinite;
+      border-bottom-color:
+        rgba(8, 45, 156, .07);
+
+      animation:
+        rotateReverse 8s linear infinite;
     }
 
-    .logo-core {
-      width: 22px;
-      height: 22px;
 
+    /* main circle */
+
+    .mark {
       position: relative;
 
-      border: 2px solid var(--blue);
-      border-left-color: transparent;
+      width: 66px;
+      height: 66px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      border:
+        1.5px solid rgba(8, 45, 156, .20);
+
+      background:
+        rgba(255,255,255,.72);
+
+      box-shadow:
+        0 15px 45px rgba(8,45,156,.09);
+
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+
+      animation:
+        markFloat 4s ease-in-out infinite;
+    }
+
+
+    /* inner symbol */
+
+    .symbol {
+      position: relative;
+
+      width: 23px;
+      height: 23px;
+
+      border:
+        2px solid var(--blue);
+
+      border-left-color:
+        transparent;
 
       border-radius: 50%;
 
       transform: rotate(-45deg);
+
+      animation:
+        symbolRotate 6s ease-in-out infinite;
     }
 
-    .logo-core::after {
+
+    .symbol::after {
       content: "";
 
       position: absolute;
@@ -288,85 +423,131 @@
       top: 5px;
       left: 5px;
 
-      background: var(--blue);
       border-radius: 50%;
 
-      transform: rotate(45deg);
+      background:
+        var(--blue);
 
       box-shadow:
-        0 0 12px rgba(8,45,156,.3);
+        0 0 14px rgba(8,45,156,.32);
+
+      transform: rotate(45deg);
     }
 
 
-    /* --------------------------------
-       Text
-    -------------------------------- */
+    /* =========================================================
+       TEXT
+    ========================================================= */
 
     h1 {
-      margin: 0;
+      max-width: 650px;
 
-      font-size: clamp(25px, 7vw, 40px);
-      line-height: 1.7;
+      font-size:
+        clamp(25px, 6vw, 40px);
+
+      line-height: 1.75;
+
       font-weight: 600;
 
       letter-spacing: -1px;
 
       opacity: 0;
+
       animation:
-        textIn .8s .35s cubic-bezier(.22,1,.36,1) forwards;
+        textReveal
+        .9s
+        .35s
+        cubic-bezier(.22,1,.36,1)
+        forwards;
     }
 
-    .message {
-      margin: 13px auto 27px;
 
-      max-width: 560px;
+    .message {
+      max-width: 570px;
+
+      margin-top: 11px;
+      margin-bottom: 27px;
 
       color: var(--muted);
 
-      font-size: clamp(14px, 4vw, 18px);
-      line-height: 2.1;
+      font-size:
+        clamp(14px, 3vw, 18px);
+
+      line-height: 2.15;
+
       font-weight: 400;
 
       opacity: 0;
 
       animation:
-        textIn .8s .52s cubic-bezier(.22,1,.36,1) forwards;
+        textReveal
+        .9s
+        .55s
+        cubic-bezier(.22,1,.36,1)
+        forwards;
     }
 
 
-    /* --------------------------------
-       Button
-    -------------------------------- */
+    /* =========================================================
+       BUTTON
+    ========================================================= */
 
-    .button-area {
+    .button-wrap {
+      position: relative;
+
       opacity: 0;
 
       animation:
-        buttonIn .9s .7s cubic-bezier(.22,1,.36,1) forwards;
+        buttonReveal
+        1s
+        .75s
+        cubic-bezier(.22,1,.36,1)
+        forwards;
     }
+
+
+    .button-aura {
+      position: absolute;
+
+      inset: -7px;
+
+      border-radius: 22px;
+
+      background:
+        rgba(8,45,156,.07);
+
+      filter: blur(8px);
+
+      animation:
+        auraPulse 3s ease-in-out infinite;
+    }
+
 
     .new-address {
       position: relative;
 
+      min-width: 190px;
+      min-height: 56px;
+
+      padding:
+        0 27px;
+
       display: inline-flex;
       align-items: center;
       justify-content: center;
+
       gap: 11px;
-
-      min-height: 56px;
-
-      padding: 0 27px;
 
       border-radius: 17px;
 
       background:
         linear-gradient(
           135deg,
-          #082d9c,
-          #123fb9
+          var(--blue),
+          var(--blue-2)
         );
 
-      color: var(--white);
+      color: white;
 
       text-decoration: none;
 
@@ -374,61 +555,73 @@
       font-weight: 600;
 
       box-shadow:
-        0 12px 32px rgba(8,45,156,.19);
+        0 14px 35px rgba(8,45,156,.20);
 
       overflow: hidden;
 
+      transform: translateZ(0);
+
       transition:
-        transform .25s ease,
-        box-shadow .25s ease;
+        transform .28s ease,
+        box-shadow .28s ease;
     }
 
-    /* moving shine */
+
+    /* shine */
 
     .new-address::before {
       content: "";
 
       position: absolute;
-      top: 0;
-      left: -80%;
 
-      width: 55%;
+      top: 0;
+      left: -100%;
+
+      width: 60%;
       height: 100%;
 
       background:
         linear-gradient(
           90deg,
           transparent,
-          rgba(255,255,255,.25),
+          rgba(255,255,255,.26),
           transparent
         );
 
-      transform: skewX(-20deg);
+      transform:
+        skewX(-20deg);
 
-      animation: shine 3.5s ease-in-out infinite;
+      animation:
+        buttonShine 4s ease-in-out infinite;
     }
 
-    /* button pulse */
+
+    /* pulse border */
 
     .new-address::after {
       content: "";
 
       position: absolute;
+
       inset: 0;
 
       border-radius: inherit;
 
       box-shadow:
-        0 0 0 0 rgba(8,45,156,.25);
+        0 0 0 0 rgba(8,45,156,.20);
 
-      animation: buttonPulse 2.8s ease-out infinite;
+      animation:
+        buttonPulse 3.2s ease-out infinite;
     }
+
 
     .button-text,
     .arrow {
       position: relative;
+
       z-index: 2;
     }
+
 
     .arrow {
       font-size: 19px;
@@ -437,157 +630,255 @@
         transform .25s ease;
     }
 
-    .new-address:active {
-      transform: scale(.97);
-    }
 
     .new-address:hover {
-      transform: translateY(-3px);
+      transform:
+        translateY(-3px);
 
       box-shadow:
-        0 17px 42px rgba(8,45,156,.26);
+        0 19px 45px rgba(8,45,156,.27);
     }
+
 
     .new-address:hover .arrow {
-      transform: translateX(-5px);
+      transform:
+        translateX(-5px);
     }
 
 
-    /* --------------------------------
-       Address
-    -------------------------------- */
+    .new-address:active {
+      transform:
+        scale(.965);
+    }
+
+
+    /* =========================================================
+       URL
+    ========================================================= */
 
     .url {
-      margin-top: 17px;
+      margin-top: 16px;
 
       direction: ltr;
 
       color: #8994ac;
 
       font-size: 12px;
-      letter-spacing: .3px;
+
+      letter-spacing: .25px;
 
       opacity: 0;
 
       animation:
-        fadeIn .8s 1s ease forwards;
+        fadeIn
+        .8s
+        1s
+        ease
+        forwards;
     }
 
 
-    /* --------------------------------
-       Date
-    -------------------------------- */
+    /* =========================================================
+       DATE
+    ========================================================= */
 
     .date {
-      margin-top: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 6px;
+
+      margin-top: 31px;
 
       color: #a0a9bc;
 
       font-size: 11px;
-      font-weight: 400;
 
       opacity: 0;
 
       animation:
-        fadeIn .8s 1.15s ease forwards;
+        fadeIn
+        .8s
+        1.15s
+        ease
+        forwards;
     }
 
-    .date span {
-      display: inline-block;
-      margin-right: 5px;
 
-      color: #7d88a1;
+    .date-value {
+      color: #77839c;
+
       font-weight: 500;
     }
 
 
-    /* --------------------------------
-       Animations
-    -------------------------------- */
+    /* =========================================================
+       ANIMATIONS
+    ========================================================= */
 
-    @keyframes pageIn {
+    @keyframes pageEnter {
+
       from {
         opacity: 0;
-        transform: translateY(20px) scale(.985);
+
+        transform:
+          translateY(20px)
+          scale(.985);
       }
 
       to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+
+        transform:
+          translateY(0)
+          scale(1);
       }
     }
 
-    @keyframes logoEntrance {
+
+    @keyframes markEnter {
+
       from {
         opacity: 0;
-        transform: scale(.55) rotate(-25deg);
+
+        transform:
+          scale(.55)
+          rotate(-25deg);
       }
 
       to {
         opacity: 1;
-        transform: scale(1) rotate(0);
+
+        transform:
+          scale(1)
+          rotate(0);
       }
     }
 
-    @keyframes logoFloat {
+
+    @keyframes markFloat {
+
       0%, 100% {
-        transform: translateY(0);
+        transform:
+          translateY(0);
       }
 
       50% {
-        transform: translateY(-6px);
+        transform:
+          translateY(-6px);
       }
     }
 
-    @keyframes rotate {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes rotateReverse {
-      to {
-        transform: rotate(-360deg);
-      }
-    }
 
     @keyframes glowPulse {
+
       0%, 100% {
-        opacity: .55;
-        transform: scale(.9);
+        opacity: .45;
+
+        transform:
+          scale(.85);
       }
 
       50% {
-        opacity: 1;
-        transform: scale(1.12);
+        opacity: .95;
+
+        transform:
+          scale(1.18);
       }
     }
 
-    @keyframes textIn {
+
+    @keyframes haloPulse {
+
+      0%, 100% {
+        transform:
+          scale(.95);
+
+        opacity: .55;
+      }
+
+      50% {
+        transform:
+          scale(1.06);
+
+        opacity: 1;
+      }
+    }
+
+
+    @keyframes rotate {
+
+      to {
+        transform:
+          rotate(360deg);
+      }
+    }
+
+
+    @keyframes rotateReverse {
+
+      to {
+        transform:
+          rotate(-360deg);
+      }
+    }
+
+
+    @keyframes symbolRotate {
+
+      0%, 100% {
+        transform:
+          rotate(-45deg);
+      }
+
+      50% {
+        transform:
+          rotate(15deg);
+      }
+    }
+
+
+    @keyframes textReveal {
+
       from {
         opacity: 0;
-        transform: translateY(13px);
+
+        transform:
+          translateY(15px);
       }
 
       to {
         opacity: 1;
-        transform: translateY(0);
+
+        transform:
+          translateY(0);
       }
     }
 
-    @keyframes buttonIn {
+
+    @keyframes buttonReveal {
+
       from {
         opacity: 0;
-        transform: translateY(18px) scale(.95);
+
+        transform:
+          translateY(20px)
+          scale(.94);
       }
 
       to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+
+        transform:
+          translateY(0)
+          scale(1);
       }
     }
+
 
     @keyframes fadeIn {
+
       from {
         opacity: 0;
       }
@@ -597,168 +888,235 @@
       }
     }
 
-    @keyframes shine {
+
+    @keyframes buttonShine {
+
       0% {
-        left: -80%;
+        left: -100%;
       }
 
-      35%, 100% {
-        left: 140%;
+      35%,
+      100% {
+        left: 150%;
       }
     }
 
+
+    @keyframes auraPulse {
+
+      0%,
+      100% {
+        opacity: .35;
+
+        transform:
+          scale(.96);
+      }
+
+      50% {
+        opacity: .75;
+
+        transform:
+          scale(1.04);
+      }
+    }
+
+
     @keyframes buttonPulse {
+
       0% {
-        box-shadow: 0 0 0 0 rgba(8,45,156,.24);
+        box-shadow:
+          0 0 0 0 rgba(8,45,156,.20);
       }
 
       65% {
-        box-shadow: 0 0 0 12px rgba(8,45,156,0);
+        box-shadow:
+          0 0 0 11px rgba(8,45,156,0);
       }
 
       100% {
-        box-shadow: 0 0 0 0 rgba(8,45,156,0);
+        box-shadow:
+          0 0 0 0 rgba(8,45,156,0);
       }
     }
 
+
     @keyframes particleFloat {
+
       0% {
         opacity: 0;
-        transform: translateY(20px) scale(.5);
+
+        transform:
+          translateY(20px)
+          scale(.5);
       }
 
-      20% {
+      25% {
         opacity: .22;
       }
 
-      50% {
-        opacity: .12;
-        transform: translateY(-20px) scale(1);
+      55% {
+        opacity: .10;
+
+        transform:
+          translateY(-20px)
+          scale(1);
       }
 
       80% {
-        opacity: .18;
+        opacity: .17;
       }
 
       100% {
         opacity: 0;
-        transform: translateY(-55px) scale(.5);
+
+        transform:
+          translateY(-55px)
+          scale(.5);
       }
     }
 
+
     @keyframes ambientMove {
+
       0%, 100% {
-        transform: translate(0,0) scale(1);
+        transform:
+          translate(0,0)
+          scale(1);
       }
 
       50% {
-        transform: translate(15px,-15px) scale(1.08);
+        transform:
+          translate(18px,-16px)
+          scale(1.08);
       }
     }
 
 
-    /* --------------------------------
-       Android / Mobile
-    -------------------------------- */
+    /* =========================================================
+       MOBILE / ANDROID
+    ========================================================= */
 
     @media (max-width: 520px) {
 
-      body {
-        min-height: 100svh;
-      }
-
       .page {
-        width: calc(100% - 30px);
+        width:
+          calc(100% - 30px);
+
         padding:
           20px
           0
           calc(20px + env(safe-area-inset-bottom));
       }
 
-      .logo-wrap {
+
+      .mark-wrap {
+        width: 100px;
+        height: 100px;
+
+        margin-bottom: 24px;
+      }
+
+
+      .mark {
+        width: 63px;
+        height: 63px;
+      }
+
+
+      .mark-ring {
+        width: 78px;
+        height: 78px;
+      }
+
+
+      .mark-halo {
         width: 88px;
         height: 88px;
-        margin-bottom: 25px;
       }
 
-      .logo {
-        width: 64px;
-        height: 64px;
-      }
-
-      .logo::before {
-        inset: -8px;
-      }
-
-      .logo::after {
-        inset: -14px;
-      }
 
       h1 {
+        max-width: 340px;
+
         font-size: 25px;
-        line-height: 1.75;
+
+        line-height: 1.78;
+
         letter-spacing: -.7px;
       }
 
+
       .message {
-        margin-top: 10px;
-        margin-bottom: 24px;
+        max-width: 340px;
+
+        margin-top: 9px;
+        margin-bottom: 23px;
 
         font-size: 14px;
-        line-height: 2.05;
+
+        line-height: 2.1;
       }
 
+
       .new-address {
-        width: min(100%, 330px);
+        width: min(
+          330px,
+          calc(100vw - 55px)
+        );
+
         min-height: 55px;
 
         border-radius: 16px;
-
-        font-size: 15px;
       }
+
 
       .url {
-        margin-top: 15px;
+        margin-top: 14px;
       }
+
 
       .date {
-        margin-top: 29px;
-      }
-
-      .particle:nth-child(n+5) {
-        display: none;
+        margin-top: 27px;
       }
     }
 
 
-    /* --------------------------------
-       Very small Android screens
-    -------------------------------- */
+    /* =========================================================
+       VERY SMALL SCREENS
+    ========================================================= */
 
     @media (max-height: 650px) {
 
-      .logo-wrap {
-        margin-bottom: 18px;
-        transform: scale(.86);
+      .mark-wrap {
+        transform:
+          scale(.82);
+
+        margin-bottom: 9px;
       }
+
 
       h1 {
         font-size: 22px;
       }
 
+
       .message {
-        margin-bottom: 17px;
+        margin-top: 7px;
+        margin-bottom: 15px;
+
+        font-size: 13px;
       }
 
+
       .date {
-        margin-top: 20px;
+        margin-top: 19px;
       }
     }
 
 
-    /* --------------------------------
-       Reduced motion
-    -------------------------------- */
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
 
     @media (prefers-reduced-motion: reduce) {
 
@@ -766,15 +1124,17 @@
       *::before,
       *::after {
         animation: none !important;
+
         transition: none !important;
       }
 
+
       h1,
       .message,
-      .button-area,
+      .button-wrap,
       .url,
       .date {
-        opacity: 1;
+        opacity: 1 !important;
       }
     }
 
@@ -784,46 +1144,62 @@
 
 <body>
 
-  <!-- Background -->
+  <!-- Ambient background -->
   <div class="ambient one"></div>
   <div class="ambient two"></div>
 
+
   <!-- Floating particles -->
   <div class="particles">
+
     <span class="particle p1"></span>
     <span class="particle p2"></span>
     <span class="particle p3"></span>
     <span class="particle p4"></span>
     <span class="particle p5"></span>
     <span class="particle p6"></span>
+
   </div>
 
 
+  <!-- Main -->
   <main class="page">
 
-    <!-- Animated Logo -->
-    <div class="logo-wrap">
-      <div class="logo-glow"></div>
 
-      <div class="logo">
-        <div class="logo-core"></div>
+    <!-- Animated mark -->
+    <div class="mark-wrap">
+
+      <div class="mark-glow"></div>
+
+      <div class="mark-halo"></div>
+
+      <div class="mark-ring"></div>
+
+      <div class="mark">
+
+        <div class="symbol"></div>
+
       </div>
+
     </div>
 
 
-    <!-- Main Text -->
+    <!-- Main heading -->
     <h1>
       وبسایت شرکت به آدرس زیر تغییر پیدا کرد.
     </h1>
 
 
+    <!-- Description -->
     <p class="message">
       برای ورود به وبسایت جدید شرکت، روی دکمه زیر کلیک کنید.
     </p>
 
 
     <!-- Button -->
-    <div class="button-area">
+    <div class="button-wrap">
+
+      <div class="button-aura"></div>
 
       <a
         class="new-address"
@@ -835,7 +1211,7 @@
           کلیک کنید!
         </span>
 
-        <span class="arrow" aria-hidden="true">
+        <span class="arrow">
           ←
         </span>
 
@@ -844,19 +1220,141 @@
     </div>
 
 
-    <!-- New Address -->
+    <!-- Address -->
     <div class="url">
       taavonikohnoor.ir
     </div>
 
 
-    <!-- Persian Date -->
+    <!-- Automatic Persian date -->
     <div class="date">
-      امروز
-      <span>۱۶ شهریور ۱۴۰۵</span>
+
+      <span>امروز</span>
+
+      <span class="date-value" id="persianDate">
+        در حال دریافت تاریخ...
+      </span>
+
     </div>
 
+
   </main>
+
+
+  <!-- =========================================================
+       AUTOMATIC PERSIAN DATE
+  ========================================================= -->
+
+  <script>
+
+    (() => {
+
+      const dateElement =
+        document.getElementById("persianDate");
+
+
+      const persianMonths = [
+        "فروردین",
+        "اردیبهشت",
+        "خرداد",
+        "تیر",
+        "مرداد",
+        "شهریور",
+        "مهر",
+        "آبان",
+        "آذر",
+        "دی",
+        "بهمن",
+        "اسفند"
+      ];
+
+
+      const persianFormatter =
+        new Intl.DateTimeFormat(
+          "fa-IR-u-ca-persian",
+          {
+            timeZone: "Asia/Tehran",
+
+            year: "numeric",
+            month: "numeric",
+            day: "numeric"
+          }
+        );
+
+
+      function getIranianPersianDate() {
+
+        const now =
+          new Date();
+
+
+        const parts =
+          persianFormatter.formatToParts(now);
+
+
+        let year = "";
+        let month = "";
+        let day = "";
+
+
+        for (const part of parts) {
+
+          if (part.type === "year") {
+            year = part.value;
+          }
+
+          if (part.type === "month") {
+            month = part.value;
+          }
+
+          if (part.type === "day") {
+            day = part.value;
+          }
+
+        }
+
+
+        const monthNumber =
+          parseInt(
+            month.replace(/[^\d]/g, ""),
+            10
+          );
+
+
+        const monthName =
+          persianMonths[monthNumber - 1] || month;
+
+
+        return `${day} ${monthName} ${year}`;
+
+      }
+
+
+      function updateDate() {
+
+        dateElement.textContent =
+          getIranianPersianDate();
+
+      }
+
+
+      /* Initial date */
+      updateDate();
+
+
+      /*
+       * Check every minute.
+       * This means if the page stays open across midnight
+       * in Iran, the displayed date updates automatically.
+       */
+      setInterval(
+        updateDate,
+        60 * 1000
+      );
+
+    })();
+
+  </script>
 
 </body>
 </html>
