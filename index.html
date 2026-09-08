@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -27,2486 +29,2156 @@
   >
 
 
-  <style>
+<style>
 
-    /* =========================================================
-       VARIABLES
-    ========================================================= */
+/* =========================================================
+   BASE
+========================================================= */
 
-    :root {
-      --blue: #082d9c;
-      --blue2: #164dcc;
-      --blue3: #4779e8;
+:root {
+  --blue: #082d9c;
+  --blue2: #1b50c8;
+  --ink: #102044;
+  --muted: #69758b;
+}
 
-      --ink: #102044;
-      --muted: #68758e;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 
-      --white: #ffffff;
-    }
+  -webkit-tap-highlight-color: transparent;
+}
 
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
 
-    /* =========================================================
-       RESET
-    ========================================================= */
+body {
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+  min-height: 100svh;
 
-      -webkit-tap-highlight-color: transparent;
-    }
+  overflow: hidden;
 
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(8,45,156,.045),
+      transparent 42%
+    ),
+    #fff;
 
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-    }
+  color: var(--ink);
 
+  font-family:
+    "Vazirmatn",
+    Tahoma,
+    Arial,
+    sans-serif;
+}
 
-    body {
-      position: relative;
 
-      width: 100%;
-      min-height: 100svh;
+/* =========================================================
+   BACKGROUND ANIMATION
+========================================================= */
 
-      overflow: hidden;
+#cosmos {
 
-      font-family:
-        "Vazirmatn",
-        Tahoma,
-        Arial,
-        sans-serif;
+  position: fixed;
 
-      color: var(--ink);
+  inset: 0;
 
-      background:
-        radial-gradient(
-          ellipse at center,
-          rgba(52, 92, 210, .065) 0%,
-          rgba(52, 92, 210, .025) 25%,
-          transparent 55%
-        ),
-        #ffffff;
-    }
+  width: 100%;
+  height: 100%;
 
+  z-index: 0;
 
-    /* =========================================================
-       GALAXY CANVAS
-    ========================================================= */
+  pointer-events: none;
 
-    #space {
-      position: fixed;
+  opacity: .42;
+}
 
-      inset: 0;
 
-      width: 100%;
-      height: 100%;
+/* very soft blue cosmic glow */
 
-      z-index: 1;
+.cosmic-glow {
 
-      pointer-events: none;
-    }
+  position: fixed;
 
+  width: 620px;
+  height: 620px;
 
-    /* =========================================================
-       GALAXY LIGHT
-    ========================================================= */
+  left: 50%;
+  top: 50%;
 
-    .galaxy-light {
-      position: fixed;
+  transform:
+    translate(-50%, -50%);
 
-      left: 50%;
-      top: 50%;
+  border-radius: 50%;
 
-      width: 500px;
-      height: 500px;
+  background:
+    radial-gradient(
+      circle,
+      rgba(26,76,190,.055),
+      rgba(26,76,190,.018) 35%,
+      transparent 70%
+    );
 
-      transform:
-        translate(-50%, -50%);
+  filter: blur(28px);
 
-      border-radius: 50%;
+  z-index: 0;
 
-      background:
-        radial-gradient(
-          circle,
-          rgba(50, 91, 210, .065) 0%,
-          rgba(50, 91, 210, .025) 32%,
-          transparent 70%
-        );
+  pointer-events: none;
 
-      filter: blur(20px);
+  animation:
+    glowPulse
+    12s
+    ease-in-out
+    infinite;
+}
 
-      z-index: 0;
 
-      pointer-events: none;
+/* =========================================================
+   CONTENT
+========================================================= */
 
-      animation:
-        galaxyBreath 7s ease-in-out infinite;
-    }
+.page {
 
+  position: relative;
 
-    /* =========================================================
-       MAIN CONTENT
-    ========================================================= */
+  z-index: 10;
 
-    .page {
-      position: relative;
+  width:
+    min(
+      760px,
+      calc(100% - 30px)
+    );
 
-      z-index: 10;
+  min-height: 100svh;
 
-      width:
-        min(
-          760px,
-          calc(100% - 30px)
-        );
+  margin: auto;
 
-      min-height: 100svh;
+  display: flex;
 
-      margin: auto;
+  flex-direction: column;
 
-      display: flex;
+  justify-content: center;
 
-      flex-direction: column;
+  align-items: center;
 
-      justify-content: center;
+  text-align: center;
 
-      align-items: center;
+  padding:
+    24px 0
+    calc(
+      24px +
+      env(safe-area-inset-bottom)
+    );
 
-      text-align: center;
+  animation:
+    pageIn
+    1.1s
+    cubic-bezier(.16,1,.3,1)
+    both;
+}
 
-      padding:
-        24px
-        0
-        calc(
-          24px +
-          env(safe-area-inset-bottom)
-        );
 
-      animation:
-        pageEnter
-        1.35s
-        cubic-bezier(.16,1,.3,1)
-        both;
-    }
+/* =========================================================
+   SMALL COSMIC / WEB SYMBOL
+========================================================= */
 
+.cosmic-mark {
 
-    /* =========================================================
-       COSMIC LOGO
-    ========================================================= */
+  position: relative;
 
-    .cosmic-logo {
-      position: relative;
+  width: 82px;
+  height: 82px;
 
-      width: 92px;
-      height: 92px;
+  margin-bottom: 28px;
 
-      margin-bottom: 30px;
+  display: grid;
 
-      display: grid;
+  place-items: center;
 
-      place-items: center;
+  animation:
+    markIn
+    1.1s
+    .1s
+    cubic-bezier(.16,1,.3,1)
+    both;
+}
 
-      animation:
-        logoEnter
-        1.4s
-        .1s
-        cubic-bezier(.16,1,.3,1)
-        both;
-    }
 
+/* outer web orbit */
 
-    .logo-orbit {
-      position: absolute;
+.cosmic-mark::before {
 
-      width: 84px;
-      height: 84px;
+  content: "";
 
-      border-radius: 50%;
+  position: absolute;
 
-      border:
-        1px solid rgba(8,45,156,.15);
+  inset: 4px;
 
-      transform:
-        rotate(20deg);
+  border:
+    1px solid
+    rgba(8,45,156,.13);
 
-      animation:
-        orbitRotate
-        10s
-        linear
-        infinite;
-    }
+  border-radius: 50%;
 
+  animation:
+    rotateSlow
+    18s
+    linear
+    infinite;
+}
 
-    .logo-orbit::before {
-      content: "";
 
-      position: absolute;
+/* second orbit */
 
-      width: 6px;
-      height: 6px;
+.cosmic-mark::after {
 
-      top: -3px;
-      left: 50%;
+  content: "";
 
-      margin-left: -3px;
+  position: absolute;
 
-      border-radius: 50%;
+  width: 67px;
+  height: 78px;
 
-      background:
-        var(--blue);
+  border:
+    1px dashed
+    rgba(8,45,156,.10);
 
-      box-shadow:
-        0 0 12px
-        rgba(8,45,156,.5);
-    }
+  border-radius: 50%;
 
+  transform:
+    rotate(55deg);
 
-    .logo-orbit-two {
-      position: absolute;
+  animation:
+    rotateReverse
+    23s
+    linear
+    infinite;
+}
 
-      width: 68px;
-      height: 88px;
 
-      border-radius: 50%;
+/* center */
 
-      border:
-        1px dashed rgba(8,45,156,.10);
+.mark-core {
 
-      transform:
-        rotate(-55deg);
+  position: relative;
 
-      animation:
-        orbitReverse
-        13s
-        linear
-        infinite;
-    }
+  width: 53px;
+  height: 53px;
 
+  display: grid;
 
-    .logo-core {
-      position: relative;
+  place-items: center;
 
-      width: 57px;
-      height: 57px;
+  border:
+    1px solid
+    rgba(8,45,156,.18);
 
-      display: grid;
+  border-radius: 50%;
 
-      place-items: center;
+  background:
+    rgba(255,255,255,.82);
 
-      border-radius: 50%;
+  box-shadow:
+    0 14px 40px
+    rgba(8,45,156,.08);
 
-      border:
-        1.5px solid
-        rgba(8,45,156,.20);
+  backdrop-filter:
+    blur(10px);
 
-      background:
-        rgba(255,255,255,.82);
+  -webkit-backdrop-filter:
+    blur(10px);
 
-      box-shadow:
-        0 15px 45px
-        rgba(8,45,156,.10);
+  animation:
+    coreFloat
+    5s
+    ease-in-out
+    infinite;
+}
 
-      backdrop-filter:
-        blur(10px);
 
-      -webkit-backdrop-filter:
-        blur(10px);
+/* web / connection symbol */
 
-      animation:
-        coreFloat
-        4.5s
-        ease-in-out
-        infinite;
-    }
+.web-symbol {
 
+  position: relative;
 
-    .core-symbol {
-      width: 21px;
-      height: 21px;
+  width: 23px;
+  height: 23px;
 
-      border:
-        2px solid
-        var(--blue);
+  border:
+    2px solid
+    var(--blue);
 
-      border-left-color:
-        transparent;
+  border-radius: 50%;
 
-      border-radius: 50%;
+  opacity: .92;
+}
 
-      transform:
-        rotate(-45deg);
-    }
 
+/* horizontal web line */
 
-    .core-symbol::after {
-      content: "";
+.web-symbol::before {
 
-      position: absolute;
+  content: "";
 
-      width: 7px;
-      height: 7px;
+  position: absolute;
 
-      margin-top: 5px;
-      margin-left: 5px;
+  left: 3px;
+  right: 3px;
 
-      border-radius: 50%;
+  top: 9px;
 
-      background:
-        var(--blue);
+  height: 2px;
 
-      box-shadow:
-        0 0 15px
-        rgba(8,45,156,.45);
-    }
+  background:
+    var(--blue);
 
+  border-radius: 10px;
+}
 
-    /* =========================================================
-       TEXT
-    ========================================================= */
 
-    h1 {
-      max-width: 690px;
+/* connection point */
 
-      font-size:
-        clamp(
-          25px,
-          5.8vw,
-          40px
-        );
+.web-symbol::after {
 
-      line-height: 1.72;
+  content: "";
 
-      font-weight: 600;
+  position: absolute;
 
-      letter-spacing: -1px;
+  width: 6px;
+  height: 6px;
 
-      opacity: 0;
+  right: -4px;
+  top: 2px;
 
-      animation:
-        textEnter
-        .95s
-        .38s
-        cubic-bezier(.16,1,.3,1)
-        forwards;
-    }
+  border-radius: 50%;
 
+  background:
+    var(--blue);
 
-    .message {
-      max-width: 590px;
+  box-shadow:
+    0 0 12px
+    rgba(8,45,156,.35);
+}
 
-      margin-top: 10px;
-      margin-bottom: 28px;
 
-      color:
-        var(--muted);
+/* =========================================================
+   TEXT
+========================================================= */
 
-      font-size:
-        clamp(
-          14px,
-          2.8vw,
-          17px
-        );
+h1 {
 
-      line-height: 2.15;
+  max-width: 690px;
 
-      opacity: 0;
+  font-size:
+    clamp(
+      25px,
+      5.8vw,
+      40px
+    );
 
-      animation:
-        textEnter
-        .95s
-        .55s
-        cubic-bezier(.16,1,.3,1)
-        forwards;
-    }
+  line-height: 1.72;
 
+  font-weight: 600;
 
-    /* =========================================================
-       BUTTON
-    ========================================================= */
+  letter-spacing: -1px;
 
-    .button-wrap {
-      position: relative;
+  opacity: 0;
 
-      opacity: 0;
+  animation:
+    textIn
+    .9s
+    .38s
+    cubic-bezier(.16,1,.3,1)
+    forwards;
+}
 
-      animation:
-        buttonEnter
-        1s
-        .72s
-        cubic-bezier(.16,1,.3,1)
-        forwards;
-    }
 
+.message {
 
-    .button-glow {
-      position: absolute;
+  max-width: 600px;
 
-      inset: -12px;
+  margin:
+    10px auto
+    27px;
 
-      border-radius: 23px;
+  color:
+    var(--muted);
 
-      background:
-        rgba(8,45,156,.065);
+  font-size:
+    clamp(
+      14px,
+      2.8vw,
+      17px
+    );
 
-      filter:
-        blur(12px);
+  line-height: 2.15;
 
-      animation:
-        buttonGlow
-        3.5s
-        ease-in-out
-        infinite;
-    }
+  opacity: 0;
 
+  animation:
+    textIn
+    .9s
+    .53s
+    cubic-bezier(.16,1,.3,1)
+    forwards;
+}
 
-    .new-address {
-      position: relative;
 
-      z-index: 2;
+/* =========================================================
+   BUTTON
+========================================================= */
 
-      min-width: 190px;
-      min-height: 56px;
+.button-wrap {
 
-      padding:
-        0 29px;
+  position: relative;
 
-      display: flex;
+  opacity: 0;
 
-      align-items: center;
+  animation:
+    buttonIn
+    .9s
+    .68s
+    cubic-bezier(.16,1,.3,1)
+    forwards;
+}
 
-      justify-content: center;
 
-      border-radius: 17px;
+.button-glow {
 
-      background:
-        linear-gradient(
-          135deg,
-          #082d9c,
-          #174dca
-        );
+  position: absolute;
 
-      color:
-        #ffffff;
+  inset: -12px;
 
-      text-decoration: none;
+  border-radius: 22px;
 
-      font-size: 15px;
+  background:
+    rgba(8,45,156,.055);
 
-      font-weight: 600;
+  filter:
+    blur(15px);
 
-      box-shadow:
-        0 16px 40px
-        rgba(8,45,156,.21);
+  animation:
+    buttonGlow
+    6s
+    ease-in-out
+    infinite;
+}
 
-      overflow: hidden;
 
-      transition:
-        transform .28s ease,
-        box-shadow .28s ease;
-    }
+.new-address {
 
+  position: relative;
 
-    /* Moving shine */
+  z-index: 2;
 
-    .new-address::before {
-      content: "";
+  width:
+    min(
+      330px,
+      calc(100vw - 52px)
+    );
 
-      position: absolute;
+  height: 56px;
 
-      top: 0;
-      left: -110%;
+  display: flex;
 
-      width: 65%;
-      height: 100%;
+  align-items: center;
 
-      background:
-        linear-gradient(
-          100deg,
-          transparent,
-          rgba(255,255,255,.30),
-          transparent
-        );
+  justify-content: center;
 
-      transform:
-        skewX(-20deg);
+  border-radius: 17px;
 
-      animation:
-        shine
-        4.5s
-        ease-in-out
-        infinite;
-    }
+  background:
+    linear-gradient(
+      135deg,
+      #082d9c,
+      #174dca
+    );
 
+  color: white;
 
-    .button-text {
-      position: relative;
+  text-decoration: none;
 
-      z-index: 2;
-    }
+  font-size: 15px;
 
+  font-weight: 600;
 
-    .new-address:hover {
-      transform:
-        translateY(-4px);
+  box-shadow:
+    0 15px 38px
+    rgba(8,45,156,.18);
 
-      box-shadow:
-        0 22px 50px
-        rgba(8,45,156,.28);
-    }
+  overflow: hidden;
 
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
 
-    .new-address:active {
-      transform:
-        scale(.965);
-    }
 
+/* subtle light sweep */
 
-    /* =========================================================
-       ADDRESS
-    ========================================================= */
+.new-address::before {
 
-    .url {
-      direction: ltr;
+  content: "";
 
-      margin-top: 15px;
+  position: absolute;
 
-      color:
-        #8994ac;
+  top: 0;
+  left: -120%;
 
-      font-size: 12px;
+  width: 65%;
+  height: 100%;
 
-      letter-spacing: .3px;
+  background:
+    linear-gradient(
+      100deg,
+      transparent,
+      rgba(255,255,255,.22),
+      transparent
+    );
 
-      opacity: 0;
+  transform:
+    skewX(-20deg);
 
-      animation:
-        fadeIn
-        .8s
-        1s
-        ease
-        forwards;
-    }
+  animation:
+    buttonShine
+    7s
+    ease-in-out
+    infinite;
+}
 
 
-    /* =========================================================
-       DATE
-    ========================================================= */
+.button-text {
 
-    .date-area {
-      display: flex;
+  position: relative;
 
-      flex-direction: column;
+  z-index: 2;
+}
 
-      align-items: center;
 
-      gap: 8px;
+.new-address:active {
 
-      margin-top: 28px;
+  transform:
+    scale(.97);
+}
 
-      opacity: 0;
 
-      animation:
-        dateEnter
-        .9s
-        1.12s
-        cubic-bezier(.16,1,.3,1)
-        forwards;
-    }
+/* =========================================================
+   DOMAIN
+========================================================= */
 
+.url {
 
-    .date-label {
-      color:
-        #a0a9bb;
+  direction: ltr;
 
-      font-size: 10px;
-    }
+  margin-top: 14px;
 
+  color:
+    #8994ac;
 
-    .date-box {
-      position: relative;
+  font-size: 12px;
 
-      min-width: 150px;
+  letter-spacing: .2px;
 
-      height: 40px;
+  opacity: 0;
 
-      padding:
-        0 22px;
+  animation:
+    fadeIn
+    .8s
+    .95s
+    ease
+    forwards;
+}
 
-      display: flex;
 
-      align-items: center;
+/* =========================================================
+   DATE BOX
+========================================================= */
 
-      justify-content: center;
+.date-box {
 
-      direction: ltr;
+  position: relative;
 
-      border-radius: 11px;
+  margin-top: 25px;
 
-      border:
-        1px solid
-        rgba(8,45,156,.16);
+  min-width: 145px;
 
-      background:
-        rgba(255,255,255,.82);
+  height: 42px;
 
-      color:
-        #52617d;
+  padding:
+    0 18px;
 
-      font-size: 13px;
+  display: flex;
 
-      font-weight: 500;
+  align-items: center;
 
-      letter-spacing: 1px;
+  justify-content: center;
 
-      box-shadow:
-        0 9px 28px
-        rgba(8,45,156,.065);
+  direction: ltr;
 
-      backdrop-filter:
-        blur(10px);
+  border:
+    1px solid
+    rgba(8,45,156,.15);
 
-      -webkit-backdrop-filter:
-        blur(10px);
-    }
+  border-radius: 12px;
 
+  background:
+    rgba(255,255,255,.86);
 
-    /*
-       Brackets
-    */
+  color:
+    #52617d;
 
-    .date-box::before,
-    .date-box::after {
-      position: absolute;
+  font-size: 13px;
 
-      top: 50%;
+  font-weight: 500;
 
-      transform:
-        translateY(-51%);
+  letter-spacing: 1px;
 
-      color:
-        rgba(8,45,156,.42);
+  box-shadow:
+    0 10px 30px
+    rgba(8,45,156,.055);
 
-      font-size: 18px;
+  backdrop-filter:
+    blur(12px);
 
-      font-weight: 400;
-    }
+  -webkit-backdrop-filter:
+    blur(12px);
 
+  opacity: 0;
 
-    .date-box::before {
-      content: "[";
+  animation:
+    dateIn
+    .8s
+    1.08s
+    cubic-bezier(.16,1,.3,1)
+    forwards;
+}
 
-      left: 9px;
-    }
 
+/* =========================================================
+   ANIMATIONS
+========================================================= */
 
-    .date-box::after {
-      content: "]";
+@keyframes pageIn {
 
-      right: 9px;
-    }
+  from {
+    opacity: 0;
 
+    transform:
+      translateY(18px)
+      scale(.99);
+  }
 
-    /* =========================================================
-       ANIMATIONS
-    ========================================================= */
+  to {
+    opacity: 1;
 
-    @keyframes pageEnter {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
 
-      from {
-        opacity: 0;
 
-        transform:
-          translateY(22px)
-          scale(.985);
-      }
+@keyframes markIn {
 
-      to {
-        opacity: 1;
+  from {
+    opacity: 0;
 
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
+    transform:
+      scale(.55)
+      rotate(-25deg);
+  }
 
+  to {
+    opacity: 1;
 
-    @keyframes logoEnter {
+    transform:
+      scale(1)
+      rotate(0);
+  }
+}
 
-      from {
-        opacity: 0;
 
-        transform:
-          scale(.45)
-          rotate(-30deg);
-      }
+@keyframes rotateSlow {
 
-      to {
-        opacity: 1;
+  from {
+    transform:
+      rotate(0);
+  }
 
-        transform:
-          scale(1)
-          rotate(0);
-      }
-    }
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
 
 
-    @keyframes coreFloat {
+@keyframes rotateReverse {
 
-      0%,100% {
-        transform:
-          translateY(0);
-      }
+  from {
+    transform:
+      rotate(55deg);
+  }
 
-      50% {
-        transform:
-          translateY(-5px);
-      }
-    }
+  to {
+    transform:
+      rotate(-305deg);
+  }
+}
 
 
-    @keyframes orbitRotate {
+@keyframes coreFloat {
 
-      from {
-        transform:
-          rotate(20deg);
-      }
+  0%,100% {
+    transform:
+      translateY(0);
+  }
 
-      to {
-        transform:
-          rotate(380deg);
-      }
-    }
+  50% {
+    transform:
+      translateY(-4px);
+  }
+}
 
 
-    @keyframes orbitReverse {
+@keyframes textIn {
 
-      from {
-        transform:
-          rotate(-55deg);
-      }
+  from {
+    opacity: 0;
 
-      to {
-        transform:
-          rotate(-415deg);
-      }
-    }
+    transform:
+      translateY(13px);
+  }
 
+  to {
+    opacity: 1;
 
-    @keyframes textEnter {
+    transform:
+      translateY(0);
+  }
+}
 
-      from {
-        opacity: 0;
 
-        transform:
-          translateY(16px);
-      }
+@keyframes buttonIn {
 
-      to {
-        opacity: 1;
+  from {
+    opacity: 0;
 
-        transform:
-          translateY(0);
-      }
-    }
+    transform:
+      translateY(15px)
+      scale(.96);
+  }
 
+  to {
+    opacity: 1;
 
-    @keyframes buttonEnter {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
 
-      from {
-        opacity: 0;
 
-        transform:
-          translateY(20px)
-          scale(.93);
-      }
+@keyframes dateIn {
 
-      to {
-        opacity: 1;
+  from {
+    opacity: 0;
 
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
+    transform:
+      translateY(10px)
+      scale(.96);
+  }
 
+  to {
+    opacity: 1;
 
-    @keyframes dateEnter {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
 
-      from {
-        opacity: 0;
 
-        transform:
-          translateY(12px)
-          scale(.96);
-      }
+@keyframes fadeIn {
 
-      to {
-        opacity: 1;
+  from {
+    opacity: 0;
+  }
 
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
+  to {
+    opacity: 1;
+  }
+}
 
 
-    @keyframes fadeIn {
+@keyframes glowPulse {
 
-      from {
-        opacity: 0;
-      }
+  0%,100% {
+    opacity: .55;
 
-      to {
-        opacity: 1;
-      }
-    }
+    transform:
+      translate(-50%,-50%)
+      scale(.94);
+  }
 
+  50% {
+    opacity: .9;
 
-    @keyframes buttonGlow {
+    transform:
+      translate(-50%,-50%)
+      scale(1.06);
+  }
+}
 
-      0%,100% {
-        opacity: .3;
 
-        transform:
-          scale(.95);
-      }
+@keyframes buttonGlow {
 
-      50% {
-        opacity: .75;
+  0%,100% {
+    opacity: .25;
 
-        transform:
-          scale(1.06);
-      }
-    }
+    transform:
+      scale(.97);
+  }
 
+  50% {
+    opacity: .6;
 
-    @keyframes shine {
+    transform:
+      scale(1.035);
+  }
+}
 
-      0% {
-        left: -110%;
-      }
 
-      35%,100% {
-        left: 155%;
-      }
-    }
+@keyframes buttonShine {
 
+  0%,
+  50% {
+    left: -120%;
+  }
 
-    @keyframes galaxyBreath {
+  75%,
+  100% {
+    left: 150%;
+  }
+}
 
-      0%,100% {
-        opacity: .55;
 
-        transform:
-          translate(-50%,-50%)
-          scale(.92);
-      }
+/* =========================================================
+   MOBILE
+========================================================= */
 
-      50% {
-        opacity: 1;
+@media (max-width:520px) {
 
-        transform:
-          translate(-50%,-50%)
-          scale(1.08);
-      }
-    }
+  .page {
 
+    width:
+      calc(100% - 28px);
 
-    /* =========================================================
-       MOBILE
-    ========================================================= */
+    padding:
+      18px 0
+      calc(
+        18px +
+        env(safe-area-inset-bottom)
+      );
+  }
 
-    @media (max-width: 520px) {
 
-      .page {
-        width:
-          calc(100% - 28px);
+  .cosmic-mark {
 
-        padding:
-          18px
-          0
-          calc(
-            18px +
-            env(safe-area-inset-bottom)
-          );
-      }
+    width: 76px;
+    height: 76px;
 
+    margin-bottom: 21px;
+  }
 
-      .cosmic-logo {
-        width: 86px;
-        height: 86px;
 
-        margin-bottom: 22px;
-      }
+  .mark-core {
 
+    width: 50px;
+    height: 50px;
+  }
 
-      .logo-orbit {
-        width: 78px;
-        height: 78px;
-      }
 
+  h1 {
 
-      .logo-orbit-two {
-        width: 63px;
-        height: 82px;
-      }
+    max-width: 355px;
 
+    font-size: 25px;
 
-      .logo-core {
-        width: 54px;
-        height: 54px;
-      }
+    line-height: 1.78;
+  }
 
 
-      h1 {
-        max-width: 350px;
+  .message {
 
-        font-size: 25px;
+    max-width: 350px;
 
-        line-height: 1.78;
-      }
+    margin:
+      7px auto
+      22px;
 
+    font-size: 14px;
 
-      .message {
-        max-width: 345px;
+    line-height: 2.08;
+  }
 
-        margin-top: 8px;
-        margin-bottom: 23px;
 
-        font-size: 14px;
+  .new-address {
 
-        line-height: 2.08;
-      }
+    height: 55px;
 
+    border-radius: 16px;
+  }
 
-      .new-address {
-        width:
-          min(
-            330px,
-            calc(100vw - 52px)
-          );
 
-        min-height: 55px;
+  .date-box {
 
-        border-radius: 16px;
-      }
+    margin-top: 23px;
 
+    min-width: 145px;
 
-      .url {
-        margin-top: 14px;
-      }
+    height: 41px;
+  }
 
 
-      .date-area {
-        margin-top: 25px;
-      }
+  /*
+     Background animation becomes
+     even softer on phones.
+  */
 
+  #cosmos {
 
-      .date-box {
-        min-width: 145px;
-      }
-    }
+    opacity: .27;
+  }
 
 
-    /* =========================================================
-       SHORT PHONES
-    ========================================================= */
+  .cosmic-glow {
 
-    @media (max-height: 680px) {
+    opacity: .65;
+  }
+}
 
-      .cosmic-logo {
-        transform:
-          scale(.82);
 
-        margin-bottom: 5px;
-      }
+/* =========================================================
+   SMALL HEIGHT DEVICES
+========================================================= */
 
+@media (max-height:680px) {
 
-      h1 {
-        font-size: 22px;
-      }
+  .cosmic-mark {
 
+    transform:
+      scale(.82);
 
-      .message {
-        margin-top: 6px;
-        margin-bottom: 15px;
+    margin-bottom: 7px;
+  }
 
-        font-size: 13px;
-      }
 
+  h1 {
 
-      .date-area {
-        margin-top: 18px;
-      }
-    }
+    font-size: 22px;
+  }
 
 
-    /* =========================================================
-       ACCESSIBILITY
-    ========================================================= */
+  .message {
 
-    @media (prefers-reduced-motion: reduce) {
+    margin-bottom: 15px;
 
-      *,
-      *::before,
-      *::after {
-        animation: none !important;
+    font-size: 13px;
+  }
 
-        transition: none !important;
-      }
 
+  .date-box {
 
-      h1,
-      .message,
-      .button-wrap,
-      .url,
-      .date-area {
-        opacity: 1 !important;
-      }
-    }
+    margin-top: 18px;
+  }
+}
 
-  </style>
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion:reduce) {
+
+  *,
+  *::before,
+  *::after {
+
+    animation:
+      none !important;
+
+    transition:
+      none !important;
+  }
+
+
+  h1,
+  .message,
+  .button-wrap,
+  .url,
+  .date-box {
+
+    opacity: 1 !important;
+  }
+}
+
+</style>
+
 </head>
 
 
 <body>
 
 
-  <!-- =======================================================
-       GALAXY
-  ======================================================== -->
+<!-- =========================================================
+     BACKGROUND
+========================================================= -->
 
-  <canvas id="space"></canvas>
+<canvas id="cosmos"></canvas>
 
-  <div class="galaxy-light"></div>
-
-
-  <!-- =======================================================
-       CONTENT
-  ======================================================== -->
-
-  <main class="page">
+<div class="cosmic-glow"></div>
 
 
-    <!-- Cosmic logo -->
+<!-- =========================================================
+     MAIN
+========================================================= -->
 
-    <div class="cosmic-logo">
+<main class="page">
 
-      <div class="logo-orbit"></div>
 
-      <div class="logo-orbit-two"></div>
+  <!-- Cosmic / Internet mark -->
 
-      <div class="logo-core">
+  <div class="cosmic-mark">
 
-        <div class="core-symbol"></div>
+    <div class="mark-core">
 
-      </div>
+      <div class="web-symbol"></div>
 
     </div>
 
-
-    <!-- Main title -->
-
-    <h1>
-      وبسایت شرکت به آدرس زیر تغییر پیدا کرد.
-    </h1>
+  </div>
 
 
-    <!-- Description -->
+  <!-- Title -->
 
-    <p class="message">
-      برای ورود به وبسایت جدید شرکت، روی دکمه زیر کلیک کنید.
-    </p>
-
-
-    <!-- Button -->
-
-    <div class="button-wrap">
-
-      <div class="button-glow"></div>
-
-      <a
-        class="new-address"
-        href="https://taavonikohnoor.ir/"
-        aria-label="ورود به وبسایت جدید شرکت"
-      >
-
-        <span class="button-text">
-          کلیک کنید!
-        </span>
-
-      </a>
-
-    </div>
+  <h1>
+    وبسایت شرکت به آدرس زیر تغییر پیدا کرد.
+  </h1>
 
 
-    <!-- New domain -->
+  <!-- Message -->
 
-    <div class="url">
-      taavonikohnoor.ir
-    </div>
-
-
-    <!-- Date -->
-
-    <div class="date-area">
-
-      <div class="date-label">
-        تاریخ
-      </div>
-
-      <div
-        class="date-box"
-        id="persianDate"
-      >
-        ۱۷/۰۶/۱۴۰۵
-      </div>
-
-    </div>
+  <p class="message">
+    برای ورود به وبسایت جدید شرکت، روی دکمه زیر کلیک کنید.
+  </p>
 
 
-  </main>
+  <!-- Button -->
+
+  <div class="button-wrap">
+
+    <div class="button-glow"></div>
+
+    <a
+      class="new-address"
+      href="https://taavonikohnoor.ir/"
+      aria-label="ورود به وبسایت جدید شرکت"
+    >
+
+      <span class="button-text">
+        کلیک کنید!
+      </span>
+
+    </a>
+
+  </div>
 
 
-  <!-- =======================================================
-       GALAXY ENGINE
-  ======================================================== -->
+  <!-- Domain -->
 
-  <script>
-
-    (() => {
-
-      const canvas =
-        document.getElementById("space");
-
-      const ctx =
-        canvas.getContext("2d");
+  <div class="url">
+    taavonikohnoor.ir
+  </div>
 
 
-      let width = 0;
-      let height = 0;
-      let dpr = 1;
+  <!-- ONLY DATE BOX -->
 
-      let stars = [];
-
-      let planets = [];
-
-      let shootingStars = [];
-
-      let lastTime = 0;
+  <div
+    class="date-box"
+    id="persianDate"
+  >
+    ۱۷/۰۶/۱۴۰۵
+  </div>
 
 
-      /* =====================================================
-         RESIZE
-      ===================================================== */
-
-      function resize() {
-
-        width =
-          window.innerWidth;
-
-        height =
-          window.innerHeight;
-
-        dpr =
-          Math.min(
-            window.devicePixelRatio || 1,
-            2
-          );
+</main>
 
 
-        canvas.width =
-          width * dpr;
+<script>
 
-        canvas.height =
-          height * dpr;
+/* =========================================================
+   COSMIC + INTERNET BACKGROUND
+========================================================= */
 
-        canvas.style.width =
-          width + "px";
+(() => {
 
-        canvas.style.height =
-          height + "px";
+  const canvas =
+    document.getElementById("cosmos");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  let width;
+  let height;
+  let dpr;
+
+  let stars = [];
+
+  let planets = [];
+
+  let nodes = [];
+
+  let packets = [];
+
+  let last = 0;
 
 
-        ctx.setTransform(
-          dpr,
+  /* -------------------------------------------------------
+     Resize
+  ------------------------------------------------------- */
+
+  function resize() {
+
+    width =
+      window.innerWidth;
+
+    height =
+      window.innerHeight;
+
+    dpr =
+      Math.min(
+        window.devicePixelRatio || 1,
+        2
+      );
+
+
+    canvas.width =
+      width * dpr;
+
+    canvas.height =
+      height * dpr;
+
+    canvas.style.width =
+      width + "px";
+
+    canvas.style.height =
+      height + "px";
+
+
+    ctx.setTransform(
+      dpr,
+      0,
+      0,
+      dpr,
+      0,
+      0
+    );
+
+
+    createStars();
+
+    createNodes();
+
+    createPlanets();
+
+  }
+
+
+  /* -------------------------------------------------------
+     Stars
+  ------------------------------------------------------- */
+
+  function createStars() {
+
+    stars = [];
+
+    const count =
+      width < 600
+        ? 130
+        : 230;
+
+
+    for (
+      let i = 0;
+      i < count;
+      i++
+    ) {
+
+      stars.push({
+
+        x:
+          Math.random() * width,
+
+        y:
+          Math.random() * height,
+
+        r:
+          Math.random() *
+          1.05 +
+          .2,
+
+        a:
+          Math.random() *
+          .22 +
+          .025,
+
+        phase:
+          Math.random() *
+          Math.PI * 2,
+
+        speed:
+          Math.random() *
+          .001 +
+          .0002
+
+      });
+
+    }
+
+  }
+
+
+  /* -------------------------------------------------------
+     Internet nodes
+  ------------------------------------------------------- */
+
+  function createNodes() {
+
+    nodes = [];
+
+    const count =
+      width < 600
+        ? 14
+        : 22;
+
+
+    for (
+      let i = 0;
+      i < count;
+      i++
+    ) {
+
+      nodes.push({
+
+        x:
+          width * .08 +
+          Math.random() *
+          width * .84,
+
+        y:
+          height * .12 +
+          Math.random() *
+          height * .76,
+
+        r:
+          Math.random() *
+          1.8 +
+          .7,
+
+        phase:
+          Math.random() *
+          Math.PI * 2
+
+      });
+
+    }
+
+  }
+
+
+  /* -------------------------------------------------------
+     Planets
+  ------------------------------------------------------- */
+
+  function createPlanets() {
+
+    planets = [];
+
+    planets.push({
+
+      type:
+        "saturn",
+
+      angle:
+        Math.random() *
+        Math.PI * 2,
+
+      radius:
+        Math.min(width,height) *
+        .34,
+
+      size:
+        width < 600
+          ? 13
+          : 18,
+
+      speed:
+        .00010
+
+    });
+
+
+    planets.push({
+
+      type:
+        "jupiter",
+
+      angle:
+        Math.PI +
+        Math.random(),
+
+      radius:
+        Math.min(width,height) *
+        .43,
+
+      size:
+        width < 600
+          ? 10
+          : 15,
+
+      speed:
+        -.000065
+
+    });
+
+  }
+
+
+  /* -------------------------------------------------------
+     Draw stars
+  ------------------------------------------------------- */
+
+  function drawStars(time) {
+
+    stars.forEach(
+      star => {
+
+        const pulse =
+          .7 +
+          Math.sin(
+            time * star.speed +
+            star.phase
+          ) * .3;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+          star.x,
+          star.y,
+          star.r,
           0,
-          0,
-          dpr,
-          0,
-          0
+          Math.PI * 2
         );
 
 
-        createStars();
+        ctx.fillStyle =
+          `rgba(30,75,170,${
+            star.a * pulse
+          })`;
 
-        createPlanets();
-
-      }
-
-
-      /* =====================================================
-         STARS
-      ===================================================== */
-
-      function createStars() {
-
-        stars = [];
-
-
-        const mobile =
-          width < 600;
-
-
-        const count =
-          mobile
-            ? 210
-            : 360;
-
-
-        const cx =
-          width / 2;
-
-        const cy =
-          height / 2;
-
-
-        const maxRadius =
-          Math.sqrt(
-            width * width +
-            height * height
-          ) * .58;
-
-
-        for (
-          let i = 0;
-          i < count;
-          i++
-        ) {
-
-          const angle =
-            Math.random() *
-            Math.PI * 2;
-
-
-          const radius =
-            Math.pow(
-              Math.random(),
-              .55
-            ) *
-            maxRadius;
-
-
-          /*
-           * Spiral arms
-           */
-
-          const arm =
-            Math.sin(
-              radius * .018
-            ) * .42;
-
-
-          const finalAngle =
-            angle + arm;
-
-
-          stars.push({
-
-            radius,
-
-            angle:
-              finalAngle,
-
-            size:
-              Math.random() *
-              1.25 +
-              .25,
-
-            alpha:
-              Math.random() *
-              .38 +
-              .06,
-
-            speed:
-              Math.random() *
-              .00016 +
-              .000035,
-
-            phase:
-              Math.random() *
-              Math.PI * 2
-
-          });
-
-        }
+        ctx.fill();
 
       }
+    );
+
+  }
 
 
-      /* =====================================================
-         PLANETS
-      ===================================================== */
+  /* -------------------------------------------------------
+     Draw internet network
+  ------------------------------------------------------- */
 
-      function createPlanets() {
+  function drawNetwork(time) {
 
-        planets = [];
+    /*
+     * Very subtle connections.
+     */
 
+    for (
+      let i = 0;
+      i < nodes.length;
+      i++
+    ) {
 
-        /*
-         * Saturn
-         */
-
-        planets.push({
-
-          type:
-            "saturn",
-
-          angle:
-            Math.random() *
-            Math.PI * 2,
-
-          radius:
-            Math.min(
-              width,
-              height
-            ) * .31,
-
-          size:
-            width < 600
-              ? 16
-              : 23,
-
-          speed:
-            .00011
-
-        });
-
-
-        /*
-         * Jupiter
-         */
-
-        planets.push({
-
-          type:
-            "jupiter",
-
-          angle:
-            Math.PI +
-            Math.random() * .8,
-
-          radius:
-            Math.min(
-              width,
-              height
-            ) * .39,
-
-          size:
-            width < 600
-              ? 13
-              : 19,
-
-          speed:
-            -.000075
-
-        });
-
-      }
-
-
-      /* =====================================================
-         DRAW STAR
-      ===================================================== */
-
-      function drawStar(
-        x,
-        y,
-        size,
-        alpha,
-        twinkle
+      for (
+        let j = i + 1;
+        j < nodes.length;
+        j++
       ) {
 
         const a =
-          alpha * twinkle;
+          nodes[i];
+
+        const b =
+          nodes[j];
 
 
-        ctx.beginPath();
+        const dx =
+          a.x - b.x;
 
-        ctx.arc(
-          x,
-          y,
-          size,
-          0,
-          Math.PI * 2
-        );
+        const dy =
+          a.y - b.y;
 
+        const distance =
+          Math.sqrt(
+            dx * dx +
+            dy * dy
+          );
 
-        ctx.fillStyle =
-          `rgba(27,72,175,${a})`;
-
-        ctx.fill();
-
-
-        /*
-         * Bright star glow
-         */
 
         if (
-          size > 1.05
+          distance < 170
         ) {
+
+          const opacity =
+            (1 -
+              distance / 170) *
+            .065;
+
 
           ctx.beginPath();
 
-          ctx.arc(
-            x,
-            y,
-            size * 3.4,
-            0,
-            Math.PI * 2
+          ctx.moveTo(
+            a.x,
+            a.y
+          );
+
+          ctx.lineTo(
+            b.x,
+            b.y
           );
 
 
-          ctx.fillStyle =
-            `rgba(55,105,220,${a * .07})`;
+          ctx.strokeStyle =
+            `rgba(25,73,170,${opacity})`;
 
-          ctx.fill();
+          ctx.lineWidth =
+            .7;
+
+          ctx.stroke();
 
         }
 
       }
 
+    }
 
-      /* =====================================================
-         DRAW JUPITER
-      ===================================================== */
 
-      function drawJupiter(
+    /*
+     * Nodes
+     */
+
+    nodes.forEach(
+      node => {
+
+        const pulse =
+          .65 +
+          Math.sin(
+            time * .001 +
+            node.phase
+          ) * .35;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+          node.x,
+          node.y,
+          node.r,
+          0,
+          Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+          `rgba(20,65,165,${
+            .10 * pulse
+          })`;
+
+        ctx.fill();
+
+
+        /*
+         * tiny node glow
+         */
+
+        ctx.beginPath();
+
+        ctx.arc(
+          node.x,
+          node.y,
+          node.r * 3.2,
+          0,
+          Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+          `rgba(45,90,190,${
+            .018 * pulse
+          })`;
+
+        ctx.fill();
+
+      }
+    );
+
+
+    /*
+     * Data packets moving
+     * through the network.
+     */
+
+    if (
+      Math.random() < .018
+    ) {
+
+      const a =
+        nodes[
+          Math.floor(
+            Math.random() *
+            nodes.length
+          )
+        ];
+
+
+      let b =
+        nodes[
+          Math.floor(
+            Math.random() *
+            nodes.length
+          )
+        ];
+
+
+      if (
+        a === b
+      ) return;
+
+
+      packets.push({
+
+        x:
+          a.x,
+
+        y:
+          a.y,
+
+        tx:
+          b.x,
+
+        ty:
+          b.y,
+
+        progress:
+          0,
+
+        speed:
+          .004 +
+          Math.random() * .004
+
+      });
+
+    }
+
+
+    packets =
+      packets.filter(
+        packet =>
+          packet.progress < 1
+      );
+
+
+    packets.forEach(
+      packet => {
+
+        packet.progress +=
+          packet.speed;
+
+
+        const x =
+          packet.x +
+          (
+            packet.tx -
+            packet.x
+          ) *
+          packet.progress;
+
+
+        const y =
+          packet.y +
+          (
+            packet.ty -
+            packet.y
+          ) *
+          packet.progress;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+          x,
+          y,
+          1.2,
+          0,
+          Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+          "rgba(35,86,190,.18)";
+
+        ctx.fill();
+
+      }
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     Jupiter
+  ------------------------------------------------------- */
+
+  function drawJupiter(
+    x,
+    y,
+    size
+  ) {
+
+    const gradient =
+      ctx.createRadialGradient(
+        x - size * .3,
+        y - size * .3,
+        1,
         x,
         y,
         size
-      ) {
-
-        ctx.save();
+      );
 
 
-        /*
-         * Glow
-         */
+    gradient.addColorStop(
+      0,
+      "rgba(225,230,240,.55)"
+    );
 
-        const glow =
-          ctx.createRadialGradient(
-            x,
-            y,
-            0,
-            x,
-            y,
-            size * 2.4
-          );
+    gradient.addColorStop(
+      1,
+      "rgba(125,145,180,.18)"
+    );
 
 
-        glow.addColorStop(
-          0,
-          "rgba(50,90,180,.13)"
-        );
+    ctx.beginPath();
 
-        glow.addColorStop(
-          1,
-          "rgba(50,90,180,0)"
-        );
+    ctx.arc(
+      x,
+      y,
+      size,
+      0,
+      Math.PI * 2
+    );
 
+    ctx.fillStyle =
+      gradient;
 
-        ctx.fillStyle =
-          glow;
+    ctx.fill();
 
-        ctx.beginPath();
-
-        ctx.arc(
-          x,
-          y,
-          size * 2.4,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.fill();
+  }
 
 
-        /*
-         * Planet
-         */
+  /* -------------------------------------------------------
+     Saturn
+  ------------------------------------------------------- */
 
-        const gradient =
-          ctx.createRadialGradient(
-            x - size * .35,
-            y - size * .35,
-            size * .1,
-            x,
-            y,
-            size
-          );
+  function drawSaturn(
+    x,
+    y,
+    size,
+    angle
+  ) {
 
+    ctx.save();
 
-        gradient.addColorStop(
-          0,
-          "#f4f5f8"
-        );
+    ctx.translate(
+      x,
+      y
+    );
 
-        gradient.addColorStop(
-          .55,
-          "#d9dee9"
-        );
+    ctx.rotate(
+      angle
+    );
 
-        gradient.addColorStop(
-          1,
-          "#aab4c7"
-        );
+    ctx.scale(
+      1,
+      .34
+    );
 
 
-        ctx.beginPath();
+    /*
+     * Ring
+     */
 
-        ctx.arc(
-          x,
-          y,
-          size,
-          0,
-          Math.PI * 2
-        );
+    ctx.beginPath();
 
-        ctx.fillStyle =
-          gradient;
-
-        ctx.fill();
-
-
-        /*
-         * Jupiter atmosphere bands
-         */
-
-        ctx.save();
-
-        ctx.beginPath();
-
-        ctx.arc(
-          x,
-          y,
-          size,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.clip();
+    ctx.ellipse(
+      0,
+      0,
+      size * 1.9,
+      size * .75,
+      0,
+      0,
+      Math.PI * 2
+    );
 
 
-        for (
-          let i = -4;
-          i <= 4;
-          i++
-        ) {
+    ctx.strokeStyle =
+      "rgba(65,95,160,.14)";
 
-          const yy =
-            y +
-            i *
-            size *
-            .21;
+    ctx.lineWidth =
+      size * .15;
+
+    ctx.stroke();
 
 
-          ctx.fillStyle =
-            i % 2 === 0
-              ? "rgba(82,101,137,.16)"
-              : "rgba(255,255,255,.24)";
+    ctx.restore();
 
 
-          ctx.fillRect(
-            x - size,
-            yy,
-            size * 2,
-            size * .10
-          );
+    /*
+     * Planet
+     */
 
-        }
-
-
-        /*
-         * Great Red Spot
-         */
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-          x + size * .28,
-          y + size * .27,
-          size * .25,
-          size * .13,
-          -.12,
-          0,
-          Math.PI * 2
-        );
-
-
-        ctx.fillStyle =
-          "rgba(122,88,93,.20)";
-
-        ctx.fill();
-
-
-        ctx.restore();
-
-
-        /*
-         * Border
-         */
-
-        ctx.beginPath();
-
-        ctx.arc(
-          x,
-          y,
-          size,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.strokeStyle =
-          "rgba(55,76,120,.16)";
-
-        ctx.lineWidth = .7;
-
-        ctx.stroke();
-
-
-        ctx.restore();
-
-      }
-
-
-      /* =====================================================
-         DRAW SATURN
-      ===================================================== */
-
-      function drawSaturn(
+    const gradient =
+      ctx.createRadialGradient(
+        x - size * .3,
+        y - size * .35,
+        1,
         x,
         y,
-        size,
-        rotation
-      ) {
+        size
+      );
 
-        ctx.save();
 
+    gradient.addColorStop(
+      0,
+      "rgba(238,241,247,.58)"
+    );
 
-        /*
-         * Glow
-         */
+    gradient.addColorStop(
+      1,
+      "rgba(130,148,180,.20)"
+    );
 
-        const glow =
-          ctx.createRadialGradient(
-            x,
-            y,
-            0,
-            x,
-            y,
-            size * 2.8
-          );
 
+    ctx.beginPath();
 
-        glow.addColorStop(
-          0,
-          "rgba(50,90,190,.12)"
-        );
+    ctx.arc(
+      x,
+      y,
+      size,
+      0,
+      Math.PI * 2
+    );
 
-        glow.addColorStop(
-          1,
-          "rgba(50,90,190,0)"
-        );
+    ctx.fillStyle =
+      gradient;
 
+    ctx.fill();
 
-        ctx.fillStyle =
-          glow;
+  }
 
-        ctx.beginPath();
 
-        ctx.arc(
-          x,
-          y,
-          size * 2.7,
-          0,
-          Math.PI * 2
-        );
+  /* -------------------------------------------------------
+     Galaxy haze
+  ------------------------------------------------------- */
 
-        ctx.fill();
+  function drawGalaxy() {
 
+    const cx =
+      width / 2;
 
-        /*
-         * Ring behind planet
-         */
+    const cy =
+      height / 2;
 
-        ctx.translate(
-          x,
-          y
-        );
 
+    ctx.save();
 
-        ctx.rotate(
-          rotation
-        );
+    ctx.translate(
+      cx,
+      cy
+    );
 
+    ctx.rotate(
+      -.18
+    );
 
-        ctx.scale(
-          1,
-          .34
-        );
+    ctx.scale(
+      1,
+      .32
+    );
 
 
-        ctx.beginPath();
+    const radius =
+      Math.min(
+        width,
+        height
+      ) * .65;
 
-        ctx.ellipse(
-          0,
-          0,
-          size * 1.9,
-          size * .72,
-          0,
-          0,
-          Math.PI * 2
-        );
 
+    const gradient =
+      ctx.createRadialGradient(
+        0,
+        0,
+        0,
+        0,
+        0,
+        radius
+      );
 
-        ctx.strokeStyle =
-          "rgba(92,118,175,.20)";
 
-        ctx.lineWidth =
-          size * .17;
+    gradient.addColorStop(
+      0,
+      "rgba(40,82,185,.055)"
+    );
 
-        ctx.stroke();
+    gradient.addColorStop(
+      .28,
+      "rgba(40,82,185,.025)"
+    );
 
+    gradient.addColorStop(
+      1,
+      "rgba(40,82,185,0)"
+    );
 
-        ctx.beginPath();
 
-        ctx.ellipse(
-          0,
-          0,
-          size * 1.65,
-          size * .60,
-          0,
-          0,
-          Math.PI * 2
-        );
+    ctx.fillStyle =
+      gradient;
 
 
-        ctx.strokeStyle =
-          "rgba(38,72,150,.12)";
+    ctx.beginPath();
 
-        ctx.lineWidth =
-          size * .055;
+    ctx.arc(
+      0,
+      0,
+      radius,
+      0,
+      Math.PI * 2
+    );
 
-        ctx.stroke();
+    ctx.fill();
 
 
-        /*
-         * Planet
-         */
+    ctx.restore();
 
-        ctx.setTransform(
-          dpr,
-          0,
-          0,
-          dpr,
-          0,
-          0
-        );
+  }
 
 
-        const gradient =
-          ctx.createRadialGradient(
-            x - size * .35,
-            y - size * .38,
-            size * .1,
-            x,
-            y,
-            size
-          );
+  /* -------------------------------------------------------
+     Main animation
+  ------------------------------------------------------- */
 
+  function animate(time) {
 
-        gradient.addColorStop(
-          0,
-          "#f5f7fb"
-        );
+    ctx.clearRect(
+      0,
+      0,
+      width,
+      height
+    );
 
-        gradient.addColorStop(
-          .55,
-          "#dce2ec"
-        );
 
-        gradient.addColorStop(
-          1,
-          "#aeb9cc"
-        );
+    drawGalaxy();
 
+    drawStars(time);
 
-        ctx.beginPath();
+    drawNetwork(time);
 
-        ctx.arc(
-          x,
-          y,
-          size,
-          0,
-          Math.PI * 2
-        );
 
-        ctx.fillStyle =
-          gradient;
+    const cx =
+      width / 2;
 
-        ctx.fill();
+    const cy =
+      height / 2;
 
 
-        /*
-         * Front ring
-         */
+    /*
+     * Planets orbit very slowly
+     * in the background.
+     */
 
-        ctx.save();
+    planets.forEach(
+      planet => {
 
-        ctx.translate(
-          x,
-          y
-        );
+        const angle =
+          planet.angle +
+          time *
+          planet.speed;
 
-        ctx.rotate(
-          rotation
-        );
 
-        ctx.scale(
-          1,
-          .34
-        );
+        const x =
+          cx +
+          Math.cos(angle) *
+          planet.radius;
 
 
-        ctx.beginPath();
+        const y =
+          cy +
+          Math.sin(angle) *
+          planet.radius *
+          .38;
 
-        ctx.ellipse(
-          0,
-          0,
-          size * 1.9,
-          size * .72,
-          0,
-          0,
-          Math.PI
-        );
-
-
-        ctx.strokeStyle =
-          "rgba(74,99,157,.25)";
-
-        ctx.lineWidth =
-          size * .11;
-
-        ctx.stroke();
-
-
-        ctx.restore();
-
-
-        /*
-         * Planet border
-         */
-
-        ctx.beginPath();
-
-        ctx.arc(
-          x,
-          y,
-          size,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.strokeStyle =
-          "rgba(55,76,120,.14)";
-
-        ctx.lineWidth = .7;
-
-        ctx.stroke();
-
-
-        ctx.restore();
-
-      }
-
-
-      /* =====================================================
-         DRAW GALAXY
-      ===================================================== */
-
-      function draw(time) {
-
-        ctx.clearRect(
-          0,
-          0,
-          width,
-          height
-        );
-
-
-        const cx =
-          width / 2;
-
-        const cy =
-          height / 2;
-
-
-        /*
-         * Milky Way disk
-         */
-
-        ctx.save();
-
-        ctx.translate(
-          cx,
-          cy
-        );
-
-        ctx.rotate(
-          -0.18
-        );
-
-        ctx.scale(
-          1,
-          .34
-        );
-
-
-        const galaxy =
-          ctx.createRadialGradient(
-            0,
-            0,
-            0,
-            0,
-            0,
-            Math.min(width,height) * .60
-          );
-
-
-        galaxy.addColorStop(
-          0,
-          "rgba(42,82,185,.11)"
-        );
-
-        galaxy.addColorStop(
-          .16,
-          "rgba(42,82,185,.06)"
-        );
-
-        galaxy.addColorStop(
-          .42,
-          "rgba(65,105,215,.025)"
-        );
-
-        galaxy.addColorStop(
-          1,
-          "rgba(255,255,255,0)"
-        );
-
-
-        ctx.fillStyle =
-          galaxy;
-
-
-        ctx.beginPath();
-
-        ctx.arc(
-          0,
-          0,
-          Math.min(width,height) * .60,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.fill();
-
-
-        ctx.restore();
-
-
-        /* ---------------------------------------------------
-           Stars
-        --------------------------------------------------- */
-
-        for (
-          const star of stars
-        ) {
-
-          const angle =
-            star.angle +
-            time * star.speed;
-
-
-          const x =
-            cx +
-            Math.cos(angle) *
-            star.radius;
-
-
-          const y =
-            cy +
-            Math.sin(angle) *
-            star.radius *
-            .34;
-
-
-          const twinkle =
-            .65 +
-            Math.sin(
-              time * .0017 +
-              star.phase
-            ) * .35;
-
-
-          drawStar(
-            x,
-            y,
-            star.size,
-            star.alpha,
-            twinkle
-          );
-
-        }
-
-
-        /* ---------------------------------------------------
-           Galaxy core
-        --------------------------------------------------- */
-
-        const core =
-          ctx.createRadialGradient(
-            cx,
-            cy,
-            0,
-            cx,
-            cy,
-            Math.min(width,height) * .22
-          );
-
-
-        core.addColorStop(
-          0,
-          "rgba(35,75,175,.10)"
-        );
-
-        core.addColorStop(
-          .28,
-          "rgba(45,90,200,.045)"
-        );
-
-        core.addColorStop(
-          1,
-          "rgba(255,255,255,0)"
-        );
-
-
-        ctx.fillStyle =
-          core;
-
-
-        ctx.beginPath();
-
-        ctx.arc(
-          cx,
-          cy,
-          Math.min(width,height) * .22,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.fill();
-
-
-        /* ---------------------------------------------------
-           Planets
-        --------------------------------------------------- */
-
-        planets.forEach(
-          (planet, index) => {
-
-            const angle =
-              planet.angle +
-              time *
-              planet.speed;
-
-
-            const x =
-              cx +
-              Math.cos(angle) *
-              planet.radius;
-
-
-            const y =
-              cy +
-              Math.sin(angle) *
-              planet.radius *
-              .38;
-
-
-            if (
-              planet.type ===
-              "saturn"
-            ) {
-
-              drawSaturn(
-                x,
-                y,
-                planet.size,
-                angle * .35
-              );
-
-            }
-
-
-            if (
-              planet.type ===
-              "jupiter"
-            ) {
-
-              drawJupiter(
-                x,
-                y,
-                planet.size
-              );
-
-            }
-
-          }
-        );
-
-
-        /* ---------------------------------------------------
-           Shooting stars
-        --------------------------------------------------- */
 
         if (
-          Math.random() < .0028
+          planet.type ===
+          "saturn"
         ) {
 
-          shootingStars.push({
-
-            x:
-              Math.random() *
-              width,
-
-            y:
-              Math.random() *
-              height *
-              .30,
-
-            length:
-              35 +
-              Math.random() *
-              55,
-
-            speed:
-              2.5 +
-              Math.random() *
-              3,
-
-            life:
-              1
-
-          });
+          drawSaturn(
+            x,
+            y,
+            planet.size,
+            angle * .3
+          );
 
         }
 
 
-        shootingStars =
-          shootingStars.filter(
-            star =>
-              star.life > 0
-        );
+        if (
+          planet.type ===
+          "jupiter"
+        ) {
 
+          drawJupiter(
+            x,
+            y,
+            planet.size
+          );
 
-        shootingStars.forEach(
-          star => {
-
-            star.x +=
-              star.speed;
-
-            star.y +=
-              star.speed * .38;
-
-            star.life -=
-              .018;
-
-
-            const trail =
-              ctx.createLinearGradient(
-                star.x,
-                star.y,
-                star.x - star.length,
-                star.y - star.length * .38
-              );
-
-
-            trail.addColorStop(
-              0,
-              `rgba(45,95,210,${star.life * .30})`
-            );
-
-            trail.addColorStop(
-              1,
-              "rgba(45,95,210,0)"
-            );
-
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-              star.x,
-              star.y
-            );
-
-            ctx.lineTo(
-              star.x - star.length,
-              star.y - star.length * .38
-            );
-
-            ctx.strokeStyle =
-              trail;
-
-            ctx.lineWidth = 1;
-
-            ctx.stroke();
-
-          }
-        );
-
-
-        lastTime =
-          time;
-
-
-        requestAnimationFrame(
-          draw
-        );
+        }
 
       }
+    );
 
 
-      window.addEventListener(
-        "resize",
-        resize,
+    last = time;
+
+
+    requestAnimationFrame(
+      animate
+    );
+
+  }
+
+
+  window.addEventListener(
+    "resize",
+    resize,
+    {
+      passive: true
+    }
+  );
+
+
+  resize();
+
+  requestAnimationFrame(
+    animate
+  );
+
+})();
+
+
+/* =========================================================
+   AUTOMATIC PERSIAN DATE — IRAN
+========================================================= */
+
+(() => {
+
+  const dateElement =
+    document.getElementById(
+      "persianDate"
+    );
+
+
+  /*
+   * Convert Latin digits
+   * to Persian digits.
+   */
+
+  function toPersianDigits(
+    value
+  ) {
+
+    return String(value)
+      .replace(
+        /\d/g,
+        digit =>
+          "۰۱۲۳۴۵۶۷۸۹"[digit]
+      );
+
+  }
+
+
+  /*
+   * Get Persian date using
+   * Tehran timezone.
+   *
+   * The browser's Intl API supports
+   * the Persian calendar.
+   */
+
+  function getPersianDate() {
+
+    const formatter =
+      new Intl.DateTimeFormat(
+        "en-US-u-ca-persian-nu-latn",
         {
-          passive: true
+          timeZone:
+            "Asia/Tehran",
+
+          year:
+            "numeric",
+
+          month:
+            "2-digit",
+
+          day:
+            "2-digit"
         }
       );
 
 
-      resize();
-
-
-      requestAnimationFrame(
-        draw
+    const parts =
+      formatter.formatToParts(
+        new Date()
       );
 
-    })();
+
+    let year = "";
+    let month = "";
+    let day = "";
 
 
-    /* =========================================================
-       AUTOMATIC IRANIAN PERSIAN DATE
-    ========================================================= */
+    for (
+      const part of parts
+    ) {
 
-    (() => {
-
-      const dateElement =
-        document.getElementById(
-          "persianDate"
-        );
-
-
-      /*
-       * Persian digits
-       */
-
-      function persianDigits(
-        value
+      if (
+        part.type ===
+        "year"
       ) {
 
-        return String(value)
-          .replace(
-            /\d/g,
-            d =>
-              "۰۱۲۳۴۵۶۷۸۹"[d]
-          );
+        year =
+          part.value;
 
       }
 
 
-      /*
-       * Get the current Persian
-       * calendar date using Iran time.
-       *
-       * IMPORTANT:
-       * en-US is deliberately used here so
-       * the browser returns ASCII numbers.
-       * This avoids the bug caused by parseInt
-       * on Persian/Arabic digits.
-       */
-
-      function getIranianDate() {
-
-        const now =
-          new Date();
-
-
-        const formatter =
-          new Intl.DateTimeFormat(
-            "en-US-u-ca-persian",
-            {
-              timeZone:
-                "Asia/Tehran",
-
-              year:
-                "numeric",
-
-              month:
-                "2-digit",
-
-              day:
-                "2-digit"
-            }
-          );
-
-
-        const parts =
-          formatter.formatToParts(
-            now
-          );
-
-
-        let year = "";
-        let month = "";
-        let day = "";
-
-
-        parts.forEach(
-          part => {
-
-            if (
-              part.type ===
-              "year"
-            ) {
-              year =
-                part.value;
-            }
-
-
-            if (
-              part.type ===
-              "month"
-            ) {
-              month =
-                part.value;
-            }
-
-
-            if (
-              part.type ===
-              "day"
-            ) {
-              day =
-                part.value;
-            }
-
-          }
-        );
-
-
-        /*
-         * Force two-digit day/month
-         */
-
-        day =
-          day.padStart(
-            2,
-            "0"
-          );
-
+      if (
+        part.type ===
+        "month"
+      ) {
 
         month =
-          month.padStart(
-            2,
-            "0"
-          );
+          part.value;
+
+      }
 
 
-        year =
-          year.padStart(
-            4,
-            "0"
-          );
+      if (
+        part.type ===
+        "day"
+      ) {
+
+        day =
+          part.value;
+
+      }
+
+    }
 
 
-        return (
-          day +
-          "/" +
-          month +
-          "/" +
-          year
+    return (
+      day.padStart(2, "0") +
+      "/" +
+      month.padStart(2, "0") +
+      "/" +
+      year.padStart(4, "0")
+    );
+
+  }
+
+
+  function updateDate() {
+
+    try {
+
+      const date =
+        getPersianDate();
+
+
+      dateElement.textContent =
+        toPersianDigits(
+          date
         );
 
-      }
+    }
 
-
-      function updateDate() {
-
-        try {
-
-          const date =
-            getIranianDate();
-
-
-          dateElement.textContent =
-            persianDigits(
-              date
-            );
-
-        }
-
-        catch (error) {
-
-          /*
-           * Fallback so the box
-           * never remains empty.
-           */
-
-          dateElement.textContent =
-            "۱۷/۰۶/۱۴۰۵";
-
-        }
-
-      }
-
+    catch (error) {
 
       /*
-       * Initial update
+       * Safe fallback
        */
 
-      updateDate();
+      dateElement.textContent =
+        "۱۷/۰۶/۱۴۰۵";
+
+    }
+
+  }
 
 
-      /*
-       * Check every minute.
-       *
-       * If the page stays open across
-       * midnight in Iran, the date
-       * automatically changes.
-       */
+  /*
+   * Immediately show date.
+   */
 
-      setInterval(
-        updateDate,
-        60 * 1000
-      );
+  updateDate();
 
-    })();
 
-  </script>
+  /*
+   * Check every minute.
+   * If the website stays open
+   * across midnight in Iran,
+   * the date updates automatically.
+   */
+
+  setInterval(
+    updateDate,
+    60 * 1000
+  );
+
+})();
+
+</script>
 
 </body>
 </html>
